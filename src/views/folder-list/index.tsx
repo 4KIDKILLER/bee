@@ -1,6 +1,6 @@
 import { memo } from "react";
 import { Folder, Button, ButtonGroup } from "/@c/index";
-import { Menu } from "lucide-react";
+import { Menu, Trash2 } from "lucide-react";
 import { ScrollArea } from "/@c/index";
 
 interface ImageItemProps {
@@ -20,11 +20,14 @@ const ImageItem = memo(function ImageItem({ src, alt = "" }: ImageItemProps) {
   );
 });
 
+const fileName = ['手机图库', '壁纸', '截图']
+
 // 每个文件夹最多展示 3 张图片
-const folders: { id: number; images: string[] }[] = Array.from(
-  { length: 40 },
+const folders: { id: number; name: string, images: string[] }[] = Array.from(
+  { length: 3 },
   (_, i) => ({
     id: i,
+    name: fileName[i],
     images: Array.from(
       { length: 3 },
       (_, j) => `https://picsum.photos/seed/folder-${i}-${j}/200/200`,
@@ -35,9 +38,9 @@ const folders: { id: number; images: string[] }[] = Array.from(
 function FolderList() {
   return (
     <div className="w-full h-full flex items-center justify-center">
-      <div className="w-[1300px] min-w-[1300px] mx-auto h-3/4 min-h-[600px]">
+      <div className="w-[1300px] min-w-[1300px] mx-auto h-3/4 min-h-[600px] max-h-[700px]">
         <div className="flex flex-col h-full">
-          <div className="h-[50px] pl-[16px] pr-[16px] w-full flex gap-[10px] items-center justify-between">
+          <div className="h-[50px] pl-[16px] pr-[16px] w-full flex gap-[10px] items-center justify-between bg-black/10 backdrop-blur-md rounded-tl-2xl rounded-tr-2xl border-t border-x border-white/20 bg-black/10">
             <ButtonGroup>
               <ButtonGroup className="hidden sm:flex">
                 <Button size="sm" aria-label="Go Back">
@@ -45,39 +48,34 @@ function FolderList() {
                 </Button>
               </ButtonGroup>
               <ButtonGroup>
-                <Button size="sm">Archive</Button>
-                <Button size="sm">Report</Button>
+                <Button size="sm">新建文件夹</Button>
+                <Button size="sm">新建文件</Button>
               </ButtonGroup>
               <ButtonGroup>
-                <Button size="sm">Snooze</Button>
+                <Button size="sm">选择</Button>
               </ButtonGroup>
             </ButtonGroup>
 
-            <ButtonGroup>
-              <ButtonGroup className="hidden sm:flex">
-                <Button size="sm" aria-label="Go Back">
-                  <Menu />
-                </Button>
-              </ButtonGroup>
-              <ButtonGroup>
-                <Button size="sm">Snooze</Button>
-              </ButtonGroup>
-            </ButtonGroup>
+
+            <Button size="icon" variant="destructive">
+              <Trash2 />
+            </Button>
+
           </div>
-          <ScrollArea className="flex-1 rounded-3xl border border-white/20 bg-black/10 backdrop-blur-md shadow-lg">
+          <ScrollArea className="flex-1 rounded-bl-2xl running-br-2xl border-b border-x border-white/20 bg-black/10 backdrop-blur-md shadow-lg">
             <div className="flex items-end px-[16px] h-[36px] w-full">
               <Button className="text-white/20 hover:text-white/80" size="sm" variant="link">
-                Archive
+                时间
               </Button>
               <Button className="text-white/20 hover:text-white/80" size="sm" variant="link">
-                Report
+                大小
               </Button>
               <Button className="text-white/20 hover:text-white/80" size="sm" variant="link">
-                Snooze
+                名称
               </Button>
             </div>
-            <div className="grid w-full grid-cols-7 auto-rows-[25%]">
-              {folders.map(({ id, images }) => (
+            <div className="grid w-full grid-cols-7 auto-rows-[150px]">
+              {folders.map(({ id, name, images }) => (
                 <div key={id} className="flex items-center justify-center">
                   <div className="text-center">
                     <Folder
@@ -91,7 +89,7 @@ function FolderList() {
                       ))}
                     />
                     <div className="pt-[2px] text-purple-50 text-sm text-shadow-amber-100">
-                      文件夹
+                      {name}
                     </div>
                   </div>
                 </div>
