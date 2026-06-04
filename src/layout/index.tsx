@@ -7,6 +7,7 @@ import Settings from "/@v/settings";
 import RecycleBin from "/@v/recycle-bin";
 
 const menuItems = [
+  { label: "相册首页", ariaLabel: "BEE Home", link: "/" },
   { label: "个人信息", ariaLabel: "Personal information", link: "/personal" },
   { label: "系统概览", ariaLabel: "System overview", link: "/overview" },
   { label: "系统设置", ariaLabel: "System settings", link: "/settings" },
