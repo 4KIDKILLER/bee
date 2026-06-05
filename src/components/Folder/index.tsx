@@ -9,7 +9,9 @@ interface FolderProps {
   className?: string;
   selection?: boolean;
   isChecked?: boolean;
+  isOpen?: boolean;
   onCheckChange?: () => void;
+  onOpenChange?: (open: boolean) => void;
 }
 
 const darkenColor = (hex: string, percent: number): string => {
@@ -35,8 +37,10 @@ const darkenColor = (hex: string, percent: number): string => {
 
 const Folder: React.FC<FolderProps> = ({
   onCheckChange,
+  onOpenChange,
   selection = false,
   isChecked = false,
+  isOpen,
   color = "#73CFFB",
   checkedColor = "#",
   size = 1,
@@ -49,10 +53,17 @@ const Folder: React.FC<FolderProps> = ({
     papers.push(null);
   }
 
-  const [open, setOpen] = useState(false);
   const [paperOffsets, setPaperOffsets] = useState<{ x: number; y: number }[]>(
     Array.from({ length: maxItems }, () => ({ x: 0, y: 0 })),
   );
+
+  const resetPaperOffsets = () => {
+    setPaperOffsets(Array.from({ length: maxItems }, () => ({ x: 0, y: 0 })));
+  };
+
+  const handleOpenChange = (nextOpen: boolean) => {
+    onOpenChange?.(nextOpen);
+  };
 
   const folderColor = isChecked ? checkedColor : color;
   const folderBackColor = darkenColor(folderColor, 0.08);
@@ -61,17 +72,18 @@ const Folder: React.FC<FolderProps> = ({
   const paper3 = "#ffffff";
 
   const handleClick = () => {
-    setOpen((prev) => !prev);
-    if (open) {
-      setPaperOffsets(Array.from({ length: maxItems }, () => ({ x: 0, y: 0 })));
+    const nextOpen = !isOpen;
+    if (nextOpen) {
+      resetPaperOffsets();
     }
+    handleOpenChange(nextOpen);
   };
 
   const handlePaperMouseMove = (
     e: React.MouseEvent<HTMLDivElement, MouseEvent>,
     index: number,
   ) => {
-    if (!open) return;
+    if (!isOpen) return;
     const rect = e.currentTarget.getBoundingClientRect();
     const centerX = rect.left + rect.width / 2;
     const centerY = rect.top + rect.height / 2;
@@ -117,11 +129,11 @@ const Folder: React.FC<FolderProps> = ({
       <div
         className={cn(
           "group relative transition-all duration-200 ease-in cursor-pointer",
-          !open && "hover:-translate-y-2",
+          !isOpen && "hover:-translate-y-2",
         )}
         style={{
           ...folderStyle,
-          transform: open ? "translateY(-8px)" : undefined,
+          transform: isOpen ? "translateY(-8px)" : undefined,
         }}
         onClick={handleClick}
       >
@@ -136,13 +148,13 @@ const Folder: React.FC<FolderProps> = ({
           {papers.map((item, i) => {
             let sizeClasses = "";
             if (i === 0)
-              sizeClasses = open ? "w-[70%] h-[80%]" : "w-[70%] h-[80%]";
+              sizeClasses = isOpen ? "w-[70%] h-[80%]" : "w-[70%] h-[80%]";
             if (i === 1)
-              sizeClasses = open ? "w-[80%] h-[80%]" : "w-[80%] h-[70%]";
+              sizeClasses = isOpen ? "w-[80%] h-[80%]" : "w-[80%] h-[70%]";
             if (i === 2)
-              sizeClasses = open ? "w-[90%] h-[80%]" : "w-[90%] h-[60%]";
+              sizeClasses = isOpen ? "w-[90%] h-[80%]" : "w-[90%] h-[60%]";
 
-            const transformStyle = open
+            const transformStyle = isOpen
               ? `${getOpenTransform(i)} translate(${paperOffsets[i].x}px, ${paperOffsets[i].y}px)`
               : undefined;
 
@@ -153,13 +165,13 @@ const Folder: React.FC<FolderProps> = ({
                 onMouseLeave={(e) => handlePaperMouseLeave(e, i)}
                 className={cn(
                   "absolute z-20 bottom-[10%] left-1/2 transition-all duration-300 ease-in-out",
-                  !open &&
+                  !isOpen &&
                     "transform -translate-x-1/2 translate-y-[10%] group-hover:translate-y-0",
-                  open && "hover:scale-110",
+                  isOpen && "hover:scale-110",
                   sizeClasses,
                 )}
                 style={{
-                  ...(!open ? {} : { transform: transformStyle }),
+                  ...(!isOpen ? {} : { transform: transformStyle }),
                   backgroundColor: i === 0 ? paper1 : i === 1 ? paper2 : paper3,
                   borderRadius: "10px",
                 }}
@@ -171,23 +183,23 @@ const Folder: React.FC<FolderProps> = ({
           <div
             className={cn(
               "absolute z-30 w-full h-full origin-bottom transition-all duration-300 ease-in-out",
-              !open && "group-hover:transform-[skew(15deg)_scaleY(0.6)]",
+              !isOpen && "group-hover:transform-[skew(15deg)_scaleY(0.6)]",
             )}
             style={{
               backgroundColor: folderColor,
               borderRadius: "5px 10px 10px 10px",
-              ...(open && { transform: "skew(15deg) scaleY(0.6)" }),
+              ...(isOpen && { transform: "skew(15deg) scaleY(0.6)" }),
             }}
           ></div>
           <div
             className={cn(
               "absolute z-30 w-full h-full origin-bottom transition-all duration-300 ease-in-out",
-              !open && "group-hover:transform-[skew(-15deg)_scaleY(0.6)]",
+              !isOpen && "group-hover:transform-[skew(-15deg)_scaleY(0.6)]",
             )}
             style={{
               backgroundColor: folderColor,
               borderRadius: "5px 10px 10px 10px",
-              ...(open && { transform: "skew(-15deg) scaleY(0.6)" }),
+              ...(isOpen && { transform: "skew(-15deg) scaleY(0.6)" }),
             }}
           ></div>
         </div>
@@ -199,8 +211,7 @@ const Folder: React.FC<FolderProps> = ({
             e.stopPropagation();
             onCheckChange?.();
           }}
-        >
-        </div>
+        ></div>
       )}
     </div>
   );

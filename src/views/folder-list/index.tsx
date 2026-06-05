@@ -39,8 +39,10 @@ function FolderList() {
   const [isCard, setIsCard] = useState(true);
   const [selection, setSelection] = useState(false);
   const [selectedFolders, setSelectedFolders] = useState<number[]>([]);
+  const [openFolderId, setOpenFolderId] = useState<number | null>(null);
 
   const handleSelectionToggle = () => {
+    setOpenFolderId(null);
     setSelection((prev) => {
       const next = !prev;
       if (!next) {
@@ -117,8 +119,10 @@ function FolderList() {
                       size={0.8}
                       selection={selection}
                       isChecked={selectedFolders.includes(id)}
+                      isOpen={openFolderId === id}
                       checkedColor="#4ADE80"
                       onCheckChange={() => handleFolderCheckChange(id)}
+                      onOpenChange={(open) => setOpenFolderId(open ? id : null)}
                       items={images.map((src, idx) => (
                         <ImageItem
                           key={idx}
