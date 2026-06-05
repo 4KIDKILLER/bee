@@ -1,6 +1,6 @@
-import { memo } from "react";
+import { memo, useState } from "react";
 import { Folder, Button, ButtonGroup } from "/@c/index";
-import { Menu, Trash2 } from "lucide-react";
+import { Menu, List, LayoutGrid } from "lucide-react";
 import { ScrollArea } from "/@c/index";
 
 interface ImageItemProps {
@@ -20,10 +20,10 @@ const ImageItem = memo(function ImageItem({ src, alt = "" }: ImageItemProps) {
   );
 });
 
-const fileName = ['手机图库', '壁纸', '截图']
+const fileName = ["手机图库", "壁纸", "截图"];
 
 // 每个文件夹最多展示 3 张图片
-const folders: { id: number; name: string, images: string[] }[] = Array.from(
+const folders: { id: number; name: string; images: string[] }[] = Array.from(
   { length: 3 },
   (_, i) => ({
     id: i,
@@ -36,11 +36,31 @@ const folders: { id: number; name: string, images: string[] }[] = Array.from(
 );
 
 function FolderList() {
+  const [isCard, setIsCard] = useState(true);
+  const [selection, setSelection] = useState(false);
+  const [selectedFolders, setSelectedFolders] = useState<number[]>([]);
+
+  const handleSelectionToggle = () => {
+    setSelection((prev) => {
+      const next = !prev;
+      if (!next) {
+        setSelectedFolders([]);
+      }
+      return next;
+    });
+  };
+
+  const handleFolderCheckChange = (id: number) => {
+    setSelectedFolders((prev) =>
+      prev.includes(id) ? prev.filter((folderId) => folderId !== id) : [...prev, id],
+    );
+  };
+
   return (
     <div className="w-full h-full flex items-center justify-center">
       <div className="w-[1300px] min-w-[1300px] mx-auto h-3/4 min-h-[600px] max-h-[700px]">
         <div className="flex flex-col h-full">
-          <div className="h-[50px] pl-[16px] pr-[16px] w-full flex gap-[10px] items-center justify-between bg-black/10 backdrop-blur-md rounded-tl-2xl rounded-tr-2xl border-t border-x border-white/20 bg-black/10">
+          <div className="h-[50px] pl-[16px] pr-[16px] w-full flex gap-[10px] items-center justify-between bg-black/10 backdrop-blur-md rounded-tl-2xl rounded-tr-2xl border-t border-x border-white/20">
             <ButtonGroup>
               <ButtonGroup className="hidden sm:flex">
                 <Button size="sm" aria-label="Go Back">
@@ -52,25 +72,40 @@ function FolderList() {
                 <Button size="sm">新建文件</Button>
               </ButtonGroup>
               <ButtonGroup>
-                <Button size="sm">选择</Button>
+                <Button size="sm" onClick={handleSelectionToggle}>
+                  {selection ? `完成选择(${selectedFolders.length})` : "选择"}
+                </Button>
               </ButtonGroup>
             </ButtonGroup>
 
-
-            <Button size="icon" variant="destructive">
-              <Trash2 />
+            <Button
+              size="sm"
+              onClick={() => setIsCard(!isCard)}
+            >
+              {isCard ? <LayoutGrid /> : <List />}
             </Button>
-
           </div>
           <ScrollArea className="flex-1 rounded-bl-2xl running-br-2xl border-b border-x border-white/20 bg-black/10 backdrop-blur-md shadow-lg">
             <div className="flex items-end px-[16px] h-[36px] w-full">
-              <Button className="text-white/20 hover:text-white/80" size="sm" variant="link">
+              <Button
+                className="text-white/20 hover:text-white/80"
+                size="sm"
+                variant="link"
+              >
                 时间
               </Button>
-              <Button className="text-white/20 hover:text-white/80" size="sm" variant="link">
+              <Button
+                className="text-white/20 hover:text-white/80"
+                size="sm"
+                variant="link"
+              >
                 大小
               </Button>
-              <Button className="text-white/20 hover:text-white/80" size="sm" variant="link">
+              <Button
+                className="text-white/20 hover:text-white/80"
+                size="sm"
+                variant="link"
+              >
                 名称
               </Button>
             </div>
@@ -80,6 +115,10 @@ function FolderList() {
                   <div className="text-center">
                     <Folder
                       size={0.8}
+                      selection={selection}
+                      isChecked={selectedFolders.includes(id)}
+                      checkedColor="#4ADE80"
+                      onCheckChange={() => handleFolderCheckChange(id)}
                       items={images.map((src, idx) => (
                         <ImageItem
                           key={idx}
