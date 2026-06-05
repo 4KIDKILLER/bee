@@ -20,6 +20,21 @@ import {
     DialogTrigger,
 } from "./ShadcnUI/dialog"
 
+import { Label } from "./ShadcnUI/label"
+
+import {
+    Field,
+    FieldContent,
+    FieldDescription,
+    FieldError,
+    FieldGroup,
+    FieldLabel,
+    FieldLegend,
+    FieldSeparator,
+    FieldSet,
+    FieldTitle,
+  } from "./ShadcnUI/field"
+
 import { TooltipProvider } from './ShadcnUI/tooltip'
 
 import { BeeTootip } from "./BeeUI/bee-tootip";
@@ -31,6 +46,7 @@ export {
     ScrollArea,
     ButtonGroup,
     Dialog,
+    Label,
     DialogClose,
     DialogContent,
     DialogDescription,
@@ -41,6 +57,16 @@ export {
     DialogTitle,
     DialogTrigger,
     TooltipProvider,
+    Field,
+    FieldContent,
+    FieldDescription,
+    FieldError,
+    FieldGroup,
+    FieldLabel,
+    FieldLegend,
+    FieldSeparator,
+    FieldSet,
+    FieldTitle,
 
     BeeTootip,
 

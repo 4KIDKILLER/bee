@@ -11,6 +11,10 @@ import {
   DialogTitle,
   DialogTrigger,
   BeeTootip,
+  Field,
+  Input,
+  FieldLabel,
+  FieldGroup,
 } from "/@c/index";
 import {
   Menu,
@@ -36,11 +40,20 @@ const CreateFolderDialog = ({ children }: CreateFolderDialogProps) => {
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="sm:max-w-sm">
         <DialogHeader>
-          <DialogTitle>Edit profile</DialogTitle>
+          <DialogTitle>创建文件夹</DialogTitle>
           <DialogDescription>
-            Make changes to your profile here. Click save when you&apos;re done.
+            在当前文件夹里创建一个专门用来存放图片的新文件夹
           </DialogDescription>
         </DialogHeader>
+        <FieldGroup>
+          <Field>
+            <FieldLabel htmlFor="folderName">
+              文件夹名称
+              <span className="text-destructive">*</span>
+              </FieldLabel>
+            <Input required id="folderName" name="folderName" placeholder="请输入文件夹名称" />
+          </Field>
+        </FieldGroup>
         <DialogFooter>
           <DialogClose asChild>
             <Button variant="outline">取消</Button>
@@ -118,7 +131,7 @@ function FolderList() {
               </CreateFolderDialog>
             </div>
             <div className="flex items-center gap-2">
-              <BeeTootip content={`${selection ? "关闭" : "开启"}选择`}>
+              <BeeTootip content={`选择${selection ? "已开启" : "已关闭"}`}>
                 <Button size="sm" onClick={handleSelectionToggle}>
                   {selection ? (
                     <SquareMousePointer />
@@ -127,9 +140,11 @@ function FolderList() {
                   )}
                 </Button>
               </BeeTootip>
-              <Button size="sm" onClick={() => setIsCard(!isCard)}>
-                {isCard ? <LayoutGrid /> : <List />}
-              </Button>
+              <BeeTootip content={`${isCard ? "卡片视图" : "列表视图"}`}>
+                <Button size="sm" onClick={() => setIsCard(!isCard)}>
+                  {isCard ? <LayoutGrid /> : <List />}
+                </Button>
+              </BeeTootip>
             </div>
           </div>
           <ScrollArea className="flex-1 rounded-bl-2xl running-br-2xl border-b border-x border-white/20 bg-black/10 backdrop-blur-md shadow-lg">
