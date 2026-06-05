@@ -1,12 +1,56 @@
-import { memo, useState } from "react";
-import { Folder, Button, ButtonGroup } from "/@c/index";
-import { Menu, List, LayoutGrid } from "lucide-react";
+import React, { memo, useState } from "react";
+import {
+  Folder,
+  Button,
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  BeeTootip,
+} from "/@c/index";
+import {
+  Menu,
+  List,
+  LayoutGrid,
+  SquareMousePointer,
+  SquareDashedMousePointer,
+} from "lucide-react";
 import { ScrollArea } from "/@c/index";
 
 interface ImageItemProps {
   src: string;
   alt?: string;
 }
+
+interface CreateFolderDialogProps {
+  children: React.ReactNode;
+}
+
+const CreateFolderDialog = ({ children }: CreateFolderDialogProps) => {
+  return (
+    <Dialog>
+      <DialogTrigger asChild>{children}</DialogTrigger>
+      <DialogContent className="sm:max-w-sm">
+        <DialogHeader>
+          <DialogTitle>Edit profile</DialogTitle>
+          <DialogDescription>
+            Make changes to your profile here. Click save when you&apos;re done.
+          </DialogDescription>
+        </DialogHeader>
+        <DialogFooter>
+          <DialogClose asChild>
+            <Button variant="outline">取消</Button>
+          </DialogClose>
+          <Button type="submit">确定</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+};
 
 const ImageItem = memo(function ImageItem({ src, alt = "" }: ImageItemProps) {
   return (
@@ -54,7 +98,9 @@ function FolderList() {
 
   const handleFolderCheckChange = (id: number) => {
     setSelectedFolders((prev) =>
-      prev.includes(id) ? prev.filter((folderId) => folderId !== id) : [...prev, id],
+      prev.includes(id)
+        ? prev.filter((folderId) => folderId !== id)
+        : [...prev, id],
     );
   };
 
@@ -63,29 +109,28 @@ function FolderList() {
       <div className="w-[1300px] min-w-[1300px] mx-auto h-3/4 min-h-[600px] max-h-[700px]">
         <div className="flex flex-col h-full">
           <div className="h-[50px] pl-[16px] pr-[16px] w-full flex gap-[10px] items-center justify-between bg-black/10 backdrop-blur-md rounded-tl-2xl rounded-tr-2xl border-t border-x border-white/20">
-            <ButtonGroup>
-              <ButtonGroup className="hidden sm:flex">
-                <Button size="sm" aria-label="Go Back">
-                  <Menu />
-                </Button>
-              </ButtonGroup>
-              <ButtonGroup>
+            <div className="flex items-center gap-2">
+              <Button size="sm" aria-label="Go Back">
+                <Menu />
+              </Button>
+              <CreateFolderDialog>
                 <Button size="sm">新建文件夹</Button>
-                <Button size="sm">新建文件</Button>
-              </ButtonGroup>
-              <ButtonGroup>
+              </CreateFolderDialog>
+            </div>
+            <div className="flex items-center gap-2">
+              <BeeTootip content={`${selection ? "关闭" : "开启"}选择`}>
                 <Button size="sm" onClick={handleSelectionToggle}>
-                  {selection ? `完成选择(${selectedFolders.length})` : "选择"}
+                  {selection ? (
+                    <SquareMousePointer />
+                  ) : (
+                    <SquareDashedMousePointer />
+                  )}
                 </Button>
-              </ButtonGroup>
-            </ButtonGroup>
-
-            <Button
-              size="sm"
-              onClick={() => setIsCard(!isCard)}
-            >
-              {isCard ? <LayoutGrid /> : <List />}
-            </Button>
+              </BeeTootip>
+              <Button size="sm" onClick={() => setIsCard(!isCard)}>
+                {isCard ? <LayoutGrid /> : <List />}
+              </Button>
+            </div>
           </div>
           <ScrollArea className="flex-1 rounded-bl-2xl running-br-2xl border-b border-x border-white/20 bg-black/10 backdrop-blur-md shadow-lg">
             <div className="flex items-end px-[16px] h-[36px] w-full">

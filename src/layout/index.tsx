@@ -5,7 +5,7 @@ import Personal from "/@v/personal";
 import Overview from "/@v/overview";
 import Settings from "/@v/settings";
 import RecycleBin from "/@v/recycle-bin";
-import { useState } from "react";
+import { TooltipProvider } from "/@c/index";
 
 const menuItems = [
   { label: "相册首页", ariaLabel: "BEE Home", link: "/" },
@@ -22,33 +22,34 @@ const socialItems = [
 ];
 
 const Layout = () => {
-  const [count, setCount] = useState(1);
   return (
     <div className="h-screen w-screen overflow-hidden relative">
-      <button onClick={() => setCount(count + 1)}>{count}</button>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<FolderList />} />
-          <Route path="/personal" element={<Personal />} />
-          <Route path="/overview" element={<Overview />} />
-          <Route path="/settings" element={<Settings />} />
-          <Route path="/recycle-bin" element={<RecycleBin />} />
-        </Routes>
-        <StaggeredMenu
-          position="right"
-          isFixed
-          items={menuItems}
-          socialItems={socialItems}
-          displaySocials
-          displayItemNumbering={true}
-          openMenuButtonColor="#000"
-          changeMenuColorOnOpen={true}
-          colors={["#B19EEF", "#5227FF"]}
-          accentColor="#5227FF"
-          onMenuOpen={() => console.log("Menu opened")}
-          onMenuClose={() => console.log("Menu closed")}
-        />
-      </BrowserRouter>
+      <TooltipProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<FolderList />} />
+            <Route path="/personal" element={<Personal />} />
+            <Route path="/overview" element={<Overview />} />
+            <Route path="/settings" element={<Settings />} />
+            <Route path="/recycle-bin" element={<RecycleBin />} />
+          </Routes>
+
+          <StaggeredMenu
+            position="right"
+            isFixed
+            items={menuItems}
+            socialItems={socialItems}
+            displaySocials
+            displayItemNumbering={true}
+            openMenuButtonColor="#000"
+            changeMenuColorOnOpen={true}
+            colors={["#B19EEF", "#5227FF"]}
+            accentColor="#5227FF"
+            onMenuOpen={() => console.log("Menu opened")}
+            onMenuClose={() => console.log("Menu closed")}
+          />
+        </BrowserRouter>
+      </TooltipProvider>
     </div>
   );
 };
