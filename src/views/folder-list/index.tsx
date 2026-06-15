@@ -35,31 +35,102 @@ interface CreateFolderDialogProps {
 }
 
 const CreateFolderDialog = ({ children }: CreateFolderDialogProps) => {
+  const [fileName, setFileName] = useState("");
+  const [invalid, setInvalid] = useState(false);
+  const [open, setOpen] = useState(false);
+
+  // 验证函数
+  const validateFolderName = (name: string): boolean => {
+    // 检查是否为空
+    if (!name.trim()) {
+      return false;
+    }
+
+    // 检查长度
+    if (name.length > 50) {
+      return false;
+    }
+
+    // 检查非法字符（Windows 文件系统限制）
+    const illegalChars = /[\\/:*?"<>|]/;
+    if (illegalChars.test(name)) {
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFileName(e.target.value);
+
+    // 输入时清除错误状态
+    if (invalid) {
+      setInvalid(false);
+    }
+  };
+
+  const handleSubmit = (e: React.ChangeEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    // 提交时验证
+    if (!validateFolderName(fileName)) {
+      setInvalid(true);
+      return;
+    }
+
+    // 验证通过，执行创建文件夹逻辑
+    console.log("创建文件夹:", fileName.trim());
+
+    // 重置并关闭
+    setFileName("");
+    setInvalid(false);
+    setOpen(false);
+  };
+
+  const handleOpenChange = (isOpen: boolean) => {
+    setOpen(isOpen);
+    if (!isOpen) {
+      // 关闭时重置
+      setFileName("");
+      setInvalid(false);
+    }
+  };
+
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="sm:max-w-sm">
-        <DialogHeader>
-          <DialogTitle>创建文件夹</DialogTitle>
-          <DialogDescription>
-            在当前文件夹里创建一个专门用来存放图片的新文件夹
-          </DialogDescription>
-        </DialogHeader>
-        <FieldGroup>
-          <Field>
-            <FieldLabel htmlFor="folderName">
-              文件夹名称
-              <span className="text-destructive">*</span>
+        <form onSubmit={handleSubmit}>
+          <DialogHeader className="pb-3">
+            <DialogTitle>创建文件夹</DialogTitle>
+            <DialogDescription>
+              在当前文件夹里创建一个专门用来存放图片的新文件夹
+            </DialogDescription>
+          </DialogHeader>
+          <FieldGroup>
+            <Field>
+              <FieldLabel htmlFor="folderName">
+                文件夹名称
+                <span className="text-destructive">*</span>
               </FieldLabel>
-            <Input required id="folderName" name="folderName" placeholder="请输入文件夹名称" />
-          </Field>
-        </FieldGroup>
-        <DialogFooter>
-          <DialogClose asChild>
-            <Button variant="outline">取消</Button>
-          </DialogClose>
-          <Button type="submit">确定</Button>
-        </DialogFooter>
+              <Input
+                value={fileName}
+                onChange={handleInputChange}
+                aria-invalid={invalid}
+                id="folderName"
+                name="folderName"
+                placeholder="请输入文件夹名称"
+                autoComplete="off"
+              />
+            </Field>
+          </FieldGroup>
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button type="button" variant="outline">取消</Button>
+            </DialogClose>
+            <Button type="submit">确定</Button>
+          </DialogFooter>
+        </form>
       </DialogContent>
     </Dialog>
   );
