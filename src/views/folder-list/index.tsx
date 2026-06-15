@@ -191,8 +191,8 @@ function FolderList() {
                         />
                       ))}
                     />
-                    <div className="pt-[2px] text-purple-50 text-sm text-shadow-amber-100">
-                      {name}
+                    <div className="pt-[2px] text-purple-50 text-xs text-shadow-amber-100">
+                      <span className="bg-black/35 py-[4px] px-[6px] rounded-md cursor-pointer hover:bg-(--theme-color) transition-colors">{name}</span>
                     </div>
                   </div>
                 </div>
