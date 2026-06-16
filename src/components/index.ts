@@ -6,7 +6,6 @@ import { Button } from "./ShadcnUI/button";
 import { Separator } from "./ShadcnUI/separator";
 import { ScrollArea } from "./ShadcnUI/scroll-area"
 import { ButtonGroup } from "./ShadcnUI/button-group";
-
 import {
     Dialog,
     DialogClose,
@@ -19,9 +18,8 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "./ShadcnUI/dialog"
-
 import { Label } from "./ShadcnUI/label"
-
+import { Spinner } from "./ShadcnUI/spinner";
 import {
     Field,
     FieldContent,
@@ -33,9 +31,26 @@ import {
     FieldSeparator,
     FieldSet,
     FieldTitle,
-  } from "./ShadcnUI/field"
-
+} from "./ShadcnUI/field"
 import { TooltipProvider } from './ShadcnUI/tooltip'
+import {
+    ContextMenu,
+    ContextMenuTrigger,
+    ContextMenuContent,
+    ContextMenuItem,
+    ContextMenuCheckboxItem,
+    ContextMenuRadioItem,
+    ContextMenuLabel,
+    ContextMenuSeparator,
+    ContextMenuShortcut,
+    ContextMenuGroup,
+    ContextMenuPortal,
+    ContextMenuSub,
+    ContextMenuSubContent,
+    ContextMenuSubTrigger,
+    ContextMenuRadioGroup
+} from './ShadcnUI/context-menu'
+import { Progress } from './ShadcnUI/progress'
 
 import { BeeTootip } from "./BeeUI/bee-tootip";
 
@@ -67,6 +82,23 @@ export {
     FieldSeparator,
     FieldSet,
     FieldTitle,
+    Spinner,
+    ContextMenu,
+    ContextMenuTrigger,
+    ContextMenuContent,
+    ContextMenuItem,
+    ContextMenuCheckboxItem,
+    ContextMenuRadioItem,
+    ContextMenuLabel,
+    ContextMenuSeparator,
+    ContextMenuShortcut,
+    ContextMenuGroup,
+    ContextMenuPortal,
+    ContextMenuSub,
+    ContextMenuSubContent,
+    ContextMenuSubTrigger,
+    ContextMenuRadioGroup,
+    Progress,
 
     BeeTootip,
 
