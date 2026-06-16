@@ -51,6 +51,7 @@ import {
     ContextMenuRadioGroup
 } from './ShadcnUI/context-menu'
 import { Progress } from './ShadcnUI/progress'
+import { Textarea } from "./ShadcnUI/textarea"
 
 import { BeeTootip } from "./BeeUI/bee-tootip";
 
@@ -99,6 +100,7 @@ export {
     ContextMenuSubTrigger,
     ContextMenuRadioGroup,
     Progress,
+    Textarea,
 
     BeeTootip,
 

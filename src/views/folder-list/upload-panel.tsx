@@ -6,6 +6,7 @@ import UploadTaskList from "./upload-task-list";
 import type {
   UploadFilterKey,
   UploadPanelProps,
+  UploadTask,
   UploadTaskStatus,
   UploadTaskStatusConfig,
 } from "./types";
@@ -55,7 +56,35 @@ const filterMeta: Record<
   },
 };
 
-function UploadPanel({ showUploadPanel, tasks }: UploadPanelProps) {
+const initialUploadTasks: UploadTask[] = [
+  {
+    id: 1,
+    name: "travel-cover.png",
+    folderName: "手机图库",
+    progress: 100,
+    status: "success",
+    size: "12.4 MB",
+  },
+  {
+    id: 2,
+    name: "wallpaper-4k.jpg",
+    folderName: "壁纸",
+    progress: 72,
+    status: "uploading",
+    size: "18.7 MB",
+  },
+  {
+    id: 3,
+    name: "meeting-shot.heic",
+    folderName: "截图",
+    progress: 26,
+    status: "pending",
+    size: "6.1 MB",
+  },
+];
+
+function UploadPanel({ showUploadPanel }: UploadPanelProps) {
+  const [tasks] = useState<UploadTask[]>(initialUploadTasks);
   const [activeFilter, setActiveFilter] =
     useState<UploadFilterKey>("uploading");
 

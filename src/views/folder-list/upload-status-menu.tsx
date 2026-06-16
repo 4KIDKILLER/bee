@@ -2,7 +2,7 @@ import type { UploadStatusMenuProps } from "./types";
 
 function UploadStatusMenu({ items, activeKey, onChange }: UploadStatusMenuProps) {
   return (
-    <aside className="flex h-full w-40 shrink-0 flex-col border-r border-white/10 p-2">
+    <aside className="flex h-full w-50 shrink-0 flex-col border-r border-white/10 py-2 px-4">
       <div className="mb-2 px-2 pt-1 text-xs font-medium tracking-[0.2em] text-white/35">
         队列状态
       </div>
@@ -15,7 +15,7 @@ function UploadStatusMenu({ items, activeKey, onChange }: UploadStatusMenuProps)
               key={item.key}
               type="button"
               onClick={() => onChange(item.key)}
-              className={`flex h-12 w-full items-center justify-between rounded-xl border px-3 py-2 text-left transition-colors ${
+              className={`flex h-12 w-full items-center justify-between rounded-md border px-3 py-2 text-left transition-colors ${
                 isActive
                   ? item.activeClass
                   : `border-transparent bg-transparent text-white/55 ${item.hoverClass}`

@@ -4,6 +4,10 @@ export interface FolderListFolder {
   id: number;
   name: string;
   images: string[];
+  createdAt: string;
+  lastOpenedAt: string;
+  tags: string[];
+  remark: string;
 }
 
 export type UploadTaskStatus = "success" | "uploading" | "pending";
@@ -18,10 +22,6 @@ export interface UploadTask {
   size: string;
 }
 
-export interface CreateFolderDialogProps {
-  children: ReactNode;
-}
-
 export type FolderListViewMode = "list" | "upload";
 
 export interface ViewModeSwitchProps {
@@ -31,7 +31,6 @@ export interface ViewModeSwitchProps {
 
 export interface UploadPanelProps {
   showUploadPanel: boolean;
-  tasks: UploadTask[];
 }
 
 export interface UploadStatusMenuItem {
@@ -71,7 +70,6 @@ export interface ImageItemProps {
 
 export interface FolderScrollAreaProps {
   showUploadPanel: boolean;
-  folders: FolderListFolder[];
   selection: boolean;
   selectedFolders: number[];
   openFolderId: number | null;
