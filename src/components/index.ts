@@ -52,9 +52,20 @@ import {
 } from './ShadcnUI/context-menu'
 import { Progress } from './ShadcnUI/progress'
 import { Textarea } from "./ShadcnUI/textarea"
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from "./ShadcnUI/alert-dialog"
 
 import { BeeTootip } from "./BeeUI/bee-tootip";
 import { BeeIcon } from "./BeeUI/bee-icon";
+import { BeeImage, BeeImagePreview } from "./BeeUI/bee-image";
 
 export {
     Input,
@@ -102,8 +113,18 @@ export {
     ContextMenuRadioGroup,
     Progress,
     Textarea,
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
 
     BeeIcon,
+    BeeImage,
+    BeeImagePreview,
     BeeTootip,
 
     Folder,

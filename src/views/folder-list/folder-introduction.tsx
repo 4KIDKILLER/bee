@@ -2,12 +2,13 @@ import { useEffect, useRef, useState, type CSSProperties } from "react";
 import {
   Button,
   BeeIcon,
+  BeeImage,
   Input,
   ScrollArea,
   Textarea,
   ButtonGroup,
 } from "/@c/index";
-import { Plus, Tag, X, Bookmark, Info } from "lucide-react";
+import { Plus, Tag, X, Bookmark, Info, ImageIcon } from "lucide-react";
 import type { FolderListFolder } from "./types";
 
 interface FolderIntroductionProps {
@@ -17,6 +18,9 @@ interface FolderIntroductionProps {
   onAddTag: (id: number, tag: string) => void;
   onRemoveTag: (id: number, tag: string) => void;
   onRemarkChange: (id: number, remark: string) => void;
+  onSetCoverImage: (id: number, slot: 1 | 2 | 3, src: string) => void;
+  onDeleteImage: (id: number, src: string) => void;
+  onPreviewImage: (images: string[], index: number) => void;
 }
 
 interface FolderTagEditorProps {
@@ -111,6 +115,9 @@ function FolderIntroduction({
   onAddTag,
   onRemoveTag,
   onRemarkChange,
+  onSetCoverImage,
+  onDeleteImage,
+  onPreviewImage,
 }: FolderIntroductionProps) {
   const panelRef = useRef<HTMLElement>(null);
   const animationName = open ? "animate__backInRight" : "animate__backOutRight";
@@ -140,6 +147,16 @@ function FolderIntroduction({
     };
 
     const handlePointerDown = (event: MouseEvent) => {
+      const target = event.target as HTMLElement | null;
+      console.log(event)
+      if (
+        target?.closest(
+          '[data-slot="dialog-content"], [data-slot="dialog-overlay"]',
+        )
+      ) {
+        return;
+      }
+
       if (!panelRef.current?.contains(event.target as Node)) {
         onClose();
       }
@@ -224,6 +241,59 @@ function FolderIntroduction({
                   placeholder="在这里记录文件夹的用途、来源或整理说明"
                   className="mt-4 h-32 w-full resize-none rounded-2xl border-white/10 bg-white/5 text-white placeholder:text-white/30 px-3 py-3 text-sm outline-none transition-colors focus:border-sky-400/40"
                 />
+              </section>
+              <section
+                className={`rounded-2xl border border-white/30 bg-black/90 p-4 ${remarkAnimation.className}`}
+                style={remarkAnimation.style}
+              >
+                <div className="flex items-center justify-between gap-2 text-sm font-medium text-white">
+                  <div className="flex items-center gap-2">
+                    <ImageIcon className="size-4 text-(--theme-color)" />
+                    <span>封面</span>
+                  </div>
+                  <span className="text-xs text-white/40">
+                    {folder.images.length} 张预览
+                  </span>
+                </div>
+                {folder.images.length > 0 ? (
+                  <div className="mt-4 grid grid-cols-3 gap-2">
+                    {folder.images.slice(0, 3).map((src, index) => (
+                      <div
+                        key={`${folder.id}-${index}`}
+                        className="group relative aspect-square overflow-hidden rounded-2xl border border-white/10 bg-white/5"
+                      >
+                        <BeeImage
+                          src={src}
+                          alt={`${folder.name}-cover-${index + 1}`}
+                          className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                          preview
+                          previewList={folder.images}
+                          showContextMenu
+                          onPreview={(images, previewIndex) =>
+                            onPreviewImage(
+                              images.map((image) => image.src),
+                              previewIndex,
+                            )
+                          }
+                          onViewDetail={() => undefined}
+                          onSetAsCover={(slot, imageSrc) =>
+                            onSetCoverImage(folder.id, slot, imageSrc)
+                          }
+                          onDelete={(imageSrc) =>
+                            onDeleteImage(folder.id, imageSrc)
+                          }
+                        />
+                        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent px-2 py-1 text-[11px] text-white/80 pointer-events-none">
+                          封面 {index + 1}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="mt-4 rounded-2xl border border-dashed border-white/10 bg-white/5 px-3 py-6 text-center text-xs text-white/40">
+                    当前文件夹暂无封面可预览
+                  </div>
+                )}
               </section>
             </div>
           ) : (

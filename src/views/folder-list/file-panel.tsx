@@ -1,6 +1,8 @@
 import { memo, useState } from "react";
 import {
   Folder,
+  BeeImage,
+  BeeImagePreview,
   BeeTootip,
   Button,
   ScrollArea,
@@ -8,8 +10,6 @@ import {
   ContextMenuContent,
   ContextMenuItem,
   ContextMenuTrigger,
-} from "/@c/index";
-import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -18,7 +18,8 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "../../components/ShadcnUI/alert-dialog";
+} from "/@c/index";
+
 import {
   SquarePen,
   Info,
@@ -119,12 +120,10 @@ const initialFolders: FolderListFolder[] = folderSeeds.map((folder, index) => ({
 
 const ImageItem = memo(function ImageItem({ src, alt = "" }: ImageItemProps) {
   return (
-    <img
-      className="w-full h-full object-cover rounded-[10px] pointer-events-none select-none"
+    <BeeImage
       src={src}
       alt={alt}
-      loading="lazy"
-      draggable={false}
+      className="w-full h-full object-cover rounded-[10px] pointer-events-none select-none"
     />
   );
 });
@@ -143,6 +142,9 @@ function FolderScrollArea({
   const [activeFolderId, setActiveFolderId] = useState<number | null>(null);
   const [pendingDeleteFolder, setPendingDeleteFolder] =
     useState<FolderListFolder | null>(null);
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewImages, setPreviewImages] = useState<string[]>([]);
+  const [previewIndex, setPreviewIndex] = useState(0);
   const activeFolder =
     folders.find((folder) => folder.id === activeFolderId) ?? null;
 
@@ -199,6 +201,45 @@ function FolderScrollArea({
           : folder,
       ),
     );
+  };
+
+  const handleSetCoverImage = (id: number, slot: 1 | 2 | 3, src: string) => {
+    setFolders((prev) =>
+      prev.map((folder) => {
+        if (folder.id !== id) {
+          return folder;
+        }
+
+        const nextImages = folder.images.filter((image) => image !== src);
+        nextImages.splice(slot - 1, 0, src);
+
+        return {
+          ...folder,
+          images: nextImages.slice(0, 3),
+        };
+      }),
+    );
+  };
+
+  const handleDeleteImage = (id: number, src: string) => {
+    setFolders((prev) =>
+      prev.map((folder) => {
+        if (folder.id !== id) {
+          return folder;
+        }
+
+        return {
+          ...folder,
+          images: folder.images.filter((image) => image !== src),
+        };
+      }),
+    );
+  };
+
+  const handlePreviewImage = (images: string[], index: number) => {
+    setPreviewImages(images);
+    setPreviewIndex(index);
+    setPreviewOpen(true);
   };
 
   const handleDeleteFolder = () => {
@@ -339,6 +380,16 @@ function FolderScrollArea({
         onAddTag={handleAddTag}
         onRemoveTag={handleRemoveTag}
         onRemarkChange={handleRemarkChange}
+        onSetCoverImage={handleSetCoverImage}
+        onDeleteImage={handleDeleteImage}
+        onPreviewImage={handlePreviewImage}
+      />
+      <BeeImagePreview
+        images={previewImages}
+        open={previewOpen}
+        index={previewIndex}
+        onOpenChange={setPreviewOpen}
+        onIndexChange={setPreviewIndex}
       />
       <AlertDialog
         open={Boolean(pendingDeleteFolder)}
@@ -359,7 +410,10 @@ function FolderScrollArea({
           </AlertDialogHeader>
           <AlertDialogFooter className="mt-6">
             <AlertDialogCancel>取消</AlertDialogCancel>
-            <AlertDialogAction variant="destructive" onClick={handleDeleteFolder}>
+            <AlertDialogAction
+              variant="destructive"
+              onClick={handleDeleteFolder}
+            >
               确认删除
             </AlertDialogAction>
           </AlertDialogFooter>
