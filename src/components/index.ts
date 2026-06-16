@@ -54,6 +54,7 @@ import { Progress } from './ShadcnUI/progress'
 import { Textarea } from "./ShadcnUI/textarea"
 
 import { BeeTootip } from "./BeeUI/bee-tootip";
+import { BeeIcon } from "./BeeUI/bee-icon";
 
 export {
     Input,
@@ -102,6 +103,7 @@ export {
     Progress,
     Textarea,
 
+    BeeIcon,
     BeeTootip,
 
     Folder,

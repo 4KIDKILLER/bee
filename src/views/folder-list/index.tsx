@@ -1,7 +1,4 @@
 import { useState } from "react";
-import { Button, BeeTootip } from "/@c/index";
-import { SquareMousePointer, SquareDashedMousePointer } from "lucide-react";
-import CreateFolderDialog from "./create-folder-dialog";
 import FilePanel from "./file-panel";
 import UploadPanel from "./upload-panel";
 import ViewModeSwitch from "./view-mode-switch";
@@ -9,10 +6,10 @@ import type { FolderListViewMode } from "./types";
 
 function FolderList() {
   const [selection, setSelection] = useState(false);
-  const [showUploadPanel, setShowUploadPanel] = useState(false);
+  const [viewMode, setViewMode] = useState<FolderListViewMode>("list");
   const [selectedFolders, setSelectedFolders] = useState<number[]>([]);
   const [openFolderId, setOpenFolderId] = useState<number | null>(null);
-  const viewMode: FolderListViewMode = showUploadPanel ? "upload" : "list";
+  const showUploadPanel = viewMode === "upload";
 
   const handleSelectionToggle = () => {
     setOpenFolderId(null);
@@ -41,25 +38,8 @@ function FolderList() {
     <div className="w-full h-full flex items-center justify-center">
       <div className="w-[1300px] min-w-[1300px] mx-auto h-3/4 min-h-[600px] max-h-[700px]">
         <div className="flex flex-col h-full">
-          <div className="h-[50px] pl-[10px] pr-[10px] w-full flex gap-[10px] items-center justify-between bg-black/40 backdrop-blur-md rounded-tl-2xl rounded-tr-2xl border-t border-x border-white/20">
-            <ViewModeSwitch
-              value={viewMode}
-              onChange={(mode) => setShowUploadPanel(mode === "upload")}
-            />
-            <div className="flex gap-2 animate__animated">
-              <CreateFolderDialog>
-                <Button size="sm">新建文件夹</Button>
-              </CreateFolderDialog>
-              <BeeTootip content={`选择${selection ? "已开启" : "已关闭"}`}>
-                <Button size="sm" onClick={handleSelectionToggle}>
-                  {selection ? (
-                    <SquareMousePointer />
-                  ) : (
-                    <SquareDashedMousePointer />
-                  )}
-                </Button>
-              </BeeTootip>
-            </div>
+          <div className="h-[50px] flex w-full items-center bg-black/40 pl-[10px] pr-[10px] backdrop-blur-md rounded-tl-2xl rounded-tr-2xl border-t border-x border-white/20">
+            <ViewModeSwitch value={viewMode} onChange={setViewMode} />
           </div>
           <div className="relative flex-1 overflow-hidden rounded-bl-2xl rounded-br-2xl border-b border-x border-white/20 bg-black/10 backdrop-blur-md shadow-lg">
             <FilePanel
@@ -67,6 +47,7 @@ function FolderList() {
               selection={selection}
               selectedFolders={selectedFolders}
               openFolderId={openFolderId}
+              onSelectionToggle={handleSelectionToggle}
               onFolderCheckChange={handleFolderCheckChange}
               onFolderOpenChange={handleFolderOpenChange}
             />

@@ -6,13 +6,9 @@ function ViewModeSwitch({ value, onChange }: ViewModeSwitchProps) {
   return (
     <div className="relative flex h-8 w-56 overflow-hidden rounded-full border border-white/10 bg-black/20 backdrop-blur-sm">
       <div
-        className={`absolute left-0.5 top-1/2 h-[calc(100%-4px)] w-[calc(50%-2px)] -translate-y-1/2 rounded-full transition-transform duration-300 ease-in-out ${
+        className={`bg-(--theme-color) absolute left-0.5 top-1/2 h-[calc(100%-4px)] w-[calc(50%-2px)] -translate-y-1/2 rounded-full transition-transform duration-300 ease-in-out ${
           isUpload ? "translate-x-full" : "translate-x-0"
         }`}
-        style={{
-          backgroundColor:
-            "color-mix(in srgb, var(--theme-color), transparent)",
-        }}
       />
 
       <button

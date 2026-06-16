@@ -73,6 +73,7 @@ export interface FolderScrollAreaProps {
   selection: boolean;
   selectedFolders: number[];
   openFolderId: number | null;
+  onSelectionToggle: () => void;
   onFolderCheckChange: (id: number) => void;
   onFolderOpenChange: (id: number, open: boolean) => void;
 }

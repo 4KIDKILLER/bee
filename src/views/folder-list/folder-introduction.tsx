@@ -1,6 +1,13 @@
 import { useEffect, useRef, useState, type CSSProperties } from "react";
-import { Button, Input, ScrollArea, Textarea, ButtonGroup } from "/@c/index";
-import { Plus, Tag, X, Bookmark } from "lucide-react";
+import {
+  Button,
+  BeeIcon,
+  Input,
+  ScrollArea,
+  Textarea,
+  ButtonGroup,
+} from "/@c/index";
+import { Plus, Tag, X, Bookmark, Info } from "lucide-react";
 import type { FolderListFolder } from "./types";
 
 interface FolderIntroductionProps {
@@ -41,11 +48,11 @@ function FolderTagEditor({
 
   return (
     <section
-      className={`rounded-2xl border border-white/10 bg-black/80 p-4 ${className ?? ""}`}
+      className={`rounded-2xl border border-white/30 bg-black/90 p-4 ${className ?? ""}`}
       style={style}
     >
       <div className="flex items-center gap-2 text-sm font-medium text-white">
-        <Tag className="size-4 text-amber-300" />
+        <Tag className="size-4 text-(--theme-color)" />
         标签
       </div>
       <div className="mt-4 flex flex-wrap gap-2">
@@ -69,8 +76,8 @@ function FolderTagEditor({
           <div className="text-xs text-white/40">暂未设置标签</div>
         )}
       </div>
-      <div className="mt-4">
-        <ButtonGroup>
+      <div className="mt-4 w-full">
+        <ButtonGroup className="w-full">
           <Input
             value={tagInput}
             onChange={(e) => setTagInput(e.target.value)}
@@ -158,10 +165,11 @@ function FolderIntroduction({
       <ScrollArea className="h-full text-white">
         <div className="flex min-h-full flex-col px-4 py-4">
           <header
-            className={`flex items-center justify-between gap-2 ${headerAnimation.className}`}
+            className={`rounded-2xl  border border-white/30 bg-black/90 p-4 flex items-center justify-between ${headerAnimation.className}`}
             style={headerAnimation.style}
           >
             <div className="flex min-w-0 items-center gap-2">
+              <BeeIcon name="folder" />
               <span className="truncate text-md font-semibold tracking-wide text-white">
                 {folder?.name ?? "未选择文件夹"}
               </span>
@@ -174,11 +182,12 @@ function FolderIntroduction({
           {folder ? (
             <div className="mt-3 flex flex-col gap-5">
               <section
-                className={`rounded-2xl border border-white/10 bg-black/80 p-4 ${basicInfoAnimation.className}`}
+                className={`rounded-2xl border border-white/30 bg-black/90 p-4 ${basicInfoAnimation.className}`}
                 style={basicInfoAnimation.style}
               >
-                <div className="text-xs tracking-[0.2em] text-white/45 uppercase">
-                  基本信息
+                <div className="flex items-center gap-2 text-sm font-medium text-white">
+                  <Info className="size-4 text-(--theme-color)" />
+                  <span>基本信息</span>
                 </div>
                 <div className="mt-4 space-y-3 text-sm text-white/75">
                   <div>
@@ -202,18 +211,18 @@ function FolderIntroduction({
               />
 
               <section
-                className={`rounded-2xl border border-white/10 bg-black/80 p-4 ${remarkAnimation.className}`}
+                className={`rounded-2xl border border-white/30 bg-black/90 p-4 ${remarkAnimation.className}`}
                 style={remarkAnimation.style}
               >
                 <div className="flex items-center gap-2 text-sm font-medium text-white">
-                  <Bookmark className="size-4 text-amber-300" />
+                  <Bookmark className="size-4 text-(--theme-color)" />
                   <span>备注</span>
                 </div>
                 <Textarea
                   value={folder.remark}
                   onChange={(e) => onRemarkChange(folder.id, e.target.value)}
                   placeholder="在这里记录文件夹的用途、来源或整理说明"
-                  className="mt-4 h-32 w-full resize-none rounded-2xl border border-white/10 bg-white/5 px-3 py-3 text-sm text-white outline-none transition-colors placeholder:text-white/30 focus:border-sky-400/40"
+                  className="mt-4 h-32 w-full resize-none rounded-2xl border-white/10 bg-white/5 text-white placeholder:text-white/30 px-3 py-3 text-sm outline-none transition-colors focus:border-sky-400/40"
                 />
               </section>
             </div>

@@ -1,6 +1,7 @@
 import { memo, useState } from "react";
 import {
   Folder,
+  BeeTootip,
   Button,
   ScrollArea,
   ContextMenu,
@@ -8,7 +9,24 @@ import {
   ContextMenuItem,
   ContextMenuTrigger,
 } from "/@c/index";
-import { SquarePen, Settings2, Info, Trash2 } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "../../components/ShadcnUI/alert-dialog";
+import {
+  SquarePen,
+  Info,
+  Trash2,
+  SquareMousePointer,
+  SquareDashedMousePointer,
+} from "lucide-react";
+import CreateFolderDialog from "./create-folder-dialog";
 import FolderIntroduction from "./folder-introduction";
 import type {
   FolderListFolder,
@@ -116,12 +134,15 @@ function FolderScrollArea({
   selection,
   selectedFolders,
   openFolderId,
+  onSelectionToggle,
   onFolderCheckChange,
   onFolderOpenChange,
 }: FolderScrollAreaProps) {
   const [folders, setFolders] = useState<FolderListFolder[]>(initialFolders);
   const [showFolderIntroduction, setShowFolderIntroduction] = useState(false);
   const [activeFolderId, setActiveFolderId] = useState<number | null>(null);
+  const [pendingDeleteFolder, setPendingDeleteFolder] =
+    useState<FolderListFolder | null>(null);
   const activeFolder =
     folders.find((folder) => folder.id === activeFolderId) ?? null;
 
@@ -180,6 +201,23 @@ function FolderScrollArea({
     );
   };
 
+  const handleDeleteFolder = () => {
+    if (!pendingDeleteFolder) {
+      return;
+    }
+
+    setFolders((prev) =>
+      prev.filter((folder) => folder.id !== pendingDeleteFolder.id),
+    );
+
+    if (activeFolderId === pendingDeleteFolder.id) {
+      setActiveFolderId(null);
+      setShowFolderIntroduction(false);
+    }
+
+    setPendingDeleteFolder(null);
+  };
+
   return (
     <>
       <ScrollArea
@@ -187,28 +225,56 @@ function FolderScrollArea({
           showUploadPanel ? "-translate-x-full" : "translate-x-0"
         }`}
       >
-        <div className="flex h-[36px] w-full items-end px-[16px]">
-          <Button
-            className="text-white/20 hover:text-white/80"
-            size="sm"
-            variant="link"
-          >
-            时间
-          </Button>
-          <Button
-            className="text-white/20 hover:text-white/80"
-            size="sm"
-            variant="link"
-          >
-            大小
-          </Button>
-          <Button
-            className="text-white/20 hover:text-white/80"
-            size="sm"
-            variant="link"
-          >
-            名称
-          </Button>
+        <div className="flex w-full items-center justify-between px-2">
+          <div className="flex items-center">
+            <CreateFolderDialog>
+              <Button
+                size="sm"
+                variant="link"
+                className="text-white/20 hover:text-(--theme-color)/80"
+              >
+                新建文件夹
+              </Button>
+            </CreateFolderDialog>
+            <div className="w-[2px] h-[10px] bg-white/50 mx-1 rounded-xs" />
+            <Button
+              className="text-white/20 hover:text-(--theme-color)/80"
+              size="sm"
+              variant="link"
+            >
+              时间
+            </Button>
+            <Button
+              className="text-white/20 hover:text-(--theme-color)/80"
+              size="sm"
+              variant="link"
+            >
+              大小
+            </Button>
+            <Button
+              className="text-white/20 hover:text-(--theme-color)/80"
+              size="sm"
+              variant="link"
+            >
+              名称
+            </Button>
+          </div>
+          <div className="flex gap-2 items-center">
+            <BeeTootip content={`选择${selection ? "已开启" : "已关闭"}`}>
+              <Button
+                size="sm"
+                variant="link"
+                onClick={onSelectionToggle}
+                className="text-white/20 hover:text-(--theme-color)/80"
+              >
+                {selection ? (
+                  <SquareMousePointer />
+                ) : (
+                  <SquareDashedMousePointer />
+                )}
+              </Button>
+            </BeeTootip>
+          </div>
         </div>
         <div className="grid w-full grid-cols-7 auto-rows-[150px]">
           {folders.map(({ id, name, images }) => (
@@ -248,11 +314,13 @@ function FolderScrollArea({
                         <Info />
                         显示简介
                       </ContextMenuItem>
-                      <ContextMenuItem>
-                        <Settings2 />
-                        设置
-                      </ContextMenuItem>
-                      <ContextMenuItem>
+                      <ContextMenuItem
+                        onClick={() =>
+                          setPendingDeleteFolder(
+                            folders.find((folder) => folder.id === id) ?? null,
+                          )
+                        }
+                      >
                         <Trash2 />
                         删除
                       </ContextMenuItem>
@@ -272,6 +340,31 @@ function FolderScrollArea({
         onRemoveTag={handleRemoveTag}
         onRemarkChange={handleRemarkChange}
       />
+      <AlertDialog
+        open={Boolean(pendingDeleteFolder)}
+        onOpenChange={(open) => {
+          if (!open) {
+            setPendingDeleteFolder(null);
+          }
+        }}
+      >
+        <AlertDialogContent className="sm:max-w-sm">
+          <AlertDialogHeader>
+            <AlertDialogTitle>确认删除文件夹</AlertDialogTitle>
+            <AlertDialogDescription>
+              {pendingDeleteFolder
+                ? `确定要删除“${pendingDeleteFolder.name}”吗？该操作不可撤销。`
+                : "确定要删除该文件夹吗？该操作不可撤销。"}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="mt-6">
+            <AlertDialogCancel>取消</AlertDialogCancel>
+            <AlertDialogAction variant="destructive" onClick={handleDeleteFolder}>
+              确认删除
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 }
