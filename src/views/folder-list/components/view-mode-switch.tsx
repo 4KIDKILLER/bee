@@ -1,4 +1,4 @@
-import type { ViewModeSwitchProps } from "./types";
+import type { ViewModeSwitchProps } from "../types";
 
 function ViewModeSwitch({ value, onChange }: ViewModeSwitchProps) {
   const isUpload = value === "upload";

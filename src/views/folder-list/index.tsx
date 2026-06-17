@@ -1,7 +1,7 @@
 import { useState } from "react";
 import FilePanel from "./file-panel";
 import UploadPanel from "./upload-panel";
-import ViewModeSwitch from "./view-mode-switch";
+import ViewModeSwitch from "./components/view-mode-switch";
 import type { FolderListViewMode } from "./types";
 
 function FolderList() {

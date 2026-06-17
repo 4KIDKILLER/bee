@@ -49,13 +49,11 @@ export interface BeeImageProps
   height?: number | string;
   fit?: React.CSSProperties["objectFit"];
   preview?: boolean;
-  previewList?: BeeImagePreviewItem[];
-  initialPreviewIndex?: number;
   showContextMenu?: boolean;
   onViewDetail?: (src: string) => void;
   onSetAsCover?: (slot: 1 | 2 | 3, src: string) => void;
   onDelete?: (src: string) => void;
-  onPreview?: (images: BeeImageSource[], index: number) => void;
+  onPreview?: (src: string) => void;
 }
 
 export interface BeeImagePreviewProps {
@@ -394,8 +392,6 @@ export function BeeImage({
   height,
   fit,
   preview = false,
-  previewList,
-  initialPreviewIndex = 0,
   showContextMenu = false,
   onViewDetail,
   onSetAsCover,
@@ -408,24 +404,6 @@ export function BeeImage({
   onClick,
   ...props
 }: BeeImageProps) {
-  const resolvedPreviewList = useMemo(() => {
-    if (previewList && previewList.length > 0) {
-      return previewList.map(normalizeImageSource);
-    }
-
-    return [{ src, alt }];
-  }, [alt, previewList, src]);
-
-  const resolvedPreviewIndex = useMemo(() => {
-    const matchedIndex = resolvedPreviewList.findIndex((item) => item.src === src);
-
-    if (matchedIndex >= 0) {
-      return matchedIndex;
-    }
-
-    return clampIndex(initialPreviewIndex, resolvedPreviewList.length);
-  }, [initialPreviewIndex, resolvedPreviewList, src]);
-
   const handleImageClick = (event: React.MouseEvent<HTMLImageElement>) => {
     onClick?.(event);
 
@@ -433,7 +411,7 @@ export function BeeImage({
       return;
     }
 
-    onPreview?.(resolvedPreviewList, resolvedPreviewIndex);
+    onPreview?.(src);
   };
 
   const imageNode = (

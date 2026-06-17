@@ -1,8 +1,8 @@
 import { useMemo, useState } from "react";
 import { Spinner } from "/@c/index";
 import { CheckCircle2, Clock3, Upload } from "lucide-react";
-import UploadStatusMenu from "./upload-status-menu";
-import UploadTaskList from "./upload-task-list";
+import UploadStatusMenu from "./components/upload-status-menu";
+import UploadTaskList from "./components/upload-task-list";
 import type {
   UploadFilterKey,
   UploadPanelProps,

@@ -1,5 +1,5 @@
 import { Progress } from "/@c/index";
-import type { UploadTaskListProps } from "./types";
+import type { UploadTaskListProps } from "../types";
 
 function UploadTaskList({
   title,

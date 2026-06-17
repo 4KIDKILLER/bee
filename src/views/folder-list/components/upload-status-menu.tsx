@@ -1,4 +1,4 @@
-import type { UploadStatusMenuProps } from "./types";
+import type { UploadStatusMenuProps } from "../types";
 
 function UploadStatusMenu({ items, activeKey, onChange }: UploadStatusMenuProps) {
   return (

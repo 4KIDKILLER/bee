@@ -63,9 +63,11 @@ import {
     AlertDialogTitle,
 } from "./ShadcnUI/alert-dialog"
 
+import { BeeCell } from "../views/folder-list/components/cell";
 import { BeeTootip } from "./BeeUI/bee-tootip";
 import { BeeIcon } from "./BeeUI/bee-icon";
 import { BeeImage, BeeImagePreview } from "./BeeUI/bee-image";
+import { BeeFolder } from "../views/folder-list/components/folder-item";
 
 export {
     Input,
@@ -122,10 +124,12 @@ export {
     AlertDialogHeader,
     AlertDialogTitle,
 
+    BeeCell,
     BeeIcon,
     BeeImage,
     BeeImagePreview,
     BeeTootip,
+    BeeFolder,
 
     Folder,
     StaggeredMenu

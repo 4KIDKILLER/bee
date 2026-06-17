@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 
 export interface FolderListFolder {
   id: number;
+  type: 1 | 2;
   name: string;
   images: string[];
   createdAt: string;

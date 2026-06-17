@@ -9,7 +9,7 @@ import {
   ButtonGroup,
 } from "/@c/index";
 import { Plus, Tag, X, Bookmark, Info, ImageIcon } from "lucide-react";
-import type { FolderListFolder } from "./types";
+import type { FolderListFolder } from "../types";
 
 interface FolderIntroductionProps {
   open: boolean;
@@ -18,8 +18,6 @@ interface FolderIntroductionProps {
   onAddTag: (id: number, tag: string) => void;
   onRemoveTag: (id: number, tag: string) => void;
   onRemarkChange: (id: number, remark: string) => void;
-  onSetCoverImage: (id: number, slot: 1 | 2 | 3, src: string) => void;
-  onDeleteImage: (id: number, src: string) => void;
   onPreviewImage: (images: string[], index: number) => void;
 }
 
@@ -115,8 +113,6 @@ function FolderIntroduction({
   onAddTag,
   onRemoveTag,
   onRemarkChange,
-  onSetCoverImage,
-  onDeleteImage,
   onPreviewImage,
 }: FolderIntroductionProps) {
   const panelRef = useRef<HTMLElement>(null);
@@ -267,23 +263,12 @@ function FolderIntroduction({
                           alt={`${folder.name}-cover-${index + 1}`}
                           className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                           preview
-                          previewList={folder.images}
-                          showContextMenu
-                          onPreview={(images, previewIndex) =>
-                            onPreviewImage(
-                              images.map((image) => image.src),
-                              previewIndex,
-                            )
-                          }
-                          onViewDetail={() => undefined}
-                          onSetAsCover={(slot, imageSrc) =>
-                            onSetCoverImage(folder.id, slot, imageSrc)
-                          }
-                          onDelete={(imageSrc) =>
-                            onDeleteImage(folder.id, imageSrc)
+                          // showContextMenu
+                          onPreview={(imageSrc) =>
+                            onPreviewImage(folder.images, folder.images.indexOf(imageSrc))
                           }
                         />
-                        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent px-2 py-1 text-[11px] text-white/80 pointer-events-none">
+                        <div className="absolute inset-x-0 bottom-0 bg-linear-to-t from-black/70 to-transparent px-2 py-1 text-[11px] text-white/80 pointer-events-none">
                           封面 {index + 1}
                         </div>
                       </div>
