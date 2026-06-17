@@ -66,7 +66,7 @@ import {
 import { BeeCell } from "../views/folder-list/components/cell";
 import { BeeTootip } from "./BeeUI/bee-tootip";
 import { BeeIcon } from "./BeeUI/bee-icon";
-import { BeeImage, BeeImagePreview } from "./BeeUI/bee-image";
+import { BeeImage, BeeImageContextMenu, BeeImagePreview } from "./BeeUI/bee-image";
 import { BeeFolder } from "../views/folder-list/components/folder-item";
 
 export {
@@ -127,9 +127,10 @@ export {
     BeeCell,
     BeeIcon,
     BeeImage,
-    BeeImagePreview,
     BeeTootip,
     BeeFolder,
+    BeeImagePreview,
+    BeeImageContextMenu,
 
     Folder,
     StaggeredMenu

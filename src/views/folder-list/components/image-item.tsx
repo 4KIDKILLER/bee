@@ -1,4 +1,4 @@
-import { BeeCell, BeeImage } from "/@c/index";
+import { BeeCell, BeeImage, BeeImageContextMenu } from "/@c/index";
 import type { FolderListFolder } from "../types";
 
 export interface BeeImageItemProps {
@@ -22,12 +22,14 @@ export function BeeImageItem({ folder, onPreview }: BeeImageItemProps) {
         />
       </div>
       <div className="max-w-[100px] text-xs text-purple-50 text-shadow-amber-100">
-        <span
-          title={folder.name}
-          className="block truncate cursor-pointer rounded-md bg-black/35 px-[6px] py-[4px] transition-colors hover:bg-(--theme-color)"
-        >
-          {folder.name}
-        </span>
+        <BeeImageContextMenu>
+          <span
+            title={folder.name}
+            className="block truncate cursor-pointer rounded-md bg-black/35 px-[6px] py-[4px] transition-colors hover:bg-(--theme-color)"
+          >
+            {folder.name}
+          </span>
+        </BeeImageContextMenu>
       </div>
     </BeeCell>
   );

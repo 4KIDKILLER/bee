@@ -39,11 +39,10 @@ export interface BeeImageSource {
 
 export type BeeImagePreviewItem = string | BeeImageSource;
 
-export interface BeeImageProps
-  extends Omit<
-    React.ImgHTMLAttributes<HTMLImageElement>,
-    "src" | "width" | "height"
-  > {
+export interface BeeImageProps extends Omit<
+  React.ImgHTMLAttributes<HTMLImageElement>,
+  "src" | "width" | "height"
+> {
   src: string;
   width?: number | string;
   height?: number | string;
@@ -352,7 +351,14 @@ export function BeeImagePreview({
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [currentOpen, hasMultiple, handleNext, handlePrev, normalizedImages.length, setPreviewOpen]);
+  }, [
+    currentOpen,
+    hasMultiple,
+    handleNext,
+    handlePrev,
+    normalizedImages.length,
+    setPreviewOpen,
+  ]);
 
   if (normalizedImages.length === 0 || !currentImage) {
     return null;
@@ -368,7 +374,8 @@ export function BeeImagePreview({
           图片预览 {currentIndex + 1} / {normalizedImages.length}
         </DialogTitle>
         <DialogDescription className="sr-only">
-          使用左右方向键切换图片，使用底部工具栏进行放大、缩小和旋转，按 Escape 关闭预览。
+          使用左右方向键切换图片，使用底部工具栏进行放大、缩小和旋转，按 Escape
+          关闭预览。
         </DialogDescription>
         <PreviewViewport
           key={`${currentIndex}-${currentImage.src}`}
@@ -435,10 +442,36 @@ export function BeeImage({
   );
 
   return showContextMenu ? (
+    <BeeImageContextMenu
+      src={src}
+      onDelete={onDelete}
+      onViewDetail={onViewDetail}
+      onSetAsCover={onSetAsCover}
+    >
+      <span className="inline-flex max-w-full">{imageNode}</span>
+    </BeeImageContextMenu>
+  ) : (
+    imageNode
+  );
+}
+
+export function BeeImageContextMenu({
+  children,
+  onViewDetail,
+  onSetAsCover,
+  onDelete,
+  src,
+}: {
+  children: React.ReactNode;
+} & Partial<
+  Pick<
+    BeeImageProps,
+    "src" | "onViewDetail" | "onSetAsCover" | "onDelete" | "onPreview"
+  >
+>) {
+  return (
     <ContextMenu>
-      <ContextMenuTrigger asChild>
-        <span className="inline-flex max-w-full">{imageNode}</span>
-      </ContextMenuTrigger>
+      <ContextMenuTrigger asChild>{children}</ContextMenuTrigger>
       <ContextMenuContent>
         <ContextMenuItem onClick={() => onViewDetail?.(src)}>
           <Info />
@@ -456,18 +489,11 @@ export function BeeImage({
           <ImageUp />
           设置为封面3
         </ContextMenuItem>
-        <ContextMenuItem
-          variant="destructive"
-          onClick={() => onDelete?.(src)}
-        >
+        <ContextMenuItem variant="destructive" onClick={() => onDelete?.(src)}>
           <Trash2 />
           删除
         </ContextMenuItem>
       </ContextMenuContent>
     </ContextMenu>
-  ) : (
-    imageNode
   );
 }
-
-export default BeeImage;
