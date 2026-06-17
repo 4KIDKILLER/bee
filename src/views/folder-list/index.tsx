@@ -36,9 +36,9 @@ function FolderList() {
 
   return (
     <div className="w-full h-full flex items-center justify-center">
-      <div className="w-[1300px] min-w-[1300px] mx-auto h-3/4 min-h-[600px] max-h-[700px]">
+      <div className="relative w-[1300px] min-w-[1300px] mx-auto h-3/4 min-h-[600px] max-h-[700px]">
         <div className="flex flex-col h-full">
-          <div className="h-[50px] flex w-full items-center bg-black/40 pl-[10px] pr-[10px] backdrop-blur-md rounded-tl-2xl rounded-tr-2xl border-t border-x border-white/20">
+          <div className="h-[50px] flex w-full items-center bg-black/40 px-4 backdrop-blur-md rounded-tl-2xl rounded-tr-2xl border-t border-x border-white/20">
             <ViewModeSwitch value={viewMode} onChange={setViewMode} />
           </div>
           <div className="relative flex-1 overflow-hidden rounded-bl-2xl rounded-br-2xl border-b border-x border-white/20 bg-black/10 backdrop-blur-md shadow-lg">
@@ -53,6 +53,12 @@ function FolderList() {
             />
             <UploadPanel showUploadPanel={showUploadPanel} />
           </div>
+        </div>
+
+        <div className="w-full flex justify-between items-center mt-2 rounded-full px-4 h-[30px]">
+          <span className="text-white text-">路径: /file/image/my-album</span>
+
+          <div className="page"></div>
         </div>
       </div>
     </div>

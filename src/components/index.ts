@@ -62,6 +62,15 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from "./ShadcnUI/alert-dialog"
+import {
+    Pagination,
+    PaginationContent,
+    PaginationEllipsis,
+    PaginationItem,
+    PaginationLink,
+    PaginationNext,
+    PaginationPrevious,
+} from "./ShadcnUI/pagination"
 
 import { BeeCell } from "../views/folder-list/components/cell";
 import { BeeTootip } from "./BeeUI/bee-tootip";
@@ -123,6 +132,13 @@ export {
     AlertDialogFooter,
     AlertDialogHeader,
     AlertDialogTitle,
+    Pagination,
+    PaginationContent,
+    PaginationEllipsis,
+    PaginationItem,
+    PaginationLink,
+    PaginationNext,
+    PaginationPrevious,
 
     BeeCell,
     BeeIcon,
