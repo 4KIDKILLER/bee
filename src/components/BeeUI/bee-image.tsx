@@ -462,11 +462,12 @@ export function BeeImageContextMenu({
   onDelete,
   src,
 }: {
+  src: string
   children: React.ReactNode;
 } & Partial<
   Pick<
     BeeImageProps,
-    "src" | "onViewDetail" | "onSetAsCover" | "onDelete" | "onPreview"
+    "onViewDetail" | "onSetAsCover" | "onDelete" | "onPreview"
   >
 >) {
   return (
