@@ -132,7 +132,7 @@
   html {
     @apply font-sans;
     background-color: #050816;
-    background-image: url("/wallpaper.jpg");
+    background-image: url("/wallpaper.png");
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
