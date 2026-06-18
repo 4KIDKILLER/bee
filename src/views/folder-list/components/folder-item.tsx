@@ -9,18 +9,18 @@ import {
   ContextMenuTrigger,
 } from "/@c/index";
 import { Info, SquarePen, Trash2 } from "lucide-react";
-import type { FolderListFolder } from "/@/views/folder-list/types";
+import type { BeeFileType } from "/@/views/folder-list/types";
 
 export interface BeeFolderProps {
-  folder: FolderListFolder;
+  folder: BeeFileType;
   selection?: boolean;
   isChecked?: boolean;
   isOpen?: boolean;
   onFolderCheckChange?: (id: number) => void;
   onFolderOpenChange?: (id: number, open: boolean) => void;
-  onFolderInfo?: (folder: FolderListFolder) => void;
-  onFolderDelete?: (folder: FolderListFolder) => void;
-  onFolderRename?: (folder: FolderListFolder) => void;
+  onFolderInfo?: (folder: BeeFileType) => void;
+  onFolderDelete?: (folder: BeeFileType) => void;
+  onFolderRename?: (folder: BeeFileType) => void;
 }
 
 interface ImageItemProps {

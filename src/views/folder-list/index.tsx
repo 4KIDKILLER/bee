@@ -1,15 +1,8 @@
 import { useState } from "react";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "/@c/index";
+import { cn } from "/@/library/utils";
 import FilePanel from "./file-panel";
 import UploadPanel from "./upload-panel";
+import FolderListPagination from "./components/folder-list-pagination";
 import ViewModeSwitch from "./components/view-mode-switch";
 import type { FolderListViewMode } from "./types";
 
@@ -48,45 +41,16 @@ function FolderList() {
     setOpenFolderId(open ? id : null);
   };
 
-  const totalPages = Math.max(1, Math.ceil(pageInfo.total / pageInfo.limit));
-
   const handlePageChange = (page: number) => {
-    setPageInfo((prev) => ({
-      ...prev,
-      page: Math.min(Math.max(page, 1), totalPages),
-    }));
+    setPageInfo((prev) => {
+      const totalPages = Math.max(1, Math.ceil(prev.total / prev.limit));
+
+      return {
+        ...prev,
+        page: Math.min(Math.max(page, 1), totalPages),
+      };
+    });
   };
-
-  const visiblePageItems: Array<number | "ellipsis-left" | "ellipsis-right"> =
-    totalPages <= 7
-      ? Array.from({ length: totalPages }, (_, index) => index + 1)
-      : (() => {
-          const pages = new Set<number>([
-            1,
-            totalPages,
-            pageInfo.page - 1,
-            pageInfo.page,
-            pageInfo.page + 1,
-          ]);
-
-          const normalizedPages = Array.from(pages)
-            .filter((page) => page >= 1 && page <= totalPages)
-            .sort((a, b) => a - b);
-
-          const items: Array<number | "ellipsis-left" | "ellipsis-right"> = [];
-
-          normalizedPages.forEach((page, index) => {
-            const previousPage = normalizedPages[index - 1];
-
-            if (previousPage && page - previousPage > 1) {
-              items.push(previousPage === 1 ? "ellipsis-left" : "ellipsis-right");
-            }
-
-            items.push(page);
-          });
-
-          return items;
-        })();
 
   return (
     <div className="w-full h-full flex items-center justify-center">
@@ -109,63 +73,21 @@ function FolderList() {
           </div>
         </div>
 
-        <div className="mt-2 flex h-[30px] w-full items-center justify-between rounded-full px-4">
-          <span className="text-white">路径: /file/image/my-album</span>
-
-          <Pagination className="mx-0 w-auto justify-end">
-            <PaginationContent className="gap-1 px-1.5 py-0.5 backdrop-blur-md">
-              <PaginationItem>
-                <PaginationPrevious
-                  href="#"
-                  text=""
-                  size="icon-sm"
-                  className="border-white/10 bg-transparent text-white/65 hover:border-(--theme-color)/30 hover:bg-(--theme-color)/10 hover:text-white"
-                  onClick={(event) => {
-                    event.preventDefault();
-                    handlePageChange(pageInfo.page - 1);
-                  }}
-                />
-              </PaginationItem>
-              {visiblePageItems.map((item) =>
-                typeof item === "number" ? (
-                  <PaginationItem key={item}>
-                    <PaginationLink
-                      href="#"
-                      size="icon-sm"
-                      isActive={pageInfo.page === item}
-                      className={
-                        pageInfo.page === item
-                          ? "border-(--theme-color)/40 bg-(--theme-color)/15 text-white shadow-[0_0_12px_rgba(255,255,255,0.08)]"
-                          : "text-white/65 hover:border-(--theme-color)/30 hover:bg-(--theme-color)/10 hover:text-white"
-                      }
-                      onClick={(event) => {
-                        event.preventDefault();
-                        handlePageChange(item);
-                      }}
-                    >
-                      {item}
-                    </PaginationLink>
-                  </PaginationItem>
-                ) : (
-                  <PaginationItem key={item}>
-                    <PaginationEllipsis className="text-white/45" />
-                  </PaginationItem>
-                ),
-              )}
-              <PaginationItem>
-                <PaginationNext
-                  href="#"
-                  text=""
-                  size="icon-sm"
-                  className="border-white/10 bg-transparent text-white/65 hover:border-(--theme-color)/30 hover:bg-(--theme-color)/10 hover:text-white"
-                  onClick={(event) => {
-                    event.preventDefault();
-                    handlePageChange(pageInfo.page + 1);
-                  }}
-                />
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
+        <div
+          className={cn(
+            viewMode === "list" ? "animate__fadeIn" : "animate__fadeOut",
+            "animate__animated mt-2 px-4 flex w-full justify-between text-center",
+          )}
+        >
+          <div className="flex items-center">
+            <span className="text-white/70">/system/file/my-album</span>
+          </div>
+          <FolderListPagination
+            page={pageInfo.page}
+            limit={pageInfo.limit}
+            total={pageInfo.total}
+            onPageChange={handlePageChange}
+          />
         </div>
       </div>
     </div>

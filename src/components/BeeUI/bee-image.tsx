@@ -49,9 +49,9 @@ export interface BeeImageProps extends Omit<
   fit?: React.CSSProperties["objectFit"];
   preview?: boolean;
   showContextMenu?: boolean;
-  onViewDetail?: (src: string) => void;
-  onSetAsCover?: (slot: 1 | 2 | 3, src: string) => void;
-  onDelete?: (src: string) => void;
+  onViewDetail?: () => void;
+  onSetAsCover?: (slot: 1 | 2 | 3) => void;
+  onDelete?: () => void;
   onPreview?: (src: string) => void;
 }
 
@@ -443,7 +443,6 @@ export function BeeImage({
 
   return showContextMenu ? (
     <BeeImageContextMenu
-      src={src}
       onDelete={onDelete}
       onViewDetail={onViewDetail}
       onSetAsCover={onSetAsCover}
@@ -460,37 +459,35 @@ export function BeeImageContextMenu({
   onViewDetail,
   onSetAsCover,
   onDelete,
-  src,
 }: {
-  src: string
   children: React.ReactNode;
 } & Partial<
   Pick<
     BeeImageProps,
-    "onViewDetail" | "onSetAsCover" | "onDelete" | "onPreview"
+    "onViewDetail" | "onSetAsCover" | "onDelete"
   >
 >) {
   return (
     <ContextMenu>
       <ContextMenuTrigger asChild>{children}</ContextMenuTrigger>
       <ContextMenuContent>
-        <ContextMenuItem onClick={() => onViewDetail?.(src)}>
+        <ContextMenuItem onClick={() => onViewDetail?.()}>
           <Info />
           详细信息
         </ContextMenuItem>
-        <ContextMenuItem onClick={() => onSetAsCover?.(1, src)}>
+        <ContextMenuItem onClick={() => onSetAsCover?.(1)}>
           <ImageUp />
           设置为封面1
         </ContextMenuItem>
-        <ContextMenuItem onClick={() => onSetAsCover?.(2, src)}>
+        <ContextMenuItem onClick={() => onSetAsCover?.(2)}>
           <ImageUp />
           设置为封面2
         </ContextMenuItem>
-        <ContextMenuItem onClick={() => onSetAsCover?.(3, src)}>
+        <ContextMenuItem onClick={() => onSetAsCover?.(3)}>
           <ImageUp />
           设置为封面3
         </ContextMenuItem>
-        <ContextMenuItem variant="destructive" onClick={() => onDelete?.(src)}>
+        <ContextMenuItem variant="destructive" onClick={() => onDelete?.()}>
           <Trash2 />
           删除
         </ContextMenuItem>

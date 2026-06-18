@@ -1,41 +1,39 @@
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import {
-  Button,
-  BeeIcon,
   BeeImage,
+  Button,
+  ButtonGroup,
   Input,
   ScrollArea,
   Textarea,
-  ButtonGroup,
 } from "/@c/index";
-import { Plus, Tag, X, Bookmark, Info, ImageIcon } from "lucide-react";
+import { Bookmark, ImageIcon, Info, Plus, Tag, X } from "lucide-react";
 import type { BeeFileType } from "../types";
 
-interface FolderIntroductionProps {
+interface ImageIntroductionProps {
   open: boolean;
-  folder: BeeFileType | null;
+  data: BeeFileType | null;
   onClose: () => void;
   onAddTag: (id: number, tag: string) => void;
   onRemoveTag: (id: number, tag: string) => void;
   onRemarkChange: (id: number, remark: string) => void;
-  onPreviewImage: (images: string[], index: number) => void;
 }
 
-interface FolderTagEditorProps {
-  folder: BeeFileType;
+interface ImageTagEditorProps {
+  data: BeeFileType;
   onAddTag: (id: number, tag: string) => void;
   onRemoveTag: (id: number, tag: string) => void;
   className?: string;
   style?: CSSProperties;
 }
 
-function FolderTagEditor({
-  folder,
+function ImageTagEditor({
+  data,
   onAddTag,
   onRemoveTag,
   className,
   style,
-}: FolderTagEditorProps) {
+}: ImageTagEditorProps) {
   const [tagInput, setTagInput] = useState("");
 
   const handleAddTag = () => {
@@ -44,7 +42,7 @@ function FolderTagEditor({
       return;
     }
 
-    onAddTag(folder.id, nextTag);
+    onAddTag(data.id, nextTag);
     setTagInput("");
   };
 
@@ -58,8 +56,8 @@ function FolderTagEditor({
         标签
       </div>
       <div className="mt-4 flex flex-wrap gap-2">
-        {folder.tags.length > 0 ? (
-          folder.tags.map((tag) => (
+        {data?.tags.length > 0 ? (
+          data.tags.map((tag) => (
             <span
               key={tag}
               className="inline-flex items-center gap-1 rounded-full border border-sky-400/25 bg-sky-400/10 px-3 py-1 text-xs text-sky-100"
@@ -68,7 +66,7 @@ function FolderTagEditor({
               <button
                 type="button"
                 className="rounded-full text-sky-100/70 transition-colors hover:text-white"
-                onClick={() => onRemoveTag(folder.id, tag)}
+                onClick={() => onRemoveTag(data.id, tag)}
               >
                 <X className="size-3" />
               </button>
@@ -106,17 +104,16 @@ function FolderTagEditor({
   );
 }
 
-function  FolderIntroduction({
+function ImageIntroduction({
   open,
-  folder,
+  data,
   onClose,
   onAddTag,
   onRemoveTag,
   onRemarkChange,
-  onPreviewImage,
-}: FolderIntroductionProps) {
+}: ImageIntroductionProps) {
   const panelRef = useRef<HTMLElement>(null);
-  const shouldAnimate = folder !== null;
+  const shouldAnimate = data !== null;
 
   const getAnimationProps = (delay: number) => {
     if (!shouldAnimate) {
@@ -126,7 +123,9 @@ function  FolderIntroduction({
       };
     }
 
-    const animationName = open ? "animate__backInRight" : "animate__backOutRight";
+    const animationName = open
+      ? "animate__backInRight"
+      : "animate__backOutRight";
 
     return {
       className: `animate__animated animate__faster ${animationName}`,
@@ -138,10 +137,10 @@ function  FolderIntroduction({
   };
 
   const headerAnimation = getAnimationProps(0);
-  const basicInfoAnimation = getAnimationProps(80);
-  const tagAnimation = getAnimationProps(160);
-  const remarkAnimation = getAnimationProps(240);
-  const emptyStateAnimation = getAnimationProps(80);
+  const previewAnimation = getAnimationProps(80);
+  const basicInfoAnimation = getAnimationProps(160);
+  const tagAnimation = getAnimationProps(240);
+  const remarkAnimation = getAnimationProps(320);
 
   useEffect(() => {
     if (!open) {
@@ -156,7 +155,6 @@ function  FolderIntroduction({
 
     const handlePointerDown = (event: MouseEvent) => {
       const target = event.target as HTMLElement | null;
-      console.log(event)
       if (
         target?.closest(
           '[data-slot="dialog-content"], [data-slot="dialog-overlay"]',
@@ -184,7 +182,7 @@ function  FolderIntroduction({
       ref={panelRef}
       aria-hidden={!open}
       className={`absolute right-0 top-0 bottom-0 z-20 w-80 ${
-        !open && !folder
+        !open && !data
           ? "hidden"
           : open
             ? "pointer-events-auto"
@@ -194,13 +192,13 @@ function  FolderIntroduction({
       <ScrollArea className="h-full text-white">
         <div className="flex min-h-full flex-col px-4 py-4">
           <header
-            className={`rounded-2xl  border border-white/30 bg-black/90 p-4 flex items-center justify-between ${headerAnimation.className}`}
+            className={`flex items-center justify-between rounded-2xl border border-white/30 bg-black/90 p-4 ${headerAnimation.className}`}
             style={headerAnimation.style}
           >
             <div className="flex min-w-0 items-center gap-2">
-              <BeeIcon name="folder" />
+              <ImageIcon className="size-5 text-(--theme-color)" />
               <span className="truncate text-md font-semibold tracking-wide text-white">
-                {folder?.name ?? "未选择文件夹"}
+                {data?.name ?? "未选择图片"}
               </span>
             </div>
             <span className="cursor-pointer" onClick={onClose}>
@@ -208,8 +206,21 @@ function  FolderIntroduction({
             </span>
           </header>
 
-          {folder ? (
+          {data ? (
             <div className="mt-3 flex flex-col gap-5">
+              <section
+                className={`rounded-2xl border border-white/30 bg-black/90 p-4 ${previewAnimation.className}`}
+                style={previewAnimation.style}
+              >
+                <BeeImage
+                  src={data.images[0]}
+                  alt={data.name}
+                  preview={false}
+                  fit="contain"
+                  className="h-36 w-full bg-black/20 object-contain"
+                />
+              </section>
+
               <section
                 className={`rounded-2xl border border-white/30 bg-black/90 p-4 ${basicInfoAnimation.className}`}
                 style={basicInfoAnimation.style}
@@ -221,18 +232,24 @@ function  FolderIntroduction({
                 <div className="mt-4 space-y-3 text-sm text-white/75">
                   <div>
                     <div className="text-white/45">创建时间</div>
-                    <div className="mt-1 text-white">{folder.createdAt}</div>
+                    <div className="mt-1 text-white">{data.createdAt}</div>
                   </div>
                   <div>
                     <div className="text-white/45">上次打开时间</div>
-                    <div className="mt-1 text-white">{folder.lastOpenedAt}</div>
+                    <div className="mt-1 text-white">{data.lastOpenedAt}</div>
+                  </div>
+                  <div>
+                    <div className="text-white/45">资源地址</div>
+                    <div className="mt-1 break-all text-xs text-white/70">
+                      {data.images[0]}
+                    </div>
                   </div>
                 </div>
               </section>
 
-              <FolderTagEditor
-                key={folder.id}
-                folder={folder}
+              <ImageTagEditor
+                key={data.id}
+                data={data}
                 onAddTag={onAddTag}
                 onRemoveTag={onRemoveTag}
                 className={tagAnimation.className}
@@ -248,67 +265,18 @@ function  FolderIntroduction({
                   <span>备注</span>
                 </div>
                 <Textarea
-                  value={folder.remark}
-                  onChange={(e) => onRemarkChange(folder.id, e.target.value)}
-                  placeholder="在这里记录文件夹的用途、来源或整理说明"
-                  className="mt-4 h-32 w-full resize-none rounded-2xl border-white/10 bg-white/5 text-white placeholder:text-white/30 px-3 py-3 text-sm outline-none transition-colors focus:border-sky-400/40"
+                  value={data.remark}
+                  onChange={(e) => onRemarkChange(data.id, e.target.value)}
+                  placeholder="在这里记录图片的用途、来源或备注说明"
+                  className="mt-4 h-32 w-full resize-none rounded-2xl border-white/10 bg-white/5 px-3 py-3 text-sm text-white outline-none transition-colors placeholder:text-white/30 focus:border-sky-400/40"
                 />
               </section>
-              <section
-                className={`rounded-2xl border border-white/30 bg-black/90 p-4 ${remarkAnimation.className}`}
-                style={remarkAnimation.style}
-              >
-                <div className="flex items-center justify-between gap-2 text-sm font-medium text-white">
-                  <div className="flex items-center gap-2">
-                    <ImageIcon className="size-4 text-(--theme-color)" />
-                    <span>封面</span>
-                  </div>
-                  <span className="text-xs text-white/40">
-                    {folder.images.length} 张预览
-                  </span>
-                </div>
-                {folder.images.length > 0 ? (
-                  <div className="mt-4 grid grid-cols-3 gap-2">
-                    {folder.images.slice(0, 3).map((src, index) => (
-                      <div
-                        key={`${folder.id}-${index}`}
-                        className="group relative aspect-square overflow-hidden rounded-2xl border border-white/10 bg-white/5"
-                      >
-                        <BeeImage
-                          src={src}
-                          alt={`${folder.name}-cover-${index + 1}`}
-                          className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                          preview
-                          // showContextMenu
-                          onPreview={(imageSrc) =>
-                            onPreviewImage(folder.images, folder.images.indexOf(imageSrc))
-                          }
-                        />
-                        <div className="absolute inset-x-0 bottom-0 bg-linear-to-t from-black/70 to-transparent px-2 py-1 text-[11px] text-white/80 pointer-events-none">
-                          封面 {index + 1}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="mt-4 rounded-2xl border border-dashed border-white/10 bg-white/5 px-3 py-6 text-center text-xs text-white/40">
-                    当前文件夹暂无封面可预览
-                  </div>
-                )}
-              </section>
             </div>
-          ) : (
-            <div
-              className={`flex flex-1 items-center justify-center px-2 text-center text-sm text-white/45 ${emptyStateAnimation.className}`}
-              style={emptyStateAnimation.style}
-            >
-              请选择一个文件夹查看简介
-            </div>
-          )}
+          ) : null}
         </div>
       </ScrollArea>
     </aside>
   );
 }
 
-export default FolderIntroduction;
+export default ImageIntroduction;

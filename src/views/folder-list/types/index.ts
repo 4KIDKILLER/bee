@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-export interface FolderListFolder {
+export interface BeeFileType {
   id: number;
   type: 1 | 2;
   name: string;
@@ -28,6 +28,19 @@ export type FolderListViewMode = "list" | "upload";
 export interface ViewModeSwitchProps {
   value: FolderListViewMode;
   onChange: (value: FolderListViewMode) => void;
+}
+
+export interface FolderListPaginationProps {
+  page: number;
+  limit: number;
+  total: number;
+  onPageChange: (page: number) => void;
+  className?: string;
+  contentClassName?: string;
+  itemClassName?: string;
+  activeItemClassName?: string;
+  controlClassName?: string;
+  ellipsisClassName?: string;
 }
 
 export interface UploadPanelProps {

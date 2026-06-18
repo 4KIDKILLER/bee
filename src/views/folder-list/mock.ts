@@ -1,6 +1,6 @@
-import type { FolderListFolder } from "./types";
+import type { BeeFileType } from "./types";
 
-export const folderSeeds: FolderListFolder[] = [
+export const folderSeeds: BeeFileType[] = [
     {
       id: 1,
       type: 1,
