@@ -71,6 +71,14 @@ import {
     PaginationNext,
     PaginationPrevious,
 } from "./ShadcnUI/pagination"
+import {
+    Avatar,
+    AvatarBadge,
+    AvatarFallback,
+    AvatarGroup,
+    AvatarGroupCount,
+    AvatarImage,
+  } from "./ShadcnUI/avatar"
 
 import { BeeCell } from "../views/folder-list/components/cell";
 import { BeeTootip } from "./BeeUI/bee-tootip";
@@ -139,6 +147,12 @@ export {
     PaginationLink,
     PaginationNext,
     PaginationPrevious,
+    Avatar,
+    AvatarBadge,
+    AvatarFallback,
+    AvatarGroup,
+    AvatarGroupCount,
+    AvatarImage,
 
     BeeCell,
     BeeIcon,

@@ -1,6 +1,12 @@
 import React, { useCallback, useLayoutEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { gsap } from "gsap";
+import {
+  Avatar,
+  AvatarBadge,
+  AvatarFallback,
+  AvatarImage,
+} from "../ShadcnUI/avatar";
 
 export interface StaggeredMenuItem {
   label: string;
@@ -484,7 +490,7 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
           className="staggered-menu-header absolute top-0 left-0 w-full flex items-center justify-between p-[2em] bg-transparent pointer-events-none z-20"
           aria-label="Main navigation header"
         >
-          <div
+          {/* <div
             className="sm-logo flex items-center select-none pointer-events-auto"
             aria-label="Logo"
           >
@@ -496,7 +502,12 @@ export const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
               width={110}
               height={24}
             />
-          </div>
+          </div> */}
+          <Avatar size="lg">
+            <AvatarImage src={logoUrl} alt="@shadcn" />
+            <AvatarFallback>CN</AvatarFallback>
+            <AvatarBadge className="bg-green-600 dark:bg-green-800" />
+          </Avatar>
 
           <button
             ref={toggleBtnRef}
