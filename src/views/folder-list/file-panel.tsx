@@ -2,7 +2,7 @@ import { useState } from "react";
 import {
   BeeFolder,
   BeeImagePreview,
-  BeeTootip,
+  // BeeTootip,
   ScrollArea,
   AlertDialog,
   AlertDialogAction,
@@ -14,7 +14,7 @@ import {
   AlertDialogTitle,
 } from "/@c/index";
 
-import { SquareMousePointer, SquareDashedMousePointer } from "lucide-react";
+// import { SquareMousePointer, SquareDashedMousePointer } from "lucide-react";
 import CreateFolderDialog from "./components/create-folder-dialog";
 import FolderIntroduction from "./components/folder-introduction";
 import ImageIntroduction from "./components/image-introduction";
@@ -27,7 +27,7 @@ function FolderScrollArea({
   selection,
   selectedFolders,
   openFolderId,
-  onSelectionToggle,
+  // onSelectionToggle,
   onFolderCheckChange,
   onFolderOpenChange,
 }: FolderScrollAreaProps) {
@@ -152,23 +152,23 @@ function FolderScrollArea({
         <div className="flex w-full h-[32px] items-end justify-between px-4">
           <div className="flex items-center gap-2">
             <CreateFolderDialog>
-              <span className="cursor-pointer transition-colors text-md text-white/20 hover:text-(--theme-color)/80">
+              <span className="cursor-pointer transition-colors text-[14px] text-white/20 hover:text-(--theme-color)/80">
                 新建文件夹
               </span>
             </CreateFolderDialog>
             <div className="w-[2px] h-[10px] bg-white/50 mx-1 rounded-xs" />
-            <span className="cursor-pointer transition-colors text-md text-white/20 hover:text-(--theme-color)/80">
+            <span className="cursor-pointer transition-colors text-[14px] text-white/20 hover:text-(--theme-color)/80">
               时间
             </span>
-            <span className="cursor-pointer transition-colors text-md text-white/20 hover:text-(--theme-color)/80">
+            <span className="cursor-pointer transition-colors text-[14px] text-white/20 hover:text-(--theme-color)/80">
               大小
             </span>
-            <span className="cursor-pointer transition-colors text-md text-white/20 hover:text-(--theme-color)/80">
+            <span className="cursor-pointer transition-colors text-[14px] text-white/20 hover:text-(--theme-color)/80">
               名称
             </span>
           </div>
           <div className="flex gap-2 items-center">
-            <BeeTootip content={`${selection ? "关闭" : "开启"}选择`}>
+            {/* <BeeTootip content={`${selection ? "关闭" : "开启"}选择`}>
               <span
                 onClick={onSelectionToggle}
               >
@@ -178,7 +178,7 @@ function FolderScrollArea({
                   <SquareDashedMousePointer size={20} className="text-white/20 hover:text-(--theme-color)/80" />
                 )}
               </span>
-            </BeeTootip>
+            </BeeTootip> */}
           </div>
         </div>
         <div className="grid w-full grid-cols-8 auto-rows-[150px]">
