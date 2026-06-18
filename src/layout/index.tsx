@@ -23,7 +23,7 @@ const socialItems = [
 
 const Layout = () => {
   return (
-    <div className="h-screen w-screen overflow-hidden relative">
+    <div className="relative h-full min-h-full w-full overflow-hidden">
       <TooltipProvider>
         <BrowserRouter>
           <Routes>

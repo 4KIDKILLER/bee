@@ -59,24 +59,28 @@ function FolderList() {
           <div className="h-[50px] flex w-full items-center bg-black/40 px-4 backdrop-blur-md rounded-tl-2xl rounded-tr-2xl border-t border-x border-white/20">
             <ViewModeSwitch value={viewMode} onChange={setViewMode} />
           </div>
-          <div className="relative flex-1 overflow-hidden rounded-bl-2xl rounded-br-2xl border-b border-x border-white/20 bg-black/10 backdrop-blur-md shadow-lg">
-            <FilePanel
-              showUploadPanel={showUploadPanel}
-              selection={selection}
-              selectedFolders={selectedFolders}
-              openFolderId={openFolderId}
-              onSelectionToggle={handleSelectionToggle}
-              onFolderCheckChange={handleFolderCheckChange}
-              onFolderOpenChange={handleFolderOpenChange}
-            />
-            <UploadPanel showUploadPanel={showUploadPanel} />
+          <div className="relative flex-1 overflow-hidden rounded-bl-2xl rounded-br-2xl border-b border-x border-white/20 bg-black/10 shadow-lg backdrop-blur-md">
+            <div className="relative h-full w-full bg-black/10">
+              <FilePanel
+                showUploadPanel={showUploadPanel}
+                selection={selection}
+                selectedFolders={selectedFolders}
+                openFolderId={openFolderId}
+                onSelectionToggle={handleSelectionToggle}
+                onFolderCheckChange={handleFolderCheckChange}
+                onFolderOpenChange={handleFolderOpenChange}
+              />
+              <UploadPanel showUploadPanel={showUploadPanel} />
+            </div>
           </div>
         </div>
 
         <div
           className={cn(
-            viewMode === "list" ? "animate__fadeIn" : "animate__fadeOut",
-            "animate__animated mt-2 px-4 flex w-full justify-between text-center",
+            "mt-2 flex w-full justify-between px-4 text-center transition-opacity duration-200",
+            viewMode === "list"
+              ? "opacity-100 pointer-events-auto"
+              : "pointer-events-none opacity-0",
           )}
         >
           <div className="flex items-center">

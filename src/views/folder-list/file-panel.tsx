@@ -145,7 +145,7 @@ function FolderScrollArea({
   return (
     <>
       <ScrollArea
-        className={`h-full w-full transition-transform duration-300 ease-in-out ${
+        className={`absolute inset-0 h-full w-full will-change-transform transition-transform duration-300 ease-in-out ${
           showUploadPanel ? "-translate-x-full" : "translate-x-0"
         }`}
       >
