@@ -8,7 +8,7 @@ import RecycleBin from "/@v/recycle-bin";
 import { TooltipProvider } from "/@c/index";
 
 const menuItems = [
-  { label: "相册首页", ariaLabel: "BEE Home", link: "/" },
+  { label: "BEE相册", ariaLabel: "BEE Home", link: "/" },
   { label: "个人信息", ariaLabel: "Personal information", link: "/personal" },
   { label: "系统概览", ariaLabel: "System overview", link: "/overview" },
   { label: "系统设置", ariaLabel: "System settings", link: "/settings" },
@@ -40,6 +40,7 @@ const Layout = () => {
             items={menuItems}
             socialItems={socialItems}
             displaySocials
+            logoUrl="/avatar.jpg"
             displayItemNumbering={true}
             openMenuButtonColor="#000"
             changeMenuColorOnOpen={true}
