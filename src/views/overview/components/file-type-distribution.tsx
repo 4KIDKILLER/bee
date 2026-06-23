@@ -55,7 +55,7 @@ const metaMap: Record<
 
 function FileTypeDistribution({ fileTypes }: FileTypeDistributionProps) {
   return (
-    <section className="rounded-2xl border border-white/10 bg-black/40 p-4 shadow-lg backdrop-blur-md">
+    <section className="rounded-2xl border border-white/20 bg-black/40 p-4 shadow-lg backdrop-blur-md">
       <div className="flex items-center gap-2 text-sm font-medium text-white/85">
         <span className="flex size-9 items-center justify-center rounded-xl bg-white/10 text-(--theme-color)">
           <Files className="size-4" />
