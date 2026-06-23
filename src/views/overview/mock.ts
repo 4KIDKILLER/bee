@@ -2,42 +2,48 @@ import type { StorageDashboardData } from "./types";
 
 const GB = 1024 ** 3;
 const TB = 1024 ** 4;
+const totalBytes = 0.5 * TB;
+
+const fileTypes: StorageDashboardData["fileTypes"] = [
+  {
+    key: "image",
+    label: "图片",
+    count: 1321,
+    usedBytes: 18.4 * GB,
+  },
+  {
+    key: "video",
+    label: "视频",
+    count: 68,
+    usedBytes: 168.2 * GB,
+  },
+  {
+    key: "document",
+    label: "文档",
+    count: 8,
+    usedBytes: 1.1 * GB,
+  },
+  {
+    key: "audio",
+    label: "音频",
+    count: 12,
+    usedBytes: 0.03 * GB,
+  },
+  {
+    key: "other",
+    label: "其他",
+    count: 31,
+    usedBytes: 0.01 * GB,
+  },
+];
+
+const usedBytes = fileTypes.reduce((sum, item) => sum + item.usedBytes, 0);
+const availableBytes = totalBytes - usedBytes;
 
 export const storageDashboardData: StorageDashboardData = {
-  totalBytes: 2.5 * TB,
-  usedBytes: 1632 * GB,
-  availableBytes: 928 * GB,
+  totalBytes,
+  usedBytes,
+  availableBytes,
   updatedAt: "今天 08:42",
-  fileTypes: [
-    {
-      key: "image",
-      label: "图片",
-      count: 48210,
-      usedBytes: 428 * GB,
-    },
-    {
-      key: "video",
-      label: "视频",
-      count: 1260,
-      usedBytes: 896 * GB,
-    },
-    {
-      key: "document",
-      label: "文档",
-      count: 18240,
-      usedBytes: 146 * GB,
-    },
-    {
-      key: "audio",
-      label: "音频",
-      count: 3920,
-      usedBytes: 98 * GB,
-    },
-    {
-      key: "other",
-      label: "其他",
-      count: 5320,
-      usedBytes: 64 * GB,
-    },
-  ],
+  fileTypes,
 };

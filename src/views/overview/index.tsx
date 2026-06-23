@@ -65,12 +65,17 @@ function formatCount(count: number) {
 
 function Overview() {
   const totalFiles = useMemo(
-    () => storageDashboardData.fileTypes.reduce((sum, item) => sum + item.count, 0),
+    () =>
+      storageDashboardData.fileTypes.reduce((sum, item) => sum + item.count, 0),
     [],
   );
 
   const usedPercent = useMemo(
-    () => Math.round((storageDashboardData.usedBytes / storageDashboardData.totalBytes) * 100),
+    () =>
+      Math.round(
+        (storageDashboardData.usedBytes / storageDashboardData.totalBytes) *
+          100,
+      ),
     [],
   );
 
@@ -82,7 +87,9 @@ function Overview() {
         ...item,
         formattedSize: formatBytes(item.usedBytes),
         formattedCount: formatCount(item.count),
-        percent: Math.round((item.usedBytes / storageDashboardData.usedBytes) * 100),
+        percent: Math.round(
+          (item.usedBytes / storageDashboardData.usedBytes) * 100,
+        ),
       })),
     [],
   );
@@ -92,42 +99,34 @@ function Overview() {
   const availableSpace = formatBytes(storageDashboardData.availableBytes);
 
   return (
-    <div className="flex h-full w-full items-center justify-center px-6 py-8">
-      <div className="relative mx-auto h-3/4 min-w-[1300px] w-[1300px] overflow-hidden rounded-2xl border border-white/20 bg-black/10 shadow-lg backdrop-blur-md">
+    <div className="flex h-full w-full items-center justify-center">
+      <div className="relative mx-auto min-w-[1300px] w-[1300px] overflow-hidden rounded-2xl border border-white/20 bg-black/10 shadow-lg backdrop-blur-md h-[700px]">
         <div className="flex h-full flex-col">
-          <header className="flex items-center justify-between gap-6 border-b border-white/10 bg-black/40 px-6 py-5 backdrop-blur-md">
-            <div>
-              <div className="flex items-center gap-2 text-sm font-medium text-(--theme-color)">
-                <Database className="size-4" />
-                存储总览
-              </div>
-              <h1 className="mt-2 text-2xl font-semibold tracking-tight text-white/90">
-                一站式查看文件数量、存储占用与剩余空间
-              </h1>
-              <p className="mt-2 text-sm text-white/55">
-                通过文字与 icon 快速识别图片、视频、文档等内容类型的存储分布。
-              </p>
+          <header className="flex items-center justify-between gap-6 border-b border-white/10 bg-black/40 px-4 backdrop-blur-md h-[50px]">
+            <div className="flex items-center gap-2 text-sm font-medium">
+              <Database className="size-4 text-(--theme-color)" />
+              <span className="text-white">存储总览</span>
             </div>
 
-            <div className="rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-right backdrop-blur-sm">
+            <div className="flex gap-2 items-center rounded-2xl border-white/10">
               <div className="flex items-center justify-end gap-2 text-sm font-medium text-white/85">
                 <Clock3 className="size-4 text-(--theme-color)" />
                 最近同步
               </div>
-              <p className="mt-1 text-sm text-white/50">
+              <div className="text-sm text-white/50">
                 数据更新时间：{storageDashboardData.updatedAt}
-              </p>
+              </div>
             </div>
           </header>
 
           <ScrollArea className="min-h-0 flex-1 bg-black/10">
-            <div className="px-6 py-6">
+            <div className="p-4">
               <div className="grid grid-cols-3 gap-4">
                 <StorageSummaryCard
                   icon={<Files className="size-4" />}
                   title="文件总览"
                   value={formatCount(totalFiles)}
-                  description="汇总展示当前存储中的文件数量，并按内容类型进行快速识别。"
+                  description="汇总当前存储中的文件数量，并按内容类型进行快速识别。"
                   footer={
                     <div className="grid grid-cols-2 gap-2">
                       {fileTypes.slice(0, 4).map((item) => {
@@ -185,14 +184,16 @@ function Overview() {
                   value={availableSpace}
                   description={
                     usedPercent >= 80
-                      ? "剩余空间开始收紧，建议优先清理大体积文件或归档历史内容。"
-                      : "当前可用空间充足，仍可继续保存新的图片、视频与文档内容。"
+                      ? "剩余空间较少，建议优先清理大体积文件或归档历史内容。"
+                      : "当前可用充足，仍可继续保存新的图片、视频与文档内容。"
                   }
                   footer={
                     <div className="rounded-2xl border border-white/10 bg-black/35 p-4">
                       <div className="flex items-center justify-between gap-3 text-sm">
                         <span className="text-white/50">可用占比</span>
-                        <span className="font-medium text-white/90">{availablePercent}%</span>
+                        <span className="font-medium text-white/90">
+                          {availablePercent}%
+                        </span>
                       </div>
                       <div className="mt-2 text-xs leading-5 text-white/45">
                         建议持续关注大文件类型增长趋势，避免接近容量上限时影响后续存储。
@@ -202,7 +203,7 @@ function Overview() {
                 />
               </div>
 
-              <div className="mt-6 grid grid-cols-[1.2fr_0.8fr] gap-4">
+              <div className="mt-4 grid grid-cols-[1.2fr_0.8fr] gap-4">
                 <FileTypeDistribution fileTypes={fileTypes} />
                 <StorageCapacityPanel
                   totalSpace={totalSpace}

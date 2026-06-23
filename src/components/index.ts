@@ -1,5 +1,7 @@
-import Folder from "./Folder";
-import StaggeredMenu from "./StaggeredMenu";
+import Dock from "./ReactBits/dock"
+import Folder from "./ReactBits/folder";
+import PillNav from "./ReactBits/pill-nav";
+import StaggeredMenu from "./ReactBits/staggered-menu";
 
 import { Input } from './ShadcnUI/input'
 import { Button } from "./ShadcnUI/button";
@@ -162,6 +164,8 @@ export {
     BeeImagePreview,
     BeeImageContextMenu,
 
+    Dock,
     Folder,
+    PillNav,
     StaggeredMenu
 }

@@ -21,7 +21,7 @@ function StorageSummaryCard({
   return (
     <section
       className={cn(
-        "rounded-2xl border border-white/10 bg-black/40 p-5 shadow-lg backdrop-blur-md",
+        "rounded-2xl border border-white/10 bg-black/40 p-4 shadow-lg backdrop-blur-md",
         className,
       )}
     >
