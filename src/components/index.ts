@@ -88,6 +88,8 @@ import { BeeIcon } from "./BeeUI/bee-icon";
 import { BeeImage, BeeImageContextMenu, BeeImagePreview } from "./BeeUI/bee-image";
 import { BeeFolder } from "../views/folder-list/components/folder-item";
 
+export { BeeLoading } from "./BeeUI/bee-loading";
+
 export {
     Input,
     Button,

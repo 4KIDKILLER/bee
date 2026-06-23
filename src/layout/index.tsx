@@ -1,8 +1,9 @@
+import { Suspense, lazy } from "react";
 import { Route, Routes, BrowserRouter, useNavigate } from "react-router-dom";
-import { Dock, BeeIcon } from "/@c/index";
-import FolderList from "/@v/folder-list";
-import Overview from "/@v/overview";
-import { TooltipProvider } from "/@c/index";
+import { Dock, BeeIcon, BeeLoading, TooltipProvider } from "/@c/index";
+
+const FolderList = lazy(() => import("/@v/folder-list"));
+const Overview = lazy(() => import("/@v/overview"));
 
 const LayoutContent = () => {
   const navigate = useNavigate();
@@ -20,7 +21,14 @@ const LayoutContent = () => {
   ];
 
   return (
-    <>
+    <Suspense
+      fallback={
+        <BeeLoading
+          title="页面加载中..."
+          description="正在准备 BEE 工作台"
+        />
+      }
+    >
       <Routes>
         <Route path="/" element={<FolderList />} />
         <Route path="/overview" element={<Overview />} />
@@ -32,7 +40,7 @@ const LayoutContent = () => {
         baseItemSize={50}
         magnification={70}
       />
-    </>
+    </Suspense>
   );
 };
 
