@@ -3,16 +3,12 @@ import { StaggeredMenu } from "/@c/index";
 import FolderList from "/@v/folder-list";
 import Personal from "/@v/personal";
 import Overview from "/@v/overview";
-import Settings from "/@v/settings";
-import RecycleBin from "/@v/recycle-bin";
 import { TooltipProvider } from "/@c/index";
 
 const menuItems = [
   { label: "BEE相册", ariaLabel: "BEE Home", link: "/" },
   { label: "个人信息", ariaLabel: "Personal information", link: "/personal" },
   { label: "系统概览", ariaLabel: "System overview", link: "/overview" },
-  { label: "系统设置", ariaLabel: "System settings", link: "/settings" },
-  { label: "回收站", ariaLabel: "Recycle bin", link: "/recycle-bin" },
 ];
 
 const socialItems = [
@@ -30,8 +26,6 @@ const Layout = () => {
             <Route path="/" element={<FolderList />} />
             <Route path="/personal" element={<Personal />} />
             <Route path="/overview" element={<Overview />} />
-            <Route path="/settings" element={<Settings />} />
-            <Route path="/recycle-bin" element={<RecycleBin />} />
           </Routes>
 
           <StaggeredMenu
