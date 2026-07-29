@@ -8,7 +8,7 @@ import {
   useNavigate,
 } from "react-router-dom";
 import { LogOut } from "lucide-react";
-import { Dock, BeeIcon, BeeLoading, TooltipProvider } from "/@c/index";
+import { Dock, BeeIcon, BeeLoading, TooltipProvider,Toaster } from "/@c/index";
 import { useAuth } from "../permissions/auth-context";
 import { ProtectedRoute, PublicOnlyRoute } from "../permissions/route-guards";
 
@@ -57,6 +57,7 @@ const LayoutContent = () => {
         <BeeLoading title="页面加载中..." description="正在准备 BEE 工作台" />
       }
     >
+      <Toaster />
       <Routes>
         <Route
           path="/"

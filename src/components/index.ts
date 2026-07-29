@@ -81,6 +81,7 @@ import {
     AvatarGroupCount,
     AvatarImage,
   } from "./ShadcnUI/avatar"
+  import { Toaster } from "./ShadcnUI/sonner";
 
 import { BeeCell } from "../views/folder-list/components/cell";
 import { BeeTootip } from "./BeeUI/bee-tootip";
@@ -157,6 +158,7 @@ export {
     AvatarGroup,
     AvatarGroupCount,
     AvatarImage,
+    Toaster,
 
     BeeCell,
     BeeIcon,

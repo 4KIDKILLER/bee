@@ -6,6 +6,7 @@ import {
   type LoginPayload,
   type LoginResult,
 } from "./auth-context";
+import { UserApi } from "/@/api/user";
 
 function readStoredToken(): string | null {
   if (typeof window === "undefined") {
@@ -28,19 +29,6 @@ function readStoredToken(): string | null {
   return normalizedToken;
 }
 
-function createMockJwtToken(username: string) {
-  const header = btoa(JSON.stringify({ alg: "HS256", typ: "JWT" }));
-  const payload = btoa(
-    JSON.stringify({
-      sub: username,
-      iat: Date.now(),
-    }),
-  );
-  const signature = btoa(`bee-signature:${username}`);
-
-  return `${header}.${payload}.${signature}`;
-}
-
 function AuthProvider({ children }: PropsWithChildren) {
   const [token, setToken] = useState<string | null>(() => readStoredToken());
   const isHydrated = true;
@@ -50,11 +38,15 @@ function AuthProvider({ children }: PropsWithChildren) {
       const normalizedUsername = username.trim();
       const normalizedPassword = password.trim();
 
-      if (!normalizedUsername || !normalizedPassword) {
-        throw new Error("请输入账号和密码");
-      }
+      const response = await UserApi.loginApi({
+        username: normalizedUsername,
+        password: normalizedPassword,
+      });
+      const nextToken = response.data.token.trim();
 
-      const nextToken = createMockJwtToken(normalizedUsername);
+      if (!nextToken) {
+        throw new Error("登录接口未返回有效令牌");
+      }
 
       window.localStorage.setItem(AUTH_TOKEN_STORAGE_KEY, nextToken);
       setToken(nextToken);
