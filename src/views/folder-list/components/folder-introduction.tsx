@@ -15,16 +15,16 @@ interface FolderIntroductionProps {
   open: boolean;
   folder: BeeFileType | null;
   onClose: () => void;
-  onAddTag: (id: number, tag: string) => void;
-  onRemoveTag: (id: number, tag: string) => void;
-  onRemarkChange: (id: number, remark: string) => void;
+  onAddTag: (id: string, tag: string) => void;
+  onRemoveTag: (id: string, tag: string) => void;
+  onRemarkChange: (id: string, remark: string) => void;
   onPreviewImage: (images: string[], index: number) => void;
 }
 
 interface FolderTagEditorProps {
   folder: BeeFileType;
-  onAddTag: (id: number, tag: string) => void;
-  onRemoveTag: (id: number, tag: string) => void;
+  onAddTag: (id: string, tag: string) => void;
+  onRemoveTag: (id: string, tag: string) => void;
   className?: string;
   style?: CSSProperties;
 }
@@ -221,11 +221,11 @@ function  FolderIntroduction({
                 <div className="mt-4 space-y-3 text-sm text-white/75">
                   <div>
                     <div className="text-white/45">创建时间</div>
-                    <div className="mt-1 text-white">{folder.createdAt}</div>
+                    <div className="mt-1 text-white">{folder.createTime}</div>
                   </div>
                   <div>
                     <div className="text-white/45">上次打开时间</div>
-                    <div className="mt-1 text-white">{folder.lastOpenedAt}</div>
+                    <div className="mt-1 text-white">{folder.updateTime}</div>
                   </div>
                 </div>
               </section>
@@ -264,12 +264,12 @@ function  FolderIntroduction({
                     <span>封面</span>
                   </div>
                   <span className="text-xs text-white/40">
-                    {folder.images.length} 张预览
+                    {folder.covers.length} 张预览
                   </span>
                 </div>
-                {folder.images.length > 0 ? (
+                {folder.covers.length > 0 ? (
                   <div className="mt-4 grid grid-cols-3 gap-2">
-                    {folder.images.slice(0, 3).map((src, index) => (
+                    {folder.covers.slice(0, 3).map((src, index) => (
                       <div
                         key={`${folder.id}-${index}`}
                         className="group relative aspect-square overflow-hidden rounded-2xl border border-white/10 bg-white/5"
@@ -281,7 +281,7 @@ function  FolderIntroduction({
                           preview
                           // showContextMenu
                           onPreview={(imageSrc) =>
-                            onPreviewImage(folder.images, folder.images.indexOf(imageSrc))
+                            onPreviewImage(folder.covers, folder.covers.indexOf(imageSrc))
                           }
                         />
                         <div className="absolute inset-x-0 bottom-0 bg-linear-to-t from-black/70 to-transparent px-2 py-1 text-[11px] text-white/80 pointer-events-none">

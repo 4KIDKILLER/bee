@@ -1,14 +1,18 @@
 import type { ReactNode } from "react";
 
 export interface BeeFileType {
-  id: number;
-  type: 1 | 2;
-  name: string;
-  images: string[];
-  createdAt: string;
-  lastOpenedAt: string;
-  tags: string[];
-  remark: string;
+  id: string
+  parentId: string
+  userId: number
+  name: string
+  size: number
+  path: string
+  type: 1 | 2
+  tags: string[]
+  covers: string[]
+  remark: string
+  createTime: string
+  updateTime: string
 }
 
 export type UploadTaskStatus = "success" | "uploading" | "pending";
@@ -85,9 +89,9 @@ export interface ImageItemProps {
 export interface FolderScrollAreaProps {
   showUploadPanel: boolean;
   selection: boolean;
-  selectedFolders: number[];
-  openFolderId: number | null;
+  selectedFolders: string[];
+  openFolderId: string | null;
   onSelectionToggle: () => void;
-  onFolderCheckChange: (id: number) => void;
-  onFolderOpenChange: (id: number, open: boolean) => void;
+  onFolderCheckChange: (id: string) => void;
+  onFolderOpenChange: (id: string, open: boolean) => void;
 }

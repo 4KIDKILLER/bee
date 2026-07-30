@@ -20,10 +20,11 @@ export function BeeImageItem({
           className="overflow-hidden rounded-md"
           fit="contain"
           width={80}
+          alt="暂无图片 "
           height={64}
           preview
           onPreview={onPreview}
-          src={folder.images[0]}
+          src={folder.covers[0]}
         />
       </div>
       <div className="max-w-[100px] text-xs text-purple-50 text-shadow-amber-100">

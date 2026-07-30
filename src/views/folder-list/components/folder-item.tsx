@@ -16,8 +16,8 @@ export interface BeeFolderProps {
   selection?: boolean;
   isChecked?: boolean;
   isOpen?: boolean;
-  onFolderCheckChange?: (id: number) => void;
-  onFolderOpenChange?: (id: number, open: boolean) => void;
+  onFolderCheckChange?: (id: string) => void;
+  onFolderOpenChange?: (id: string, open: boolean) => void;
   onFolderInfo?: (folder: BeeFileType) => void;
   onFolderDelete?: (folder: BeeFileType) => void;
   onFolderRename?: (folder: BeeFileType) => void;
@@ -49,7 +49,7 @@ export function BeeFolder({
   onFolderDelete,
   onFolderRename,
 }: BeeFolderProps) {
-  const { id, name, images } = folder;
+  const { id, name, covers } = folder;
 
   return (
     <BeeCell>
@@ -61,7 +61,7 @@ export function BeeFolder({
         checkedColor="#4ADE80"
         onCheckChange={() => onFolderCheckChange?.(id)}
         onOpenChange={(open) => onFolderOpenChange?.(id, open)}
-        items={images.map((src, idx) => (
+        items={covers.map((src, idx) => (
           <ImageItem key={idx} src={src} alt={`folder-${id}-img-${idx}`} />
         ))}
       />

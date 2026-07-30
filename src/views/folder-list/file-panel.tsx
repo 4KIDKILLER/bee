@@ -34,8 +34,8 @@ function FolderScrollArea({
   const [folders, setFolders] = useState<BeeFileType[]>(folderSeeds);
   const [showFolderIntroduction, setShowFolderIntroduction] = useState(false);
   const [showImageIntroduction, setShowImageIntroduction] = useState(false);
-  const [activeFolderId, setActiveFolderId] = useState<number | null>(null);
-  const [activeImageId, setActiveImageId] = useState<number | null>(null);
+  const [activeFolderId, setActiveFolderId] = useState<string | null>(null);
+  const [activeImageId, setActiveImageId] = useState<string | null>(null);
   const [pendingDeleteFolder, setPendingDeleteFolder] =
     useState<BeeFileType | null>(null);
   const [previewOpen, setPreviewOpen] = useState(false);
@@ -46,14 +46,14 @@ function FolderScrollArea({
   const activeImage =
     folders.find((folder) => folder.id === activeImageId && folder.type === 2) ?? null;
 
-  const handleShowFolderIntroduction = (id: number) => {
+  const handleShowFolderIntroduction = (id: string) => {
     setActiveFolderId(id);
     setActiveImageId(null);
     setShowImageIntroduction(false);
     setShowFolderIntroduction(true);
   };
 
-  const handleShowImageIntroduction = (id: number) => {
+  const handleShowImageIntroduction = (id: string) => {
     setActiveImageId(id);
     setActiveFolderId(null);
     setShowFolderIntroduction(false);
@@ -68,7 +68,7 @@ function FolderScrollArea({
     setShowImageIntroduction(false);
   };
 
-  const handleAddTag = (id: number, tag: string) => {
+  const handleAddTag = (id: string, tag: string) => {
     const nextTag = tag.trim();
     if (!nextTag) {
       return;
@@ -88,7 +88,7 @@ function FolderScrollArea({
     );
   };
 
-  const handleRemoveTag = (id: number, tag: string) => {
+  const handleRemoveTag = (id: string, tag: string) => {
     setFolders((prev) =>
       prev.map((folder) =>
         folder.id === id
@@ -101,7 +101,7 @@ function FolderScrollArea({
     );
   };
 
-  const handleRemarkChange = (id: number, remark: string) => {
+  const handleRemarkChange = (id: string, remark: string) => {
     setFolders((prev) =>
       prev.map((folder) =>
         folder.id === id

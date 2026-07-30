@@ -1,21 +1,21 @@
 import type {
-    LoginDataType,
-    LoginParamsType,
-    LoginResponseType
-} from "../type/user";
+    UserLoginDataType,
+    UserLoginParamsType,
+    UserLoginResponseType
+} from "../types/user";
 import request from "/@/library/request";
 
 interface UserApiType {
-    loginApi: (params: LoginParamsType) => Promise<LoginResponseType>;
+    loginApi: (params: UserLoginParamsType) => Promise<UserLoginResponseType>;
 }
 
 const UserApi: UserApiType = {
-    loginApi(params: LoginParamsType): Promise<LoginResponseType> {
-        return request.post<LoginDataType, LoginParamsType>("/login", params, {
+    loginApi(params: UserLoginParamsType): Promise<UserLoginResponseType> {
+        return request.post<UserLoginDataType, UserLoginParamsType>("/login", params, {
             skipAuth: true,
         });
     }
-};
+}
 
 export { UserApi };
-export type { LoginDataType, LoginParamsType, UserApiType };
+export type { UserLoginDataType, UserLoginParamsType, UserApiType };

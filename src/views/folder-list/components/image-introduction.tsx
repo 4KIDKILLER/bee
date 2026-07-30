@@ -14,15 +14,15 @@ interface ImageIntroductionProps {
   open: boolean;
   data: BeeFileType | null;
   onClose: () => void;
-  onAddTag: (id: number, tag: string) => void;
-  onRemoveTag: (id: number, tag: string) => void;
-  onRemarkChange: (id: number, remark: string) => void;
+  onAddTag: (id: string, tag: string) => void;
+  onRemoveTag: (id: string, tag: string) => void;
+  onRemarkChange: (id: string, remark: string) => void;
 }
 
 interface ImageTagEditorProps {
   data: BeeFileType;
-  onAddTag: (id: number, tag: string) => void;
-  onRemoveTag: (id: number, tag: string) => void;
+  onAddTag: (id: string, tag: string) => void;
+  onRemoveTag: (id: string, tag: string) => void;
   className?: string;
   style?: CSSProperties;
 }
@@ -213,7 +213,7 @@ function ImageIntroduction({
                 style={previewAnimation.style}
               >
                 <BeeImage
-                  src={data.images[0]}
+                  src={data.covers[0]}
                   alt={data.name}
                   preview={false}
                   fit="contain"
@@ -232,16 +232,16 @@ function ImageIntroduction({
                 <div className="mt-4 space-y-3 text-sm text-white/75">
                   <div>
                     <div className="text-white/45">创建时间</div>
-                    <div className="mt-1 text-white">{data.createdAt}</div>
+                    <div className="mt-1 text-white">{data.createTime}</div>
                   </div>
                   <div>
                     <div className="text-white/45">上次打开时间</div>
-                    <div className="mt-1 text-white">{data.lastOpenedAt}</div>
+                    <div className="mt-1 text-white">{data.updateTime}</div>
                   </div>
                   <div>
                     <div className="text-white/45">资源地址</div>
                     <div className="mt-1 break-all text-xs text-white/70">
-                      {data.images[0]}
+                      {data.covers[0]}
                     </div>
                   </div>
                 </div>
