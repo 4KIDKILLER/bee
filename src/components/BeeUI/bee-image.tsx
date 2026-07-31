@@ -423,12 +423,13 @@ export function BeeImage({
 
   const imageNode = (
     <img
-      src={src}
-      alt={alt ?? ""}
+      alt={alt}
+      {...props}
       width={width}
       height={height}
       loading={loading}
       draggable={draggable}
+      onClick={handleImageClick}
       className={cn(preview && "cursor-zoom-in", className)}
       style={{
         width,
@@ -436,8 +437,7 @@ export function BeeImage({
         objectFit: fit,
         ...style,
       }}
-      onClick={handleImageClick}
-      {...props}
+      src={src || `${import.meta.env.VITE_FILE_BASE_URL}/default/cover.png`}
     />
   );
 
@@ -462,10 +462,7 @@ export function BeeImageContextMenu({
 }: {
   children: React.ReactNode;
 } & Partial<
-  Pick<
-    BeeImageProps,
-    "onViewDetail" | "onSetAsCover" | "onDelete"
-  >
+  Pick<BeeImageProps, "onViewDetail" | "onSetAsCover" | "onDelete">
 >) {
   return (
     <ContextMenu>

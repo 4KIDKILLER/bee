@@ -20,11 +20,11 @@ export function BeeImageItem({
           className="overflow-hidden rounded-md"
           fit="contain"
           width={80}
-          alt="暂无图片 "
+          alt="暂无图片"
           height={64}
           preview
           onPreview={onPreview}
-          src={folder.covers[0]}
+          src={folder.src}
         />
       </div>
       <div className="max-w-[100px] text-xs text-purple-50 text-shadow-amber-100">
@@ -32,10 +32,10 @@ export function BeeImageItem({
           onViewDetail={() => onViewDetail?.(folder)}
         >
           <span
-            title={folder.name}
+            title={folder.originalName}
             className="block truncate cursor-pointer rounded-md bg-black/35 px-[6px] py-[4px] transition-colors hover:bg-(--theme-color)"
           >
-            {folder.name}
+            {folder.originalName}
           </span>
         </BeeImageContextMenu>
       </div>

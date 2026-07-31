@@ -5,9 +5,10 @@ export interface BeeFileType {
   parentId: string
   userId: number
   name: string
+  originalName: string
   size: number
-  path: string
   type: 1 | 2
+  src: string
   tags: string[]
   covers: string[]
   remark: string

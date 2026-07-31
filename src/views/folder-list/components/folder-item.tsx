@@ -49,7 +49,6 @@ export function BeeFolder({
   onFolderDelete,
   onFolderRename,
 }: BeeFolderProps) {
-  const { id, name, covers } = folder;
 
   return (
     <BeeCell>
@@ -59,20 +58,20 @@ export function BeeFolder({
         selection={selection}
         isChecked={isChecked}
         checkedColor="#4ADE80"
-        onCheckChange={() => onFolderCheckChange?.(id)}
-        onOpenChange={(open) => onFolderOpenChange?.(id, open)}
-        items={covers.map((src, idx) => (
-          <ImageItem key={idx} src={src} alt={`folder-${id}-img-${idx}`} />
+        onCheckChange={() => onFolderCheckChange?.(folder.id)}
+        onOpenChange={(open) => onFolderOpenChange?.(folder.id, open)}
+        items={folder.covers.map((src, idx) => (
+          <ImageItem key={idx} src={src} alt={`folder-${folder.id}-img-${idx}`} />
         ))}
       />
       <div className="max-w-[100px] text-xs text-purple-50 text-shadow-amber-100">
         <ContextMenu>
           <ContextMenuTrigger asChild>
             <span
-              title={name}
+              title={folder.originalName}
               className="block w-full truncate cursor-pointer rounded-md bg-black/35 px-[6px] py-[4px] transition-colors hover:bg-(--theme-color)"
             >
-              {name}
+              {folder.originalName}
             </span>
           </ContextMenuTrigger>
           <ContextMenuContent>

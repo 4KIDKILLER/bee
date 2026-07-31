@@ -14,8 +14,8 @@ function FolderList() {
   });
   const [selection, setSelection] = useState(false);
   const [viewMode, setViewMode] = useState<FolderListViewMode>("list");
-  const [selectedFolders, setSelectedFolders] = useState<number[]>([]);
-  const [openFolderId, setOpenFolderId] = useState<number | null>(null);
+  const [selectedFolders, setSelectedFolders] = useState<string[]>([]);
+  const [openFolderId, setOpenFolderId] = useState<string | null>(null);
   const showUploadPanel = viewMode === "upload";
 
   const handleSelectionToggle = () => {
@@ -29,7 +29,7 @@ function FolderList() {
     });
   };
 
-  const handleFolderCheckChange = (id: number) => {
+  const handleFolderCheckChange = (id: string) => {
     setSelectedFolders((prev) =>
       prev.includes(id)
         ? prev.filter((folderId) => folderId !== id)
@@ -37,7 +37,7 @@ function FolderList() {
     );
   };
 
-  const handleFolderOpenChange = (id: number, open: boolean) => {
+  const handleFolderOpenChange = (id: string, open: boolean) => {
     setOpenFolderId(open ? id : null);
   };
 
