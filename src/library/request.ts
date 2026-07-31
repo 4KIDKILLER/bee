@@ -105,12 +105,16 @@ function normalizeError(error: unknown) {
         const responseData = error.response?.data;
         const status = error.response?.status;
         const code = getApiCode(responseData);
+        const fallbackMessage = status
+            ? `请求失败，状态码：${status}`
+            : "网络异常，请检查网络连接";
         const message =
             getErrorMessage(responseData) ||
-            (status ? `请求失败，状态码：${status}` : error.message) ||
+            fallbackMessage ||
+            error.message ||
             DEFAULT_ERROR_MESSAGE;
 
-        if (code !== undefined && !SUCCESS_CODES.has(code)) {
+        if (code === undefined || !SUCCESS_CODES.has(code)) {
             showErrorToast(message);
         }
 
