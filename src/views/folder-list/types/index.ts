@@ -1,20 +1,7 @@
 import type { ReactNode } from "react";
+import type { FileListDataType } from "/@/api/file"
 
-export interface BeeFileType {
-  id: string
-  parentId: string
-  userId: number
-  name: string
-  originalName: string
-  size: number
-  type: 1 | 2
-  src: string
-  tags: string[]
-  covers: string[]
-  remark: string
-  createTime: string
-  updateTime: string
-}
+export type BeeFileType = FileListDataType
 
 export type UploadTaskStatus = "success" | "uploading" | "pending";
 export type UploadFilterKey = UploadTaskStatus;

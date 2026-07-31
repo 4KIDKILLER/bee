@@ -1,5 +1,3 @@
-import type { ApiResponse } from "/@/library/request";
-
 interface UserLoginParamsType {
     username: string;
     password: string;
@@ -11,7 +9,6 @@ interface UserLoginDataType {
     username: string;
 }
 
-type UserLoginResponseType = ApiResponse<UserLoginDataType>
-
+type UserLoginResponseType = ApiResponseType<UserLoginDataType>
 
 export type { UserLoginDataType, UserLoginParamsType, UserLoginResponseType };

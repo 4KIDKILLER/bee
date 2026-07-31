@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   BeeFolder,
   BeeImagePreview,
@@ -20,7 +20,7 @@ import FolderIntroduction from "./components/folder-introduction";
 import ImageIntroduction from "./components/image-introduction";
 import BeeImageItem from "./components/image-item";
 import type { BeeFileType, FolderScrollAreaProps } from "./types";
-import { folderSeeds } from "./mock";
+import { FileApi } from "/@/api/file";
 
 function FolderScrollArea({
   showUploadPanel,
@@ -31,7 +31,7 @@ function FolderScrollArea({
   onFolderCheckChange,
   onFolderOpenChange,
 }: FolderScrollAreaProps) {
-  const [folders, setFolders] = useState<BeeFileType[]>(folderSeeds);
+  const [folders, setFolders] = useState<BeeFileType[]>([]);
   const [showFolderIntroduction, setShowFolderIntroduction] = useState(false);
   const [showImageIntroduction, setShowImageIntroduction] = useState(false);
   const [activeFolderId, setActiveFolderId] = useState<string | null>(null);
@@ -44,7 +44,9 @@ function FolderScrollArea({
   const activeFolder =
     folders.find((folder) => folder.id === activeFolderId) ?? null;
   const activeImage =
-    folders.find((folder) => folder.id === activeImageId && folder.type === 2) ?? null;
+    folders.find(
+      (folder) => folder.id === activeImageId && folder.type === 2,
+    ) ?? null;
 
   const handleShowFolderIntroduction = (id: string) => {
     setActiveFolderId(id);
@@ -141,6 +143,18 @@ function FolderScrollArea({
 
     setPendingDeleteFolder(null);
   };
+
+  useEffect(() => {
+    FileApi.getFileListApi({
+      page: 1,
+      parentId: "",
+      pageSize: 50,
+    }).then((res) => {
+      if (res.code == 200) {
+        setFolders(res.data.list);
+      }
+    });
+  }, []);
 
   return (
     <>

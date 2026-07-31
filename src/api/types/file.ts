@@ -1,5 +1,4 @@
-import type { ApiResponse } from "/@/library/request";
-
+import type { AxiosProgressEvent } from "axios"
 interface FileUploadParamsType {
     file: File
     parentId: string
@@ -12,28 +11,31 @@ interface FileListParamsType {
 }
 
 interface FileListDataType {
-    id: number
+    id: string
     parentId: string
-    fileId: string
     userId: number
-    fileName: string
-    fileSize: number
-    filePath: string
-    fileType: number
-    fileExt: string
-    updateTime: string
+    name: string
+    originalName: string
+    size: number
+    type: 1 | 2
+    src: string
+    tags: string[]
+    covers: string[]
+    remark: string
     createTime: string
-    type: number
-    status: number
+    updateTime: string
 }
 
-type FileUploadResponseType = ApiResponse<null>
-type FileListResponseType = ApiResponse<FileListDataType[]>
+type OnUploadProgressType = (e: AxiosProgressEvent) => void
+
+type FileUploadResponseType = ApiResponseType<null>
+type FileListResponseType = ApiListResponseType<FileListDataType>
 
 export type {
     FileListDataType,
     FileListParamsType,
     FileListResponseType,
     FileUploadParamsType,
-    FileUploadResponseType
+    OnUploadProgressType,
+    FileUploadResponseType,
 }

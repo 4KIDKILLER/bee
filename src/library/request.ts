@@ -6,28 +6,20 @@ import type {
 } from "axios";
 import { AUTH_TOKEN_STORAGE_KEY } from "../permissions/constants";
 
-type ApiCode = number;
-
-interface ApiResponse<T = unknown> {
-    code: ApiCode;
-    data: T;
-    message: string;
-}
-
 interface RequestConfig<D = unknown> extends AxiosRequestConfig<D> {
     rawResponse?: boolean;
     skipAuth?: boolean;
 }
 
 interface RequestErrorOptions {
-    code?: ApiCode;
+    code?: ApiCodeType;
     data?: unknown;
     response?: AxiosResponse;
     status?: number;
 }
 
 class RequestError extends Error {
-    code?: ApiCode;
+    code?: ApiCodeType;
     data?: unknown;
     response?: AxiosResponse;
     status?: number;
@@ -42,7 +34,7 @@ class RequestError extends Error {
     }
 }
 
-const SUCCESS_CODES = new Set<ApiCode>([200]);
+const SUCCESS_CODES = new Set<ApiCodeType>([200]);
 const DEFAULT_ERROR_MESSAGE = "请求失败，请稍后重试";
 const RESPONSE_FORMAT_ERROR_MESSAGE = "接口响应格式异常";
 
@@ -86,7 +78,7 @@ function getApiCode(data: unknown) {
     return typeof code === "number" ? code : undefined;
 }
 
-function isApiResponse<T = unknown>(data: unknown): data is ApiResponse<T> {
+function isApiResponse<T = unknown>(data: unknown): data is ApiResponseType<T> {
     return (
         isRecord(data) &&
         typeof data.code === "number" &&
@@ -95,7 +87,7 @@ function isApiResponse<T = unknown>(data: unknown): data is ApiResponse<T> {
     );
 }
 
-function isApiSuccess(data: ApiResponse) {
+function isApiSuccess(data: ApiResponseType) {
     return SUCCESS_CODES.has(data.code);
 }
 
@@ -136,7 +128,7 @@ requestInstance.interceptors.request.use(
             const headers = AxiosHeaders.from(requestConfig.headers);
 
             if (!headers.has("Authorization")) {
-                headers.set("Authorization", `Bearer ${token}`);
+                headers.set("Authorization", token);
             }
 
             requestConfig.headers = headers;
@@ -184,14 +176,14 @@ requestInstance.interceptors.response.use(
 
 function request<T = unknown, D = unknown>(
     config: RequestConfig<D> & { rawResponse: true },
-): Promise<AxiosResponse<ApiResponse<T>>>;
+): Promise<AxiosResponse<ApiResponseType<T>>>;
 function request<T = unknown, D = unknown>(
     config: RequestConfig<D>,
-): Promise<ApiResponse<T>>;
+): Promise<ApiResponseType<T>>;
 function request<T = unknown, D = unknown>(config: RequestConfig<D>) {
     return requestInstance.request<
-        ApiResponse<T>,
-        ApiResponse<T> | AxiosResponse<ApiResponse<T>>,
+        ApiResponseType<T>,
+        ApiResponseType<T> | AxiosResponse<ApiResponseType<T>>,
         D
     >(config);
 }
@@ -271,7 +263,7 @@ export {
     request,
     requestInstance,
 };
-export type { ApiResponse, RequestConfig };
+export type { RequestConfig };
 
 export default {
     delete: del,
