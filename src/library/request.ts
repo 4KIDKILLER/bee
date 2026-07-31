@@ -4,6 +4,7 @@ import type {
     AxiosResponse,
     InternalAxiosRequestConfig,
 } from "axios";
+import { toast } from "sonner";
 import { AUTH_TOKEN_STORAGE_KEY } from "../permissions/constants";
 
 interface RequestConfig<D = unknown> extends AxiosRequestConfig<D> {
@@ -91,6 +92,10 @@ function isApiSuccess(data: ApiResponseType) {
     return SUCCESS_CODES.has(data.code);
 }
 
+function showErrorToast(message: string) {
+    toast.error(message || DEFAULT_ERROR_MESSAGE);
+}
+
 function normalizeError(error: unknown) {
     if (error instanceof RequestError) {
         return error;
@@ -99,13 +104,18 @@ function normalizeError(error: unknown) {
     if (axios.isAxiosError(error)) {
         const responseData = error.response?.data;
         const status = error.response?.status;
+        const code = getApiCode(responseData);
         const message =
             getErrorMessage(responseData) ||
             (status ? `请求失败，状态码：${status}` : error.message) ||
             DEFAULT_ERROR_MESSAGE;
 
+        if (code !== undefined && !SUCCESS_CODES.has(code)) {
+            showErrorToast(message);
+        }
+
         return new RequestError(message, {
-            code: getApiCode(responseData),
+            code,
             data: responseData,
             response: error.response,
             status,
@@ -162,8 +172,11 @@ requestInstance.interceptors.response.use(
             return data as never;
         }
 
+        const message = getErrorMessage(data) || DEFAULT_ERROR_MESSAGE;
+        showErrorToast(message);
+
         return Promise.reject(
-            new RequestError(getErrorMessage(data) || DEFAULT_ERROR_MESSAGE, {
+            new RequestError(message, {
                 code: data.code,
                 data,
                 response,

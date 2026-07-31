@@ -1,6 +1,5 @@
 import { useMemo, useState, type ChangeEvent, type FormEvent } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { toast } from "sonner";
 import {
   BeeIcon,
   Button,
@@ -64,11 +63,8 @@ function Login() {
       setFormState(initialFormState);
       setHasSubmitted(false);
       navigate(redirectPath, { replace: true });
-    } catch (error) {
+    } catch {
       setHasSubmitted(false);
-      toast.error(
-        error instanceof Error ? error.message : "登录失败，请稍后重试",
-      );
     } finally {
       setSubmitting(false);
     }
