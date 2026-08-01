@@ -1,7 +1,6 @@
 import type {
     FileListDataType,
     FileListParamsType,
-    FileUploadParamsType,
     FileListResponseType,
     OnUploadProgressType,
     FileUploadResponseType
@@ -10,7 +9,7 @@ import request from "/@/library/request";
 
 interface FileApiType {
     getFileListApi: (params: FileListParamsType, signal?: AbortSignal) => Promise<FileListResponseType>
-    uploadFileApi: (params: FileUploadParamsType, onUploadProgress: OnUploadProgressType) => Promise<FileUploadResponseType>
+    uploadFileApi: (params: FormData, onUploadProgress: OnUploadProgressType) => Promise<FileUploadResponseType>
 }
 
 const FileApi: FileApiType = {
@@ -19,8 +18,8 @@ const FileApi: FileApiType = {
      * @param params 
      * @returns 
      */
-    uploadFileApi(params: FileUploadParamsType, onUploadProgress: OnUploadProgressType): Promise<FileUploadResponseType> {
-        return request.post<null, FileUploadParamsType>("/upload", params, { onUploadProgress })
+    uploadFileApi(params: FormData, onUploadProgress: OnUploadProgressType): Promise<FileUploadResponseType> {
+        return request.post<null, FormData>("/upload", params, { onUploadProgress })
     },
     /**
      * @description 获取文件列表
@@ -36,7 +35,6 @@ export { FileApi };
 export type {
     FileListDataType,
     FileListParamsType,
-    FileUploadParamsType,
     FileListResponseType,
     OnUploadProgressType,
     FileUploadResponseType

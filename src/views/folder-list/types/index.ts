@@ -6,14 +6,18 @@ export type BeeFileType = FileListDataType
 export type UploadTaskStatus = "success" | "uploading" | "pending";
 export type UploadFilterKey = UploadTaskStatus;
 
-export interface UploadTask {
-  id: number;
+export interface UploadTaskItem {
+  id: string;
   name: string;
   folderName: string;
   progress: number;
   status: UploadTaskStatus;
   size: string;
 }
+
+export type Task = Record<string, UploadTaskItem>
+
+export type UploadTask = Record<UploadTaskStatus, Task>
 
 export type FolderListViewMode = "list" | "upload";
 
@@ -48,7 +52,7 @@ export interface UploadStatusMenuItem {
 }
 
 export interface UploadStatusMenuProps {
-  onUploadTrigger:()=>void
+  onUploadTrigger: () => void
   activeKey: UploadFilterKey
   items: UploadStatusMenuItem[]
   onChange: (key: UploadFilterKey) => void;
@@ -65,7 +69,7 @@ export interface UploadTaskStatusConfig {
 
 export interface UploadTaskListProps {
   title: string;
-  tasks: UploadTask[];
+  tasks: Task;
   emptyText: string;
   statusMap: Record<UploadTaskStatus, UploadTaskStatusConfig>;
 }

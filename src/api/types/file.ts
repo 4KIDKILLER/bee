@@ -1,8 +1,4 @@
 import type { AxiosProgressEvent } from "axios"
-interface FileUploadParamsType {
-    file: File
-    parentId: string
-}
 
 interface FileListParamsType {
     page: number
@@ -35,7 +31,6 @@ export type {
     FileListDataType,
     FileListParamsType,
     FileListResponseType,
-    FileUploadParamsType,
     OnUploadProgressType,
     FileUploadResponseType,
 }

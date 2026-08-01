@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useRef, useCallback } from "react";
 import { Spinner } from "/@c/index";
 import { CheckCircle2, Clock3, Upload } from "lucide-react";
 import UploadStatusMenu from "./components/upload-status-menu";
@@ -10,6 +10,11 @@ import type {
   UploadTaskStatus,
   UploadTaskStatusConfig,
 } from "./types";
+import { FileApi } from "/@/api/file";
+import RequestPool from "/@/library/class/RequestPool";
+import { formatFileSize } from "/@/library/utils";
+
+const MIN_UPLOAD_DISPLAY_DURATION = 3000;
 
 const statusMap: Record<UploadTaskStatus, UploadTaskStatusConfig> = {
   success: {
@@ -56,43 +61,44 @@ const filterMeta: Record<
   },
 };
 
-const initialUploadTasks: UploadTask[] = [
-  {
-    id: 1,
-    name: "travel-cover.png",
-    folderName: "手机图库",
-    progress: 100,
-    status: "success",
-    size: "12.4 MB",
-  },
-  {
-    id: 2,
-    name: "wallpaper-4k.jpg",
-    folderName: "壁纸",
-    progress: 72,
-    status: "uploading",
-    size: "18.7 MB",
-  },
-  {
-    id: 3,
-    name: "meeting-shot.heic",
-    folderName: "截图",
-    progress: 26,
-    status: "pending",
-    size: "6.1 MB",
-  },
-];
+// const initialUploadTasks: UploadTask = {
+//   success: {
+//     "12312321": {
+//       id: 1,
+//       name: "travel-cover.png",
+//       folderName: "手机图库",
+//       progress: 100,
+//       status: "success",
+//       size: "12.4 MB",
+//     },
+//     awefawe11: {
+//       id: 3,
+//       name: "meeting-shot.heic",
+//       folderName: "截图",
+//       progress: 26,
+//       status: "pending",
+//       size: "6.1 MB",
+//     },
+//   },
+//   uploading: {},
+//   pending: {},
+// };
 
 function UploadPanel({ showUploadPanel }: UploadPanelProps) {
-  const [tasks] = useState<UploadTask[]>(initialUploadTasks);
+  const [tasks, setTasks] = useState<UploadTask>({
+    success: {},
+    uploading: {},
+    pending: {},
+  });
   const [activeFilter, setActiveFilter] =
     useState<UploadFilterKey>("uploading");
+  const requestPoolRef = useRef(new RequestPool(3));
 
   const counts = useMemo(
     () => ({
-      uploading: tasks.filter((task) => task.status === "uploading").length,
-      success: tasks.filter((task) => task.status === "success").length,
-      pending: tasks.filter((task) => task.status === "pending").length,
+      uploading: Object.keys(tasks.uploading).length,
+      success: Object.keys(tasks.success).length,
+      pending: Object.keys(tasks.pending).length,
     }),
     [tasks],
   );
@@ -104,38 +110,214 @@ function UploadPanel({ showUploadPanel }: UploadPanelProps) {
         label: "进行中",
         count: counts.uploading,
         activeClass: statusMap.uploading.badgeClass,
-        hoverClass: "hover:border-sky-400/20 hover:bg-sky-400/10 hover:text-sky-200",
+        hoverClass:
+          "hover:border-sky-400/20 hover:bg-sky-400/10 hover:text-sky-200",
       },
       {
         key: "success" as const,
         label: "已完成",
         count: counts.success,
         activeClass: statusMap.success.badgeClass,
-        hoverClass: "hover:border-emerald-400/20 hover:bg-emerald-400/10 hover:text-emerald-200",
+        hoverClass:
+          "hover:border-emerald-400/20 hover:bg-emerald-400/10 hover:text-emerald-200",
       },
       {
         key: "pending" as const,
         label: "等待中",
         count: counts.pending,
         activeClass: statusMap.pending.badgeClass,
-        hoverClass: "hover:border-amber-400/20 hover:bg-amber-400/10 hover:text-amber-200",
+        hoverClass:
+          "hover:border-amber-400/20 hover:bg-amber-400/10 hover:text-amber-200",
       },
     ],
     [counts],
   );
 
   const filteredTasks = useMemo(
-    () => tasks.filter((task) => task.status === activeFilter),
+    () => tasks[activeFilter],
     [activeFilter, tasks],
   );
 
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const finishedCount = counts.success;
+  const allCount = counts.pending + counts.success + counts.uploading;
   const currentMeta = filterMeta[activeFilter];
   const currentStatus = statusMap[activeFilter];
 
-  const handleUpload = () => {
-    
-  }
+  const handleUpload = useCallback(() => {
+    // setTasks(
+    //   (prev) => [
+    //     ...prev,
+    //     {
+    //       id: 2,
+    //       name: "wallpaper-4k.jpg",
+    //       folderName: "壁纸",
+    //       progress: 72,
+    //       status: "uploading",
+    //       size: "18.7 MB",
+    //     },
+    //   ],
+    // );
+    fileInputRef.current?.click();
+  }, []);
+
+  const handleFileChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const files = e.target.files;
+      if (!files || files.length === 0) return;
+
+      const uploadTasks = Array.from(files).map((file) => {
+        const taskId = crypto.randomUUID().replaceAll("-", "");
+
+        return {
+          file,
+          taskId,
+          task: {
+            id: taskId,
+            progress: 0,
+            name: file.name,
+            folderName: "当前目录",
+            status: "pending" as const,
+            size: formatFileSize(file.size),
+          },
+        };
+      });
+
+      setTasks((prev) => ({
+        ...prev,
+        pending: {
+          ...prev.pending,
+          ...Object.fromEntries(
+            uploadTasks.map(({ taskId, task }) => [taskId, task]),
+          ),
+        },
+      }));
+
+      uploadTasks.forEach(({ file, taskId }) => {
+        void requestPoolRef.current
+          .add(() => {
+            setTasks((prev) => {
+              const task = prev.pending[taskId];
+              if (!task) return prev;
+
+              const pending = { ...prev.pending };
+              delete pending[taskId];
+
+              return {
+                ...prev,
+                pending,
+                uploading: {
+                  ...prev.uploading,
+                  [taskId]: { ...task, status: "uploading" },
+                },
+              };
+            });
+
+            const requestData = new FormData();
+            requestData.append("file", file);
+            requestData.append("parentId", "");
+
+            const startedAt = performance.now();
+            let actualProgress = 0;
+
+            const updateDisplayedProgress = () => {
+              const elapsed = performance.now() - startedAt;
+              const timedProgress = Math.min(
+                99,
+                Math.floor((elapsed / MIN_UPLOAD_DISPLAY_DURATION) * 100),
+              );
+              const progress = Math.min(actualProgress, timedProgress);
+
+              setTasks((prev) => {
+                const task = prev.uploading[taskId];
+                if (!task || task.progress === progress) return prev;
+
+                return {
+                  ...prev,
+                  uploading: {
+                    ...prev.uploading,
+                    [taskId]: { ...task, progress },
+                  },
+                };
+              });
+            };
+
+            const progressTimer = window.setInterval(
+              updateDisplayedProgress,
+              100,
+            );
+
+            return FileApi.uploadFileApi(requestData, (progressEvent) => {
+              actualProgress = progressEvent.total
+                ? Math.round(
+                    (progressEvent.loaded / progressEvent.total) * 100,
+                  )
+                : Math.round((progressEvent.progress ?? 0) * 100);
+              updateDisplayedProgress();
+            })
+              .then(async (result) => {
+                actualProgress = 100;
+                const remainingDuration = Math.max(
+                  0,
+                  MIN_UPLOAD_DISPLAY_DURATION -
+                    (performance.now() - startedAt),
+                );
+
+                if (remainingDuration > 0) {
+                  await new Promise<void>((resolve) => {
+                    window.setTimeout(resolve, remainingDuration);
+                  });
+                }
+
+                return result;
+              })
+              .finally(() => {
+                window.clearInterval(progressTimer);
+              });
+          })
+          .then(() => {
+            setTasks((prev) => {
+              const task = prev.uploading[taskId];
+              if (!task) return prev;
+
+              const uploading = { ...prev.uploading };
+              delete uploading[taskId];
+
+              return {
+                ...prev,
+                uploading,
+                success: {
+                  ...prev.success,
+                  [taskId]: { ...task, progress: 100, status: "success" },
+                },
+              };
+            });
+          })
+          .catch(() => {
+            setTasks((prev) => {
+              const task = prev.uploading[taskId];
+              if (!task) return prev;
+
+              const uploading = { ...prev.uploading };
+              delete uploading[taskId];
+
+              return {
+                ...prev,
+                uploading,
+                pending: {
+                  ...prev.pending,
+                  [taskId]: { ...task, progress: 0, status: "pending" },
+                },
+              };
+            });
+          });
+      });
+
+      e.target.value = "";
+    },
+    [],
+  );
 
   return (
     <div
@@ -143,6 +325,14 @@ function UploadPanel({ showUploadPanel }: UploadPanelProps) {
         showUploadPanel ? "translate-x-0" : "translate-x-full"
       }`}
     >
+      <input
+        type="file"
+        multiple
+        id="fileInput"
+        className="hidden"
+        ref={fileInputRef}
+        onChange={handleFileChange}
+      />
       <div className="flex h-full text-white w-full overflow-hidden border border-white/10">
         <UploadStatusMenu
           items={menuItems}
@@ -160,7 +350,7 @@ function UploadPanel({ showUploadPanel }: UploadPanelProps) {
                   上传队列
                 </div>
                 <p className="mt-1 text-sm text-white/50">
-                  当前共有 {tasks.length} 个任务，已完成 {finishedCount} 个
+                  当前共有 {allCount} 个任务，已完成 {finishedCount} 个
                 </p>
               </div>
               <div
