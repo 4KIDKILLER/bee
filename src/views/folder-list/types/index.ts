@@ -48,8 +48,9 @@ export interface UploadStatusMenuItem {
 }
 
 export interface UploadStatusMenuProps {
-  items: UploadStatusMenuItem[];
-  activeKey: UploadFilterKey;
+  onUploadTrigger:()=>void
+  activeKey: UploadFilterKey
+  items: UploadStatusMenuItem[]
   onChange: (key: UploadFilterKey) => void;
 }
 
@@ -74,12 +75,21 @@ export interface ImageItemProps {
   alt?: string;
 }
 
+export interface FileListPaginationMeta {
+  page: number;
+  pageSize: number;
+  total: number;
+}
+
 export interface FolderScrollAreaProps {
   showUploadPanel: boolean;
   selection: boolean;
   selectedFolders: string[];
   openFolderId: string | null;
+  page: number;
+  limit: number;
   onSelectionToggle: () => void;
   onFolderCheckChange: (id: string) => void;
   onFolderOpenChange: (id: string, open: boolean) => void;
+  onPaginationChange: (pagination: FileListPaginationMeta) => void;
 }

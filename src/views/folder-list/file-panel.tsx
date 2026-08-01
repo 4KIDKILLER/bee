@@ -27,9 +27,12 @@ function FolderScrollArea({
   selection,
   selectedFolders,
   openFolderId,
+  page,
+  limit,
   // onSelectionToggle,
   onFolderCheckChange,
   onFolderOpenChange,
+  onPaginationChange,
 }: FolderScrollAreaProps) {
   const [folders, setFolders] = useState<BeeFileType[]>([]);
   const [showFolderIntroduction, setShowFolderIntroduction] = useState(false);
@@ -145,16 +148,30 @@ function FolderScrollArea({
   };
 
   useEffect(() => {
-    FileApi.getFileListApi({
-      page: 1,
-      parentId: "",
-      pageSize: 50,
-    }).then((res) => {
-      if (res.code == 200) {
+    const controller = new AbortController();
+
+    FileApi.getFileListApi(
+      {
+        page,
+        parentId: "",
+        pageSize: limit,
+      },
+      controller.signal,
+    )
+      .then((res) => {
         setFolders(res.data.list);
-      }
-    });
-  }, []);
+        onPaginationChange({
+          page: res.data.page,
+          pageSize: res.data.pageSize,
+          total: res.data.total,
+        });
+      })
+      .catch(() => {});
+
+    return () => {
+      controller.abort();
+    };
+  }, [limit, onPaginationChange, page]);
 
   return (
     <>

@@ -101,6 +101,10 @@ function normalizeError(error: unknown) {
         return error;
     }
 
+    if (axios.isCancel(error)) {
+        return new RequestError(error.message, { data: error });
+    }
+
     if (axios.isAxiosError(error)) {
         const responseData = error.response?.data;
         const status = error.response?.status;

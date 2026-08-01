@@ -1,16 +1,16 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { cn } from "/@/library/utils";
 import FilePanel from "./file-panel";
 import UploadPanel from "./upload-panel";
 import FolderListPagination from "./components/folder-list-pagination";
 import ViewModeSwitch from "./components/view-mode-switch";
-import type { FolderListViewMode } from "./types";
+import type { FileListPaginationMeta, FolderListViewMode } from "./types";
 
 function FolderList() {
   const [pageInfo, setPageInfo] = useState({
-    limit: 50,
-    total: 1500,
-    page: 30,
+    page: 1,
+    total: 0,
+    limit: 1,
   });
   const [selection, setSelection] = useState(false);
   const [viewMode, setViewMode] = useState<FolderListViewMode>("list");
@@ -41,6 +41,17 @@ function FolderList() {
     setOpenFolderId(open ? id : null);
   };
 
+  const handlePaginationChange = useCallback(
+    ({ page, pageSize, total }: FileListPaginationMeta) => {
+      setPageInfo({
+        page,
+        total,
+        limit: pageSize,
+      });
+    },
+    [],
+  );
+
   const handlePageChange = (page: number) => {
     setPageInfo((prev) => {
       const totalPages = Math.max(1, Math.ceil(prev.total / prev.limit));
@@ -66,9 +77,12 @@ function FolderList() {
                 selection={selection}
                 selectedFolders={selectedFolders}
                 openFolderId={openFolderId}
+                page={pageInfo.page}
+                limit={pageInfo.limit}
                 onSelectionToggle={handleSelectionToggle}
                 onFolderCheckChange={handleFolderCheckChange}
                 onFolderOpenChange={handleFolderOpenChange}
+                onPaginationChange={handlePaginationChange}
               />
               <UploadPanel showUploadPanel={showUploadPanel} />
             </div>

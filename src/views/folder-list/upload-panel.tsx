@@ -133,6 +133,10 @@ function UploadPanel({ showUploadPanel }: UploadPanelProps) {
   const currentMeta = filterMeta[activeFilter];
   const currentStatus = statusMap[activeFilter];
 
+  const handleUpload = () => {
+    
+  }
+
   return (
     <div
       className={`absolute inset-0 h-full w-full will-change-transform transition-transform duration-300 ease-in-out ${
@@ -144,6 +148,7 @@ function UploadPanel({ showUploadPanel }: UploadPanelProps) {
           items={menuItems}
           activeKey={activeFilter}
           onChange={setActiveFilter}
+          onUploadTrigger={handleUpload}
         />
 
         <div className="flex min-h-0 flex-1 flex-col">

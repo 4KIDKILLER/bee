@@ -9,7 +9,7 @@ import type {
 import request from "/@/library/request";
 
 interface FileApiType {
-    getFileListApi: (params: FileListParamsType) => Promise<FileListResponseType>
+    getFileListApi: (params: FileListParamsType, signal?: AbortSignal) => Promise<FileListResponseType>
     uploadFileApi: (params: FileUploadParamsType, onUploadProgress: OnUploadProgressType) => Promise<FileUploadResponseType>
 }
 
@@ -27,8 +27,8 @@ const FileApi: FileApiType = {
      * @param params 
      * @returns 
      */
-    getFileListApi(params: FileListParamsType): Promise<FileListResponseType> {
-        return request.get<ApiDataListType<FileListDataType>, FileListParamsType>("/getFileList", params)
+    getFileListApi(params: FileListParamsType, signal?: AbortSignal): Promise<FileListResponseType> {
+        return request.get<ApiDataListType<FileListDataType>, FileListParamsType>("/getFileList", params, { signal })
     }
 }
 
