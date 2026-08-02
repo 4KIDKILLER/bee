@@ -5,7 +5,10 @@ import type {
     InternalAxiosRequestConfig,
 } from "axios";
 import { toast } from "sonner";
-import { AUTH_TOKEN_STORAGE_KEY } from "../permissions/constants";
+import {
+    AUTH_LOGOUT_EVENT,
+    AUTH_TOKEN_STORAGE_KEY,
+} from "../permissions/constants";
 
 interface RequestConfig<D = unknown> extends AxiosRequestConfig<D> {
     rawResponse?: boolean;
@@ -55,6 +58,15 @@ function getStoredToken() {
 
     const token = window.localStorage.getItem(AUTH_TOKEN_STORAGE_KEY)?.trim();
     return token || null;
+}
+
+function logout() {
+    if (typeof window === "undefined") {
+        return;
+    }
+
+    window.localStorage.removeItem(AUTH_TOKEN_STORAGE_KEY);
+    window.dispatchEvent(new Event(AUTH_LOGOUT_EVENT));
 }
 
 function getErrorMessage(data: unknown) {
@@ -118,6 +130,11 @@ function normalizeError(error: unknown) {
             error.message ||
             DEFAULT_ERROR_MESSAGE;
 
+        // HTTP 非 2xx 响应会进入 Axios 的错误分支，因此在这里处理 401 响应体中的 7001 业务码
+        if (code === 7001) {
+            logout();
+        }
+
         if (code === undefined || !SUCCESS_CODES.has(code)) {
             showErrorToast(message);
         }
@@ -178,6 +195,10 @@ requestInstance.interceptors.response.use(
 
         if (isApiSuccess(data)) {
             return data as never;
+        }
+
+        if (data.code === 7001) {
+            logout();
         }
 
         const message = getErrorMessage(data) || DEFAULT_ERROR_MESSAGE;

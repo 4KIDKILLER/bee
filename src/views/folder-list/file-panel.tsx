@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   BeeFolder,
   BeeImagePreview,
@@ -13,8 +13,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "/@c/index";
-
-// import { SquareMousePointer, SquareDashedMousePointer } from "lucide-react";
+// SquareMousePointer, SquareDashedMousePointer
 import CreateFolderDialog from "./components/create-folder-dialog";
 import FolderIntroduction from "./components/folder-introduction";
 import ImageIntroduction from "./components/image-introduction";
@@ -44,6 +43,7 @@ function FolderScrollArea({
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImages, setPreviewImages] = useState<string[]>([]);
   const [previewIndex, setPreviewIndex] = useState(0);
+  const requestControllerRef = useRef<AbortController | null>(null);
   const activeFolder =
     folders.find((folder) => folder.id === activeFolderId) ?? null;
   const activeImage =
@@ -147,10 +147,13 @@ function FolderScrollArea({
     setPendingDeleteFolder(null);
   };
 
-  useEffect(() => {
-    const controller = new AbortController();
+  const getFileList = useCallback(() => {
+    requestControllerRef.current?.abort();
 
-    FileApi.getFileListApi(
+    const controller = new AbortController();
+    requestControllerRef.current = controller;
+
+    return FileApi.getFileListApi(
       {
         page,
         parentId: "",
@@ -167,11 +170,19 @@ function FolderScrollArea({
         });
       })
       .catch(() => {});
+  }, [limit, onPaginationChange, page]);
+
+  const onRefresh = () => {
+    void getFileList();
+  };
+
+  useEffect(() => {
+    void getFileList();
 
     return () => {
-      controller.abort();
+      requestControllerRef.current?.abort();
     };
-  }, [limit, onPaginationChange, page]);
+  }, [getFileList]);
 
   return (
     <>
@@ -196,6 +207,10 @@ function FolderScrollArea({
             </span>
             <span className="cursor-pointer transition-colors text-[14px] text-white/20 hover:text-(--theme-color)/80">
               名称
+            </span>
+            <div className="w-[2px] h-[10px] bg-white/50 mx-1 rounded-xs" />
+            <span onClick={onRefresh} className="flex items-center gap-1 cursor-pointer transition-colors text-[14px] text-white/20 hover:text-(--theme-color)/80">
+              刷新
             </span>
           </div>
           <div className="flex gap-2 items-center">

@@ -198,7 +198,7 @@ function ImageIntroduction({
             <div className="flex min-w-0 items-center gap-2">
               <ImageIcon className="size-5 text-(--theme-color)" />
               <span className="truncate text-md font-semibold tracking-wide text-white">
-                {data?.name ?? "未选择图片"}
+                {data?.originalName ?? "未选择图片"}
               </span>
             </div>
             <span className="cursor-pointer" onClick={onClose}>
@@ -213,7 +213,7 @@ function ImageIntroduction({
                 style={previewAnimation.style}
               >
                 <BeeImage
-                  src={data.covers[0]}
+                  src={data.src}
                   alt={data.name}
                   preview={false}
                   fit="contain"

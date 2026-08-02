@@ -1,5 +1,11 @@
-import { useCallback, useMemo, useState, type PropsWithChildren } from "react";
-import { AUTH_TOKEN_STORAGE_KEY } from "./constants";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  type PropsWithChildren,
+} from "react";
+import { AUTH_LOGOUT_EVENT, AUTH_TOKEN_STORAGE_KEY } from "./constants";
 import {
   AuthContext,
   type AuthContextValue,
@@ -60,6 +66,14 @@ function AuthProvider({ children }: PropsWithChildren) {
     window.localStorage.removeItem(AUTH_TOKEN_STORAGE_KEY);
     setToken(null);
   }, []);
+
+  useEffect(() => {
+    window.addEventListener(AUTH_LOGOUT_EVENT, logout);
+
+    return () => {
+      window.removeEventListener(AUTH_LOGOUT_EVENT, logout);
+    };
+  }, [logout]);
 
   const value = useMemo<AuthContextValue>(
     () => ({

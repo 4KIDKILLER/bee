@@ -14,6 +14,7 @@ import { FileApi } from "/@/api/file";
 import RequestPool from "/@/library/class/RequestPool";
 import { formatFileSize } from "/@/library/utils";
 
+// 上传中状态的最短展示时长，避免小文件上传过快导致进度条一闪而过
 const MIN_UPLOAD_DISPLAY_DURATION = 3000;
 
 const statusMap: Record<UploadTaskStatus, UploadTaskStatusConfig> = {
@@ -146,19 +147,6 @@ function UploadPanel({ showUploadPanel }: UploadPanelProps) {
   const currentStatus = statusMap[activeFilter];
 
   const handleUpload = useCallback(() => {
-    // setTasks(
-    //   (prev) => [
-    //     ...prev,
-    //     {
-    //       id: 2,
-    //       name: "wallpaper-4k.jpg",
-    //       folderName: "壁纸",
-    //       progress: 72,
-    //       status: "uploading",
-    //       size: "18.7 MB",
-    //     },
-    //   ],
-    // );
     fileInputRef.current?.click();
   }, []);
 
@@ -256,10 +244,12 @@ function UploadPanel({ showUploadPanel }: UploadPanelProps) {
                 : Math.round((progressEvent.progress ?? 0) * 100);
               updateDisplayedProgress();
             })
+              // 接口成功后检查展示时间；如果不足三秒，则等待剩余时间再完成任务
               .then(async (result) => {
                 actualProgress = 100;
                 const remainingDuration = Math.max(
                   0,
+                  // 用配置的最短时长减去请求实际已经运行的时长
                   MIN_UPLOAD_DISPLAY_DURATION -
                     (performance.now() - startedAt),
                 );
@@ -300,6 +290,7 @@ function UploadPanel({ showUploadPanel }: UploadPanelProps) {
               if (!task) return prev;
 
               const uploading = { ...prev.uploading };
+              // 从正在上传队列中删除失败任务，避免它继续显示为上传中
               delete uploading[taskId];
 
               return {
