@@ -88,8 +88,8 @@ import { BeeTootip } from "./BeeUI/bee-tootip";
 import { BeeIcon } from "./BeeUI/bee-icon";
 import { BeeImage, BeeImageContextMenu, BeeImagePreview } from "./BeeUI/bee-image";
 import { BeeFolder } from "../views/folder-list/components/folder-item";
-
-export { BeeLoading } from "./BeeUI/bee-loading";
+import { BeeLoading } from "./BeeUI/bee-loading";
+import { BeeEmpty } from "./BeeUI/bee-empty";
 
 export {
     Input,
@@ -167,6 +167,8 @@ export {
     BeeFolder,
     BeeImagePreview,
     BeeImageContextMenu,
+    BeeLoading,
+    BeeEmpty,
 
     Dock,
     Folder,

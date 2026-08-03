@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
+  BeeEmpty,
   BeeFolder,
   BeeImagePreview,
   // BeeTootip,
@@ -23,6 +24,7 @@ import { FileApi } from "/@/api/file";
 
 function FolderScrollArea({
   showUploadPanel,
+  setViewMode,
   selection,
   selectedFolders,
   openFolderId,
@@ -184,37 +186,49 @@ function FolderScrollArea({
     };
   }, [getFileList]);
 
+  const toggleUploadPanel = () => {
+    setViewMode("upload");
+  };
+
   return (
-    <>
-      <ScrollArea
-        className={`absolute inset-0 h-full w-full will-change-transform transition-transform duration-300 ease-in-out ${
-          showUploadPanel ? "-translate-x-full" : "translate-x-0"
-        }`}
-      >
-        <div className="flex w-full h-[32px] items-end justify-between px-4">
-          <div className="flex items-center gap-2">
-            <CreateFolderDialog>
+    <div
+      className={`absolute inset-0 h-full w-full will-change-transform transition-transform duration-300 ease-in-out ${
+        showUploadPanel ? "-translate-x-full" : "translate-x-0"
+      }`}
+    >
+      {folders.length === 0 ? (
+        <div className="w-full h-full flex justify-center items-center">
+          <BeeEmpty onUpload={toggleUploadPanel} onRefresh={onRefresh} />
+        </div>
+      ) : (
+        <ScrollArea className="h-full w-full">
+          <div className="flex w-full h-[32px] items-end justify-between px-4">
+            <div className="flex items-center gap-2">
+              <CreateFolderDialog>
+                <span className="cursor-pointer transition-colors text-[14px] text-white/20 hover:text-(--theme-color)/80">
+                  新建文件夹
+                </span>
+              </CreateFolderDialog>
+              <div className="w-[2px] h-[10px] bg-white/50 mx-1 rounded-xs" />
               <span className="cursor-pointer transition-colors text-[14px] text-white/20 hover:text-(--theme-color)/80">
-                新建文件夹
+                时间
               </span>
-            </CreateFolderDialog>
-            <div className="w-[2px] h-[10px] bg-white/50 mx-1 rounded-xs" />
-            <span className="cursor-pointer transition-colors text-[14px] text-white/20 hover:text-(--theme-color)/80">
-              时间
-            </span>
-            <span className="cursor-pointer transition-colors text-[14px] text-white/20 hover:text-(--theme-color)/80">
-              大小
-            </span>
-            <span className="cursor-pointer transition-colors text-[14px] text-white/20 hover:text-(--theme-color)/80">
-              名称
-            </span>
-            <div className="w-[2px] h-[10px] bg-white/50 mx-1 rounded-xs" />
-            <span onClick={onRefresh} className="flex items-center gap-1 cursor-pointer transition-colors text-[14px] text-white/20 hover:text-(--theme-color)/80">
-              刷新
-            </span>
-          </div>
-          <div className="flex gap-2 items-center">
-            {/* <BeeTootip content={`${selection ? "关闭" : "开启"}选择`}>
+              <span className="cursor-pointer transition-colors text-[14px] text-white/20 hover:text-(--theme-color)/80">
+                大小
+              </span>
+              <span className="cursor-pointer transition-colors text-[14px] text-white/20 hover:text-(--theme-color)/80">
+                名称
+              </span>
+              <div className="w-[2px] h-[10px] bg-white/50 mx-1 rounded-xs" />
+              <span
+                onClick={onRefresh}
+                className="flex items-center gap-1 cursor-pointer transition-colors text-[14px] text-white/20 hover:text-(--theme-color)/80"
+              >
+                刷新
+              </span>
+            </div>
+            <div className="flex gap-2 items-center">
+              {/* <BeeTootip content={`${selection ? "关闭" : "开启"}选择`}>
               <span
                 onClick={onSelectionToggle}
               >
@@ -225,33 +239,34 @@ function FolderScrollArea({
                 )}
               </span>
             </BeeTootip> */}
+            </div>
           </div>
-        </div>
-        <div className="grid w-full grid-cols-8 auto-rows-[150px]">
-          {folders.map((folder) =>
-            folder.type === 1 ? (
-              <BeeFolder
-                key={folder.id}
-                folder={folder}
-                selection={selection}
-                isChecked={selectedFolders.includes(folder.id)}
-                isOpen={openFolderId === folder.id}
-                onFolderCheckChange={onFolderCheckChange}
-                onFolderOpenChange={onFolderOpenChange}
-                onFolderInfo={(item) => handleShowFolderIntroduction(item.id)}
-                onFolderDelete={setPendingDeleteFolder}
-              />
-            ) : (
-              <BeeImageItem
-                key={folder.id}
-                folder={folder}
-                onPreview={(src: string) => handlePreviewImage([src], 0)}
-                onViewDetail={(item) => handleShowImageIntroduction(item.id)}
-              />
-            ),
-          )}
-        </div>
-      </ScrollArea>
+          <div className="grid w-full grid-cols-8 auto-rows-[150px]">
+            {folders.map((folder) =>
+              folder.type === 1 ? (
+                <BeeFolder
+                  key={folder.id}
+                  folder={folder}
+                  selection={selection}
+                  isChecked={selectedFolders.includes(folder.id)}
+                  isOpen={openFolderId === folder.id}
+                  onFolderCheckChange={onFolderCheckChange}
+                  onFolderOpenChange={onFolderOpenChange}
+                  onFolderInfo={(item) => handleShowFolderIntroduction(item.id)}
+                  onFolderDelete={setPendingDeleteFolder}
+                />
+              ) : (
+                <BeeImageItem
+                  key={folder.id}
+                  folder={folder}
+                  onPreview={(src: string) => handlePreviewImage([src], 0)}
+                  onViewDetail={(item) => handleShowImageIntroduction(item.id)}
+                />
+              ),
+            )}
+          </div>
+        </ScrollArea>
+      )}
       <FolderIntroduction
         open={showFolderIntroduction}
         folder={activeFolder}
@@ -304,7 +319,7 @@ function FolderScrollArea({
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </>
+    </div>
   );
 }
 

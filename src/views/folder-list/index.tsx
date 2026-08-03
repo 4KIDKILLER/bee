@@ -12,6 +12,7 @@ function FolderList() {
     total: 0,
     limit: 50,
   });
+  const [path] = useState("/");
   const [selection, setSelection] = useState(false);
   const [viewMode, setViewMode] = useState<FolderListViewMode>("list");
   const [selectedFolders, setSelectedFolders] = useState<string[]>([]);
@@ -74,6 +75,7 @@ function FolderList() {
             <div className="relative h-full w-full bg-black/10">
               <FilePanel
                 showUploadPanel={showUploadPanel}
+                setViewMode={setViewMode}
                 selection={selection}
                 selectedFolders={selectedFolders}
                 openFolderId={openFolderId}
@@ -98,14 +100,20 @@ function FolderList() {
           )}
         >
           <div className="flex items-center">
-            <span className="text-white/70">/system/file/my-album</span>
+            <span className="text-white/70">{ path }</span>
           </div>
-          <FolderListPagination
-            page={pageInfo.page}
-            limit={pageInfo.limit}
-            total={pageInfo.total}
-            onPageChange={handlePageChange}
-          />
+          {
+            pageInfo.total === 0 ? (
+              <></>
+            ) : (
+              <FolderListPagination
+                page={pageInfo.page}
+                limit={pageInfo.limit}
+                total={pageInfo.total}
+                onPageChange={handlePageChange}
+              />
+            )
+          }
         </div>
       </div>
     </div>

@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import type { ReactNode, Dispatch, SetStateAction } from "react";
 import type { FileListDataType } from "/@/api/file"
 
 export type BeeFileType = FileListDataType
@@ -87,6 +87,7 @@ export interface FileListPaginationMeta {
 
 export interface FolderScrollAreaProps {
   showUploadPanel: boolean;
+  setViewMode: Dispatch<SetStateAction<FolderListViewMode>>;
   selection: boolean;
   selectedFolders: string[];
   openFolderId: string | null;
