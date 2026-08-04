@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
+  Button,
   BeeEmpty,
   BeeFolder,
   BeeImagePreview,
@@ -21,6 +22,7 @@ import ImageIntroduction from "./components/image-introduction";
 import BeeImageItem from "./components/image-item";
 import type { BeeFileType, FolderScrollAreaProps } from "./types";
 import { FileApi } from "/@/api/file";
+import { FolderPlus } from "lucide-react";
 
 function FolderScrollArea({
   showUploadPanel,
@@ -174,9 +176,27 @@ function FolderScrollArea({
       .catch(() => {});
   }, [limit, onPaginationChange, page]);
 
-  const onRefresh = () => {
+  const onRefresh = useCallback(() => {
     void getFileList();
-  };
+  }, [getFileList]);
+
+  const onCreateFolder = useCallback(
+    async (folderName: string) => {
+      const createResult = await FileApi.createFolderApi({
+        folderName,
+        parentId: "",
+      });
+      return new Promise<boolean>((resolve, reject) => {
+        if (createResult.code == 200) {
+          onRefresh();
+          resolve(true);
+        } else {
+          reject(false);
+        }
+      });
+    },
+    [onRefresh],
+  );
 
   useEffect(() => {
     void getFileList();
@@ -198,13 +218,25 @@ function FolderScrollArea({
     >
       {folders.length === 0 ? (
         <div className="w-full h-full flex justify-center items-center">
-          <BeeEmpty onUpload={toggleUploadPanel} onRefresh={onRefresh} />
+          <BeeEmpty onUpload={toggleUploadPanel} onRefresh={onRefresh}>
+            <CreateFolderDialog onConfirm={onCreateFolder}>
+              <Button
+                size="sm"
+                variant="link"
+                onClick={onRefresh}
+                className="text-white/80 text-[12px]"
+              >
+                <FolderPlus />
+                创建文件夹
+              </Button>
+            </CreateFolderDialog>
+          </BeeEmpty>
         </div>
       ) : (
         <ScrollArea className="h-full w-full">
           <div className="flex w-full h-[32px] items-end justify-between px-4">
             <div className="flex items-center gap-2">
-              <CreateFolderDialog>
+              <CreateFolderDialog onConfirm={onCreateFolder}>
                 <span className="cursor-pointer transition-colors text-[14px] text-white/20 hover:text-(--theme-color)/80">
                   新建文件夹
                 </span>

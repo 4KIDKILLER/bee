@@ -5,6 +5,15 @@ interface FileListParamsType {
     parentId: string
     pageSize: number
 }
+interface CreateFolderParamsType {
+    // tags: string
+    // cover1: string
+    // cover2: string
+    // cover3: string
+    // remark: string
+    parentId: string
+    folderName: string
+}
 
 interface FileListDataType {
     id: string
@@ -24,7 +33,6 @@ interface FileListDataType {
 
 type OnUploadProgressType = (e: AxiosProgressEvent) => void
 
-type FileUploadResponseType = ApiResponseType<null>
 type FileListResponseType = ApiListResponseType<FileListDataType>
 
 export type {
@@ -32,5 +40,5 @@ export type {
     FileListParamsType,
     FileListResponseType,
     OnUploadProgressType,
-    FileUploadResponseType,
+    CreateFolderParamsType
 }

@@ -3,13 +3,14 @@ import type {
     FileListParamsType,
     FileListResponseType,
     OnUploadProgressType,
-    FileUploadResponseType
+    CreateFolderParamsType
 } from "../types/file";
 import request from "/@/library/request";
 
 interface FileApiType {
+    createFolderApi: (params: CreateFolderParamsType) => Promise<ApiDefaultResponseType>
     getFileListApi: (params: FileListParamsType, signal?: AbortSignal) => Promise<FileListResponseType>
-    uploadFileApi: (params: FormData, onUploadProgress: OnUploadProgressType) => Promise<FileUploadResponseType>
+    uploadFileApi: (params: FormData, onUploadProgress: OnUploadProgressType) => Promise<ApiDefaultResponseType>
 }
 
 const FileApi: FileApiType = {
@@ -18,7 +19,7 @@ const FileApi: FileApiType = {
      * @param params 
      * @returns 
      */
-    uploadFileApi(params: FormData, onUploadProgress: OnUploadProgressType): Promise<FileUploadResponseType> {
+    uploadFileApi(params: FormData, onUploadProgress: OnUploadProgressType): Promise<ApiDefaultResponseType> {
         return request.post<null, FormData>("/upload", params, { onUploadProgress })
     },
     /**
@@ -28,6 +29,14 @@ const FileApi: FileApiType = {
      */
     getFileListApi(params: FileListParamsType, signal?: AbortSignal): Promise<FileListResponseType> {
         return request.get<ApiDataListType<FileListDataType>, FileListParamsType>("/getFileList", params, { signal })
+    },
+    /**
+     * @description 创建文件夹
+     * @param params 
+     * @returns 
+     */
+    createFolderApi(params: CreateFolderParamsType): Promise<ApiDefaultResponseType> {
+        return request.post<null, CreateFolderParamsType>("/createFolder", params)
     }
 }
 
@@ -37,5 +46,4 @@ export type {
     FileListParamsType,
     FileListResponseType,
     OnUploadProgressType,
-    FileUploadResponseType
 }

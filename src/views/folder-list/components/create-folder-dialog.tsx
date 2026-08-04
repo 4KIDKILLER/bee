@@ -1,4 +1,9 @@
-import { useState, type ChangeEvent, type FormEvent, type ReactNode } from "react";
+import {
+  useState,
+  type ChangeEvent,
+  type SubmitEvent,
+  type ReactNode,
+} from "react";
 import {
   Button,
   Dialog,
@@ -18,10 +23,16 @@ import {
 
 interface CreateFolderDialogProps {
   children: ReactNode;
+  onCancel?: () => void;
+  onConfirm?: (folderName: string) => Promise<boolean>;
 }
 
-function CreateFolderDialog({ children }: CreateFolderDialogProps) {
-  const [fileName, setFileName] = useState("");
+function CreateFolderDialog({
+  children,
+  onCancel,
+  onConfirm,
+}: CreateFolderDialogProps) {
+  const [folderName, setFolderName] = useState("");
   const [invalid, setInvalid] = useState(false);
   const [open, setOpen] = useState(false);
 
@@ -42,24 +53,26 @@ function CreateFolderDialog({ children }: CreateFolderDialogProps) {
     return true;
   };
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!validateFolderName(fileName)) {
+    if (!validateFolderName(folderName)) {
       setInvalid(true);
       return;
     }
 
-    console.log("创建文件夹:", fileName.trim());
-
-    setFileName("");
-    setInvalid(false);
-    setOpen(false);
+    onConfirm?.(folderName).then((status) => {
+      if (status) {
+        setFolderName("");
+        setInvalid(false);
+        setOpen(false);
+      }
+    });
   };
 
-  const handleFileNameChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handlefolderNameChange = (e: ChangeEvent<HTMLInputElement>) => {
     const nextValue = e.target.value;
-    setFileName(nextValue);
+    setFolderName(nextValue);
     if (invalid) {
       setInvalid(!validateFolderName(nextValue));
     }
@@ -68,7 +81,7 @@ function CreateFolderDialog({ children }: CreateFolderDialogProps) {
   const handleOpenChange = (isOpen: boolean) => {
     setOpen(isOpen);
     if (!isOpen) {
-      setFileName("");
+      setFolderName("");
       setInvalid(false);
     }
   };
@@ -94,8 +107,8 @@ function CreateFolderDialog({ children }: CreateFolderDialogProps) {
                 required
                 id="folderName"
                 name="folderName"
-                value={fileName}
-                onChange={handleFileNameChange}
+                value={folderName}
+                onChange={handlefolderNameChange}
                 aria-invalid={invalid}
                 placeholder="请输入文件夹名称"
               />
@@ -106,7 +119,9 @@ function CreateFolderDialog({ children }: CreateFolderDialogProps) {
           </FieldGroup>
           <DialogFooter className="mt-6">
             <DialogClose asChild>
-              <Button variant="outline">取消</Button>
+              <Button onClick={onCancel} variant="outline">
+                取消
+              </Button>
             </DialogClose>
             <Button type="submit">确定</Button>
           </DialogFooter>

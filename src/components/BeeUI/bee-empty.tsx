@@ -6,13 +6,16 @@ import {
   EmptyContent,
   EmptyMedia,
 } from "../ShadcnUI/empty";
+import { type ReactNode } from "react";
 import { Button } from "../ShadcnUI/button";
 import { Upload, RefreshCcw, FolderOpen } from "lucide-react";
 
 export function BeeEmpty({
+  children,
   onUpload,
   onRefresh,
 }: {
+  children?: ReactNode;
   onUpload: () => void;
   onRefresh: () => void;
 }) {
@@ -30,14 +33,25 @@ export function BeeEmpty({
         </EmptyDescription>
       </EmptyHeader>
       <EmptyContent className="flex-row justify-center gap-2">
-        <Button className="text-white/80 text-[12px]" size="sm" variant="link" onClick={onUpload}>
-          <Upload />
-          上传文件
-        </Button>
-        <Button className="text-white/80 text-[12px]" size="sm" variant="link" onClick={onRefresh}>
+        <Button
+          className="text-white/80 text-[12px]"
+          size="sm"
+          variant="link"
+          onClick={onRefresh}
+        >
           <RefreshCcw />
           刷新
         </Button>
+        <Button
+          className="text-white/80 text-[12px]"
+          size="sm"
+          variant="link"
+          onClick={onUpload}
+        >
+          <Upload />
+          上传文件
+        </Button>
+        {children}
       </EmptyContent>
     </Empty>
   );

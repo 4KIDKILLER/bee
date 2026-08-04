@@ -18,3 +18,5 @@ interface ApiListResponseType<T = unknown> {
     code: ApiCodeType
     data: ApiDataListType<T>
 }
+
+type ApiDefaultResponseType = ApiResponseType<null>
