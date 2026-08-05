@@ -1,7 +1,7 @@
 import type { BeeFileType } from "./types";
 
 export const rootPath:BeeFileType = {
-    id: "/",
+    id: "",
     parentId: "",
     userId: 0,
     name: "/",

@@ -1,11 +1,10 @@
 import { useCallback, useState } from "react";
-import { cn } from "/@/library/utils";
 import FilePanel from "./file-panel";
 import UploadPanel from "./upload-panel";
-import { ArrowBigLeft } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import FolderListPagination from "./components/folder-list-pagination";
 import ViewModeSwitch from "./components/view-mode-switch";
-import { Button } from "/@c/index";
+import { Button, BeeTootip } from "/@c/index";
 import { rootPath } from "./folder-list.d";
 import type {
   BeeFileType,
@@ -26,8 +25,14 @@ function FolderList() {
   const [openFolderId, setOpenFolderId] = useState<string | null>(null);
   const [currentFolderId, setCurrentFolderId] = useState("");
   const showUploadPanel = viewMode === "upload";
+  const isGoBackDisabled = path.length <= 1 || showUploadPanel;
   const accessPath =
-    path.length == 1 ? "/" : `/${path.map((item) => item.originalName).slice(1).join("/")}`;
+    path.length == 1
+      ? "/"
+      : `/${path
+          .map((item) => item.originalName)
+          .slice(1)
+          .join("/")}`;
 
   const handleSelectionToggle = () => {
     setOpenFolderId(null);
@@ -56,11 +61,6 @@ function FolderList() {
     setCurrentFolderId(folder.id);
     setOpenFolderId(null);
     setSelectedFolders([]);
-    setPageInfo((prev) => ({
-      ...prev,
-      page: 1,
-      total: 0,
-    }));
     setPath((prev) => [...prev, folder]);
   }, []);
 
@@ -75,6 +75,10 @@ function FolderList() {
     [],
   );
 
+  /**
+   * 翻页事件
+   * @param page 
+   */
   const handlePageChange = (page: number) => {
     setPageInfo((prev) => {
       const totalPages = Math.max(1, Math.ceil(prev.total / prev.limit));
@@ -87,14 +91,23 @@ function FolderList() {
   };
 
   const handleGoBack = useCallback(() => {
-    if(path.length > 1){
-      setPath((prev)=> {
-        prev.pop()
-        return [...prev]
-      })
-      setCurrentFolderId(path[path.length - 1].id)
+    if (isGoBackDisabled) {
+      return;
     }
-  }, [path]);
+
+    const nextPath = path.slice(0, -1);
+    const parentFolder = nextPath.at(-1);
+
+    setPath(nextPath);
+    setCurrentFolderId(parentFolder?.id ?? "");
+    setOpenFolderId(null);
+    setSelectedFolders([]);
+    setPageInfo((prev) => ({
+      ...prev,
+      page: 1,
+      total: 0,
+    }));
+  }, [isGoBackDisabled, path]);
 
   return (
     <div className="w-full h-full flex items-center justify-center">
@@ -120,28 +133,28 @@ function FolderList() {
                 onOpenFolder={handleOpenFolder}
                 onPaginationChange={handlePaginationChange}
               />
-              <UploadPanel showUploadPanel={showUploadPanel} />
+              <UploadPanel
+                currentFolderId={currentFolderId}
+                showUploadPanel={showUploadPanel}
+              />
             </div>
           </div>
         </div>
 
-        <div
-          className={cn(
-            "mt-2 flex w-full justify-between px-4 text-center transition-opacity duration-200",
-            viewMode === "list"
-              ? "opacity-100 pointer-events-auto"
-              : "pointer-events-none opacity-0",
-          )}
-        >
+        <div className="mt-2 flex w-full justify-between px-4 text-center transition-opacity duration-200">
           <div className="flex items-center">
-            <Button
-              onClick={handleGoBack}
-              variant="outline"
-              size="icon"
-              className="rounded-full size-8 text-white/65 hover:border-(--theme-color) bg-transparent hover:bg-(--theme-color)/20 hover:text-(--theme-color) border-transparent"
-            >
-              <ArrowBigLeft />
-            </Button>
+            <BeeTootip side="left" content="返回上一级">
+              <Button
+                onClick={handleGoBack}
+                disabled={isGoBackDisabled}
+                variant="outline"
+                size="icon"
+                aria-label="返回上一级"
+                className="rounded-full size-8 text-white/65 hover:border-(--theme-color) bg-transparent hover:bg-(--theme-color)/20 hover:text-(--theme-color) border-transparent"
+              >
+                <ArrowLeft />
+              </Button>
+            </BeeTootip>
             <span className="text-white/70 pl-2 text-8">{accessPath}</span>
           </div>
           {pageInfo.total === 0 ? (

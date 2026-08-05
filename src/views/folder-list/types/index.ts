@@ -40,7 +40,8 @@ export interface FolderListPaginationProps {
 }
 
 export interface UploadPanelProps {
-  showUploadPanel: boolean;
+  currentFolderId: string
+  showUploadPanel: boolean
 }
 
 export interface UploadStatusMenuItem {

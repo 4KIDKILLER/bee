@@ -62,30 +62,7 @@ const filterMeta: Record<
   },
 };
 
-// const initialUploadTasks: UploadTask = {
-//   success: {
-//     "12312321": {
-//       id: 1,
-//       name: "travel-cover.png",
-//       folderName: "手机图库",
-//       progress: 100,
-//       status: "success",
-//       size: "12.4 MB",
-//     },
-//     awefawe11: {
-//       id: 3,
-//       name: "meeting-shot.heic",
-//       folderName: "截图",
-//       progress: 26,
-//       status: "pending",
-//       size: "6.1 MB",
-//     },
-//   },
-//   uploading: {},
-//   pending: {},
-// };
-
-function UploadPanel({ showUploadPanel }: UploadPanelProps) {
+function UploadPanel({ showUploadPanel, currentFolderId }: UploadPanelProps) {
   const [tasks, setTasks] = useState<UploadTask>({
     success: {},
     uploading: {},
@@ -204,7 +181,7 @@ function UploadPanel({ showUploadPanel }: UploadPanelProps) {
 
             const requestData = new FormData();
             requestData.append("file", file);
-            requestData.append("parentId", "");
+            requestData.append("parentId", currentFolderId);
 
             const startedAt = performance.now();
             let actualProgress = 0;
@@ -236,35 +213,37 @@ function UploadPanel({ showUploadPanel }: UploadPanelProps) {
               100,
             );
 
-            return FileApi.uploadFileApi(requestData, (progressEvent) => {
-              actualProgress = progressEvent.total
-                ? Math.round(
-                    (progressEvent.loaded / progressEvent.total) * 100,
-                  )
-                : Math.round((progressEvent.progress ?? 0) * 100);
-              updateDisplayedProgress();
-            })
-              // 接口成功后检查展示时间；如果不足三秒，则等待剩余时间再完成任务
-              .then(async (result) => {
-                actualProgress = 100;
-                const remainingDuration = Math.max(
-                  0,
-                  // 用配置的最短时长减去请求实际已经运行的时长
-                  MIN_UPLOAD_DISPLAY_DURATION -
-                    (performance.now() - startedAt),
-                );
-
-                if (remainingDuration > 0) {
-                  await new Promise<void>((resolve) => {
-                    window.setTimeout(resolve, remainingDuration);
-                  });
-                }
-
-                return result;
+            return (
+              FileApi.uploadFileApi(requestData, (progressEvent) => {
+                actualProgress = progressEvent.total
+                  ? Math.round(
+                      (progressEvent.loaded / progressEvent.total) * 100,
+                    )
+                  : Math.round((progressEvent.progress ?? 0) * 100);
+                updateDisplayedProgress();
               })
-              .finally(() => {
-                window.clearInterval(progressTimer);
-              });
+                // 接口成功后检查展示时间；如果不足三秒，则等待剩余时间再完成任务
+                .then(async (result) => {
+                  actualProgress = 100;
+                  const remainingDuration = Math.max(
+                    0,
+                    // 用配置的最短时长减去请求实际已经运行的时长
+                    MIN_UPLOAD_DISPLAY_DURATION -
+                      (performance.now() - startedAt),
+                  );
+
+                  if (remainingDuration > 0) {
+                    await new Promise<void>((resolve) => {
+                      window.setTimeout(resolve, remainingDuration);
+                    });
+                  }
+
+                  return result;
+                })
+                .finally(() => {
+                  window.clearInterval(progressTimer);
+                })
+            );
           })
           .then(() => {
             setTasks((prev) => {
@@ -307,7 +286,7 @@ function UploadPanel({ showUploadPanel }: UploadPanelProps) {
 
       e.target.value = "";
     },
-    [],
+    [currentFolderId],
   );
 
   return (
