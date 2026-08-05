@@ -200,7 +200,7 @@ function  FolderIntroduction({
             <div className="flex min-w-0 items-center gap-2">
               <BeeIcon name="folder" />
               <span className="truncate text-md font-semibold tracking-wide text-white">
-                {folder?.name ?? "未选择文件夹"}
+                {folder?.originalName ?? "未选择文件夹"}
               </span>
             </div>
             <span className="cursor-pointer" onClick={onClose}>

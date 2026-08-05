@@ -30,11 +30,13 @@ function FolderScrollArea({
   selection,
   selectedFolders,
   openFolderId,
+  currentFolderId,
   page,
   limit,
   // onSelectionToggle,
   onFolderCheckChange,
   onFolderOpenChange,
+  onOpenFolder,
   onPaginationChange,
 }: FolderScrollAreaProps) {
   const [folders, setFolders] = useState<BeeFileType[]>([]);
@@ -48,6 +50,7 @@ function FolderScrollArea({
   const [previewImages, setPreviewImages] = useState<string[]>([]);
   const [previewIndex, setPreviewIndex] = useState(0);
   const requestControllerRef = useRef<AbortController | null>(null);
+  const skipNextFetchKeyRef = useRef<string | null>(null);
   const activeFolder =
     folders.find((folder) => folder.id === activeFolderId) ?? null;
   const activeImage =
@@ -151,40 +154,41 @@ function FolderScrollArea({
     setPendingDeleteFolder(null);
   };
 
-  const getFileList = useCallback(() => {
-    requestControllerRef.current?.abort();
+  const getFileList = useCallback(
+    (parentId: string, currentPage: number) => {
+      requestControllerRef.current?.abort();
 
-    const controller = new AbortController();
-    requestControllerRef.current = controller;
+      const controller = new AbortController();
+      requestControllerRef.current = controller;
 
-    return FileApi.getFileListApi(
-      {
-        page,
-        parentId: "",
-        pageSize: limit,
-      },
-      controller.signal,
-    )
-      .then((res) => {
+      return FileApi.getFileListApi(
+        {
+          page: currentPage,
+          parentId,
+          pageSize: limit,
+        },
+        controller.signal,
+      ).then((res) => {
         setFolders(res.data.list);
         onPaginationChange({
           page: res.data.page,
           pageSize: res.data.pageSize,
           total: res.data.total,
         });
-      })
-      .catch(() => {});
-  }, [limit, onPaginationChange, page]);
+      });
+    },
+    [limit, onPaginationChange],
+  );
 
   const onRefresh = useCallback(() => {
-    void getFileList();
-  }, [getFileList]);
+    void getFileList(currentFolderId, page).catch(() => {});
+  }, [currentFolderId, getFileList, page]);
 
   const onCreateFolder = useCallback(
     async (folderName: string) => {
       const createResult = await FileApi.createFolderApi({
         folderName,
-        parentId: "",
+        parentId: currentFolderId,
       });
       return new Promise<boolean>((resolve, reject) => {
         if (createResult.code == 200) {
@@ -195,20 +199,45 @@ function FolderScrollArea({
         }
       });
     },
-    [onRefresh],
+    [currentFolderId, onRefresh],
   );
 
   useEffect(() => {
-    void getFileList();
+    const requestKey = `${currentFolderId}:${page}:${limit}`;
+
+    if (skipNextFetchKeyRef.current === requestKey) {
+      skipNextFetchKeyRef.current = null;
+      return;
+    }
+
+    void getFileList(currentFolderId, page)
+      .then()
+      .catch(() => {});
 
     return () => {
       requestControllerRef.current?.abort();
     };
-  }, [getFileList]);
+  }, [currentFolderId, getFileList, limit, page]);
 
   const toggleUploadPanel = () => {
     setViewMode("upload");
   };
+
+  const handleOpenFolder = useCallback(
+    (folder: BeeFileType) => {
+      void getFileList(folder.id, 1)
+        .then(() => {
+          setActiveFolderId(null);
+          setActiveImageId(null);
+          setShowFolderIntroduction(false);
+          setShowImageIntroduction(false);
+          skipNextFetchKeyRef.current = `${folder.id}:1:${limit}`;
+          onOpenFolder(folder);
+        })
+        .catch(() => {});
+    },
+    [getFileList, limit, onOpenFolder],
+  );
 
   return (
     <div
@@ -286,6 +315,7 @@ function FolderScrollArea({
                   onFolderOpenChange={onFolderOpenChange}
                   onFolderInfo={(item) => handleShowFolderIntroduction(item.id)}
                   onFolderDelete={setPendingDeleteFolder}
+                  onOpenFolder={handleOpenFolder}
                 />
               ) : (
                 <BeeImageItem

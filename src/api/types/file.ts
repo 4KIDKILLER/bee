@@ -24,6 +24,7 @@ interface FileListDataType {
     size: number
     type: 1 | 2
     src: string
+    thumbSrc: string
     tags: string[]
     covers: string[]
     remark: string

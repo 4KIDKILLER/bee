@@ -2,9 +2,16 @@ import { useCallback, useState } from "react";
 import { cn } from "/@/library/utils";
 import FilePanel from "./file-panel";
 import UploadPanel from "./upload-panel";
+import { ArrowBigLeft } from "lucide-react";
 import FolderListPagination from "./components/folder-list-pagination";
 import ViewModeSwitch from "./components/view-mode-switch";
-import type { FileListPaginationMeta, FolderListViewMode } from "./types";
+import { Button } from "/@c/index";
+import { rootPath } from "./folder-list.d";
+import type {
+  BeeFileType,
+  FileListPaginationMeta,
+  FolderListViewMode,
+} from "./types";
 
 function FolderList() {
   const [pageInfo, setPageInfo] = useState({
@@ -12,12 +19,15 @@ function FolderList() {
     total: 0,
     limit: 50,
   });
-  const [path] = useState("/");
+  const [path, setPath] = useState<BeeFileType[]>([rootPath]);
   const [selection, setSelection] = useState(false);
   const [viewMode, setViewMode] = useState<FolderListViewMode>("list");
   const [selectedFolders, setSelectedFolders] = useState<string[]>([]);
   const [openFolderId, setOpenFolderId] = useState<string | null>(null);
+  const [currentFolderId, setCurrentFolderId] = useState("");
   const showUploadPanel = viewMode === "upload";
+  const accessPath =
+    path.length == 1 ? "/" : `/${path.map((item) => item.originalName).slice(1).join("/")}`;
 
   const handleSelectionToggle = () => {
     setOpenFolderId(null);
@@ -42,6 +52,18 @@ function FolderList() {
     setOpenFolderId(open ? id : null);
   };
 
+  const handleOpenFolder = useCallback((folder: BeeFileType) => {
+    setCurrentFolderId(folder.id);
+    setOpenFolderId(null);
+    setSelectedFolders([]);
+    setPageInfo((prev) => ({
+      ...prev,
+      page: 1,
+      total: 0,
+    }));
+    setPath((prev) => [...prev, folder]);
+  }, []);
+
   const handlePaginationChange = useCallback(
     ({ page, pageSize, total }: FileListPaginationMeta) => {
       setPageInfo({
@@ -64,6 +86,16 @@ function FolderList() {
     });
   };
 
+  const handleGoBack = useCallback(() => {
+    if(path.length > 1){
+      setPath((prev)=> {
+        prev.pop()
+        return [...prev]
+      })
+      setCurrentFolderId(path[path.length - 1].id)
+    }
+  }, [path]);
+
   return (
     <div className="w-full h-full flex items-center justify-center">
       <div className="relative w-[1300px] min-w-[1300px] mx-auto h-[700px]">
@@ -79,11 +111,13 @@ function FolderList() {
                 selection={selection}
                 selectedFolders={selectedFolders}
                 openFolderId={openFolderId}
+                currentFolderId={currentFolderId}
                 page={pageInfo.page}
                 limit={pageInfo.limit}
                 onSelectionToggle={handleSelectionToggle}
                 onFolderCheckChange={handleFolderCheckChange}
                 onFolderOpenChange={handleFolderOpenChange}
+                onOpenFolder={handleOpenFolder}
                 onPaginationChange={handlePaginationChange}
               />
               <UploadPanel showUploadPanel={showUploadPanel} />
@@ -100,20 +134,26 @@ function FolderList() {
           )}
         >
           <div className="flex items-center">
-            <span className="text-white/70">{ path }</span>
+            <Button
+              onClick={handleGoBack}
+              variant="outline"
+              size="icon"
+              className="rounded-full size-8 text-white/65 hover:border-(--theme-color) bg-transparent hover:bg-(--theme-color)/20 hover:text-(--theme-color) border-transparent"
+            >
+              <ArrowBigLeft />
+            </Button>
+            <span className="text-white/70 pl-2 text-8">{accessPath}</span>
           </div>
-          {
-            pageInfo.total === 0 ? (
-              <></>
-            ) : (
-              <FolderListPagination
-                page={pageInfo.page}
-                limit={pageInfo.limit}
-                total={pageInfo.total}
-                onPageChange={handlePageChange}
-              />
-            )
-          }
+          {pageInfo.total === 0 ? (
+            <></>
+          ) : (
+            <FolderListPagination
+              page={pageInfo.page}
+              limit={pageInfo.limit}
+              total={pageInfo.total}
+              onPageChange={handlePageChange}
+            />
+          )}
         </div>
       </div>
     </div>

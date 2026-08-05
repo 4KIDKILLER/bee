@@ -91,10 +91,12 @@ export interface FolderScrollAreaProps {
   selection: boolean;
   selectedFolders: string[];
   openFolderId: string | null;
+  currentFolderId: string;
   page: number;
   limit: number;
   onSelectionToggle: () => void;
   onFolderCheckChange: (id: string) => void;
   onFolderOpenChange: (id: string, open: boolean) => void;
+  onOpenFolder: (folder: BeeFileType) => void;
   onPaginationChange: (pagination: FileListPaginationMeta) => void;
 }

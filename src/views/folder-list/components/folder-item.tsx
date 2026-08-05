@@ -21,6 +21,7 @@ export interface BeeFolderProps {
   onFolderInfo?: (folder: BeeFileType) => void;
   onFolderDelete?: (folder: BeeFileType) => void;
   onFolderRename?: (folder: BeeFileType) => void;
+  onOpenFolder?: (folder: BeeFileType) => void;
 }
 
 interface ImageItemProps {
@@ -48,8 +49,8 @@ export function BeeFolder({
   onFolderInfo,
   onFolderDelete,
   onFolderRename,
+  onOpenFolder,
 }: BeeFolderProps) {
-
   return (
     <BeeCell>
       <Folder
@@ -61,7 +62,11 @@ export function BeeFolder({
         onCheckChange={() => onFolderCheckChange?.(folder.id)}
         onOpenChange={(open) => onFolderOpenChange?.(folder.id, open)}
         items={folder.covers.map((src, idx) => (
-          <ImageItem key={idx} src={src} alt={`folder-${folder.id}-img-${idx}`} />
+          <ImageItem
+            key={idx}
+            src={src}
+            alt={`folder-${folder.id}-img-${idx}`}
+          />
         ))}
       />
       <div className="max-w-[100px] text-xs text-purple-50 text-shadow-amber-100">
@@ -69,6 +74,7 @@ export function BeeFolder({
           <ContextMenuTrigger asChild>
             <span
               title={folder.originalName}
+              onClick={() => onOpenFolder?.(folder)}
               className="block w-full truncate cursor-pointer rounded-md bg-black/35 px-[6px] py-[4px] transition-colors hover:bg-(--theme-color)"
             >
               {folder.originalName}

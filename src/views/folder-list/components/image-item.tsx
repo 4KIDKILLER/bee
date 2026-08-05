@@ -12,6 +12,10 @@ export function BeeImageItem({
   onPreview,
   onViewDetail,
 }: BeeImageItemProps) {
+  const dotIndex = folder.originalName.lastIndexOf(".");
+  const fileName = folder.originalName.slice(0, dotIndex);
+  const fileExt = folder.originalName.slice(dotIndex);
+
   return (
     <BeeCell>
       <div className="w-[100px] h-[80px] flex items-center justify-center">
@@ -20,22 +24,21 @@ export function BeeImageItem({
           className="overflow-hidden rounded-md"
           fit="contain"
           width={80}
-          alt="暂无图片"
+          alt={folder.originalName}
           height={64}
           preview
           onPreview={onPreview}
-          src={folder.src}
+          src={folder.thumbSrc}
         />
       </div>
       <div className="max-w-[100px] text-xs text-purple-50 text-shadow-amber-100">
-        <BeeImageContextMenu
-          onViewDetail={() => onViewDetail?.(folder)}
-        >
+        <BeeImageContextMenu onViewDetail={() => onViewDetail?.(folder)}>
           <span
             title={folder.originalName}
-            className="block truncate cursor-pointer rounded-md bg-black/35 px-[6px] py-[4px] transition-colors hover:bg-(--theme-color)"
+            className="flex max-w-full cursor-pointer rounded-md bg-black/35 px-[6px] py-[4px] transition-colors hover:bg-(--theme-color)"
           >
-            {folder.originalName}
+            <span className="min-w-0 truncate">{fileName}</span>
+            <span className="shrink-0">{fileExt}</span>
           </span>
         </BeeImageContextMenu>
       </div>
