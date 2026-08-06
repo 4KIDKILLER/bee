@@ -49,7 +49,6 @@ function FolderScrollArea({
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImages, setPreviewImages] = useState<string[]>([]);
   const [previewIndex, setPreviewIndex] = useState(0);
-  const requestControllerRef = useRef<AbortController | null>(null);
   const skipNextFetchKeyRef = useRef<string | null>(null);
   const activeFolder =
     folders.find((folder) => folder.id === activeFolderId) ?? null;
@@ -156,18 +155,12 @@ function FolderScrollArea({
 
   const getFileList = useCallback(
     (parentId: string, currentPage: number) => {
-      requestControllerRef.current?.abort();
-
-      const controller = new AbortController();
-      requestControllerRef.current = controller;
-
       return FileApi.getFileListApi(
         {
           page: currentPage,
           parentId,
           pageSize: limit,
         },
-        controller.signal,
       ).then((res) => {
         setFolders(res.data.list);
         onPaginationChange({
@@ -213,10 +206,6 @@ function FolderScrollArea({
     void getFileList(currentFolderId, page)
       .then()
       .catch(() => {});
-
-    return () => {
-      requestControllerRef.current?.abort();
-    };
   }, [currentFolderId, getFileList, limit, page]);
 
   const toggleUploadPanel = () => {

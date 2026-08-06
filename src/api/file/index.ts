@@ -9,7 +9,7 @@ import request from "/@/library/request";
 
 interface FileApiType {
     createFolderApi: (params: CreateFolderParamsType) => Promise<ApiDefaultResponseType>
-    getFileListApi: (params: FileListParamsType, signal?: AbortSignal) => Promise<FileListResponseType>
+    getFileListApi: (params: FileListParamsType) => Promise<FileListResponseType>
     uploadFileApi: (params: FormData, onUploadProgress: OnUploadProgressType) => Promise<ApiDefaultResponseType>
 }
 
@@ -27,8 +27,8 @@ const FileApi: FileApiType = {
      * @param params 
      * @returns 
      */
-    getFileListApi(params: FileListParamsType, signal?: AbortSignal): Promise<FileListResponseType> {
-        return request.get<ApiDataListType<FileListDataType>, FileListParamsType>("/getFileList", params, { signal })
+    getFileListApi(params: FileListParamsType): Promise<FileListResponseType> {
+        return request.get<ApiDataListType<FileListDataType>, FileListParamsType>("/getFileList", params)
     },
     /**
      * @description 创建文件夹
