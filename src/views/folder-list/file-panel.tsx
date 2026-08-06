@@ -50,7 +50,7 @@ function FolderScrollArea({
   //当前操作文件夹的类型 1:创建 2修改
   const folderMode = useRef<1 | 2>(1);
   const [folderDialogOpen, setFolderDialogOpen] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(false);
+  // const [loading, setLoading] = useState<boolean>(false);
   const [folders, setFolders] = useState<BeeFileType[]>([]);
   const [showFolderIntroduction, setShowFolderIntroduction] = useState(false);
   const [showImageIntroduction, setShowImageIntroduction] = useState(false);
@@ -167,7 +167,7 @@ function FolderScrollArea({
 
   const getFileList = useCallback(
     (parentId: string, currentPage: number) => {
-      setLoading(true);
+      // setLoading(true);
       return FileApi.getFileListApi({
         page: currentPage,
         parentId,
@@ -179,7 +179,7 @@ function FolderScrollArea({
           pageSize: res.data.pageSize,
           total: res.data.total,
         });
-        setLoading(false);
+        // setLoading(false);
       });
     },
     [limit, onPaginationChange],
@@ -277,7 +277,7 @@ function FolderScrollArea({
       >
         <BeeLoading description="正在准备 BEE 文件列表" />
       </div> */}
-      {folders.length === 0 && !loading ? (
+      {folders.length === 0 ? (
         <div className="w-full h-full flex justify-center items-center">
           <BeeEmpty
             onUpload={toggleUploadPanel}
