@@ -8,7 +8,7 @@ export interface BeeLoadingProps {
 }
 
 export function BeeLoading({
-  title = "页面加载中...",
+  title = "加载中...",
   description = "正在准备 BEE 工作台",
   className = "",
 }: BeeLoadingProps) {

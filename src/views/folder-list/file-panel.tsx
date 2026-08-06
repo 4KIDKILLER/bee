@@ -5,6 +5,7 @@ import {
   BeeFolder,
   BeeImagePreview,
   // BeeTootip,
+  // BeeLoading,
   ScrollArea,
   AlertDialog,
   AlertDialogAction,
@@ -16,13 +17,18 @@ import {
   AlertDialogTitle,
 } from "/@c/index";
 // SquareMousePointer, SquareDashedMousePointer
-import CreateFolderDialog from "./components/create-folder-dialog";
+import FolderEditDialog from "./components/folder-edit-dialog";
 import FolderIntroduction from "./components/folder-introduction";
 import ImageIntroduction from "./components/image-introduction";
 import BeeImageItem from "./components/image-item";
-import type { BeeFileType, FolderScrollAreaProps } from "./types";
+import type {
+  BeeFileType,
+  FolderScrollAreaProps,
+} from "./types";
 import { FileApi } from "/@/api/file";
+// import { cn } from "/@/library/utils";
 import { FolderPlus } from "lucide-react";
+import { toast } from "sonner";
 
 function FolderScrollArea({
   showUploadPanel,
@@ -39,6 +45,12 @@ function FolderScrollArea({
   onOpenFolder,
   onPaginationChange,
 }: FolderScrollAreaProps) {
+  //当前操作的文件夹id
+  const folderId = useRef<string>("");
+  //当前操作文件夹的类型 1:创建 2修改
+  const folderMode = useRef<1 | 2>(1);
+  const [folderDialogOpen, setFolderDialogOpen] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const [folders, setFolders] = useState<BeeFileType[]>([]);
   const [showFolderIntroduction, setShowFolderIntroduction] = useState(false);
   const [showImageIntroduction, setShowImageIntroduction] = useState(false);
@@ -155,44 +167,57 @@ function FolderScrollArea({
 
   const getFileList = useCallback(
     (parentId: string, currentPage: number) => {
-      return FileApi.getFileListApi(
-        {
-          page: currentPage,
-          parentId,
-          pageSize: limit,
-        },
-      ).then((res) => {
+      setLoading(true);
+      return FileApi.getFileListApi({
+        page: currentPage,
+        parentId,
+        pageSize: limit,
+      }).then((res) => {
         setFolders(res.data.list);
         onPaginationChange({
           page: res.data.page,
           pageSize: res.data.pageSize,
           total: res.data.total,
         });
+        setLoading(false);
       });
     },
     [limit, onPaginationChange],
   );
 
-  const onRefresh = useCallback(() => {
-    void getFileList(currentFolderId, page).catch(() => {});
-  }, [currentFolderId, getFileList, page]);
-
-  const onCreateFolder = useCallback(
-    async (folderName: string) => {
-      const createResult = await FileApi.createFolderApi({
-        folderName,
-        parentId: currentFolderId,
-      });
-      return new Promise<boolean>((resolve, reject) => {
-        if (createResult.code == 200) {
-          onRefresh();
-          resolve(true);
-        } else {
-          reject(false);
-        }
-      });
+  const onRefresh = useCallback(
+    (isRefresh = false) => {
+      void getFileList(currentFolderId, page)
+        .then(() => {
+          if (isRefresh) toast.success("刷新成功");
+        })
+        .catch(() => {});
     },
-    [currentFolderId, onRefresh],
+    [currentFolderId, getFileList, page],
+  );
+
+  const handleCreateFolder = useCallback(
+    async (folderName: string) => {
+      if (folderMode.current == 1) {
+        const createResult = await FileApi.createFolderApi({
+          folderName,
+          parentId: currentFolderId,
+        });
+        return new Promise<boolean>((resolve, reject) => {
+          if (createResult.code == 200) {
+            onRefresh();
+            resolve(true);
+          } else {
+            reject(false);
+          }
+        });
+      } else {
+        return new Promise<boolean>((resolve) => {
+          resolve(true);
+        });
+      }
+    },
+    [currentFolderId, folderMode, onRefresh],
   );
 
   useEffect(() => {
@@ -228,37 +253,61 @@ function FolderScrollArea({
     [getFileList, limit, onOpenFolder],
   );
 
+  const handleFolderRename = useCallback((folder: BeeFileType) => {
+    folderId.current = folder.id;
+    console.log(folder);
+  }, []);
+
+  const handleFolderChange = useCallback((mode: 1 | 2) => {
+    folderMode.current = mode;
+    setFolderDialogOpen(true);
+  }, []);
+
   return (
     <div
       className={`absolute inset-0 h-full w-full will-change-transform transition-transform duration-300 ease-in-out ${
         showUploadPanel ? "-translate-x-full" : "translate-x-0"
       }`}
     >
-      {folders.length === 0 ? (
+      {/* <div
+        className={cn(
+          loading ? "block" : "hidden",
+          "w-full h-full backdrop-blur-sm absolute left-0 top-0 bg-black/50 z-10",
+        )}
+      >
+        <BeeLoading description="正在准备 BEE 文件列表" />
+      </div> */}
+      {folders.length === 0 && !loading ? (
         <div className="w-full h-full flex justify-center items-center">
-          <BeeEmpty onUpload={toggleUploadPanel} onRefresh={onRefresh}>
-            <CreateFolderDialog onConfirm={onCreateFolder}>
-              <Button
-                size="sm"
-                variant="link"
-                onClick={onRefresh}
-                className="text-white/80 text-[12px]"
-              >
-                <FolderPlus />
-                创建文件夹
-              </Button>
-            </CreateFolderDialog>
+          <BeeEmpty
+            onUpload={toggleUploadPanel}
+            onRefresh={() => onRefresh(true)}
+          >
+            {/* <FolderEditDialog onConfirm={onCreateFolder}> */}
+            <Button
+              size="sm"
+              variant="link"
+              onClick={() => handleFolderChange(1)}
+              className="text-white/80 text-[12px]"
+            >
+              <FolderPlus />
+              创建文件夹
+            </Button>
+            {/* </FolderEditDialog> */}
           </BeeEmpty>
         </div>
       ) : (
         <ScrollArea className="h-full w-full">
           <div className="flex w-full h-[32px] items-end justify-between px-4">
             <div className="flex items-center gap-2">
-              <CreateFolderDialog onConfirm={onCreateFolder}>
-                <span className="cursor-pointer transition-colors text-[14px] text-white/20 hover:text-(--theme-color)/80">
-                  新建文件夹
-                </span>
-              </CreateFolderDialog>
+              {/* <FolderEditDialog onConfirm={onCreateFolder}> */}
+              <span
+                onClick={() => handleFolderChange(1)}
+                className="cursor-pointer transition-colors text-[14px] text-white/20 hover:text-(--theme-color)/80"
+              >
+                新建文件夹
+              </span>
+              {/* </FolderEditDialog> */}
               <div className="w-[2px] h-[10px] bg-white/50 mx-1 rounded-xs" />
               <span className="cursor-pointer transition-colors text-[14px] text-white/20 hover:text-(--theme-color)/80">
                 时间
@@ -271,7 +320,7 @@ function FolderScrollArea({
               </span>
               <div className="w-[2px] h-[10px] bg-white/50 mx-1 rounded-xs" />
               <span
-                onClick={onRefresh}
+                onClick={() => onRefresh(true)}
                 className="flex items-center gap-1 cursor-pointer transition-colors text-[14px] text-white/20 hover:text-(--theme-color)/80"
               >
                 刷新
@@ -300,6 +349,7 @@ function FolderScrollArea({
                   selection={selection}
                   isChecked={selectedFolders.includes(folder.id)}
                   isOpen={openFolderId === folder.id}
+                  onFolderRename={handleFolderRename}
                   onFolderCheckChange={onFolderCheckChange}
                   onFolderOpenChange={onFolderOpenChange}
                   onFolderInfo={(item) => handleShowFolderIntroduction(item.id)}
@@ -318,6 +368,11 @@ function FolderScrollArea({
           </div>
         </ScrollArea>
       )}
+      <FolderEditDialog
+        open={folderDialogOpen}
+        onConfirm={handleCreateFolder}
+        onClose={() => setFolderDialogOpen(false)}
+      ></FolderEditDialog>
       <FolderIntroduction
         open={showFolderIntroduction}
         folder={activeFolder}

@@ -22,19 +22,23 @@ import {
 } from "/@c/index";
 
 interface CreateFolderDialogProps {
-  children: ReactNode;
+  open: boolean;
+  onClose: () => void;
+  children?: ReactNode;
   onCancel?: () => void;
   onConfirm?: (folderName: string) => Promise<boolean>;
 }
 
 function CreateFolderDialog({
+  open,
+  onClose,
   children,
   onCancel,
   onConfirm,
 }: CreateFolderDialogProps) {
   const [folderName, setFolderName] = useState("");
   const [invalid, setInvalid] = useState(false);
-  const [open, setOpen] = useState(false);
+  // const [open, setOpen] = useState(false);
 
   const validateFolderName = (name: string): boolean => {
     if (!name.trim()) {
@@ -63,9 +67,9 @@ function CreateFolderDialog({
 
     onConfirm?.(folderName).then((status) => {
       if (status) {
+        onClose();
         setFolderName("");
         setInvalid(false);
-        setOpen(false);
       }
     });
   };
@@ -78,9 +82,9 @@ function CreateFolderDialog({
     }
   };
 
-  const handleOpenChange = (isOpen: boolean) => {
-    setOpen(isOpen);
-    if (!isOpen) {
+  const handleOpenChange = (status: boolean) => {
+    if (!status) {
+      onClose();
       setFolderName("");
       setInvalid(false);
     }

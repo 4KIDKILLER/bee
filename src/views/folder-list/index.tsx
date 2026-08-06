@@ -16,7 +16,7 @@ function FolderList() {
   const [pageInfo, setPageInfo] = useState({
     page: 1,
     total: 0,
-    limit: 1,
+    limit: 50,
   });
   const [path, setPath] = useState<BeeFileType[]>([rootPath]);
   const [selection, setSelection] = useState(false);
