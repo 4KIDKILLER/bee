@@ -2,6 +2,7 @@ import { useCallback, useState } from "react";
 import FilePanel from "./file-panel";
 import UploadPanel from "./upload-panel";
 import { ArrowLeft } from "lucide-react";
+import { cn } from "/@/library/utils";
 import FolderListPagination from "./components/folder-list-pagination";
 import ViewModeSwitch from "./components/view-mode-switch";
 import { Button, BeeTootip } from "/@c/index";
@@ -77,7 +78,7 @@ function FolderList() {
 
   /**
    * 翻页事件
-   * @param page 
+   * @param page
    */
   const handlePageChange = (page: number) => {
     setPageInfo((prev) => {
@@ -141,7 +142,7 @@ function FolderList() {
           </div>
         </div>
 
-        <div className="mt-2 flex w-full justify-between px-4 text-center transition-opacity duration-200">
+        <div className="mt-2 flex w-full justify-between px-4 text-center">
           <div className="flex items-center">
             <BeeTootip side="left" content="返回上一级">
               <Button
@@ -165,6 +166,10 @@ function FolderList() {
               limit={pageInfo.limit}
               total={pageInfo.total}
               onPageChange={handlePageChange}
+              className={cn(
+                "animate__animated animate__faster",
+                showUploadPanel ? "animate__fadeOut" : "animate__fadeIn",
+              )}
             />
           )}
         </div>

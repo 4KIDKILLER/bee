@@ -3,7 +3,7 @@ import type { FileListDataType } from "/@/api/file"
 
 export type BeeFileType = FileListDataType
 
-export type UploadTaskStatus = "success" | "uploading" | "pending";
+export type UploadTaskStatus = "success" | "uploading" | "pending" | "error";
 export type UploadFilterKey = UploadTaskStatus;
 
 export interface UploadTaskItem {
@@ -13,6 +13,7 @@ export interface UploadTaskItem {
   progress: number;
   status: UploadTaskStatus;
   size: string;
+  errorReason?: string;
 }
 
 export type Task = Record<string, UploadTaskItem>

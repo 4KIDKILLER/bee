@@ -1,6 +1,6 @@
 import { useMemo, useState, useRef, useCallback } from "react";
 import { Spinner } from "/@c/index";
-import { CheckCircle2, Clock3, Upload } from "lucide-react";
+import { CheckCircle2, Clock3, TriangleAlert, Upload } from "lucide-react";
 import UploadStatusMenu from "./components/upload-status-menu";
 import UploadTaskList from "./components/upload-task-list";
 import type {
@@ -16,6 +16,9 @@ import { formatFileSize } from "/@/library/utils";
 
 // 上传中状态的最短展示时长，避免小文件上传过快导致进度条一闪而过
 const MIN_UPLOAD_DISPLAY_DURATION = 3000;
+// 最大限制10M
+const MAX_UPLOAD_FILE_SIZE = 1 * 1024;
+const MAX_UPLOAD_FILE_SIZE_TEXT = "10M";
 
 const statusMap: Record<UploadTaskStatus, UploadTaskStatusConfig> = {
   success: {
@@ -42,6 +45,14 @@ const statusMap: Record<UploadTaskStatus, UploadTaskStatusConfig> = {
     listClass: "bg-amber-400/10",
     icon: <Clock3 className="size-4" />,
   },
+  error: {
+    label: "未完成",
+    textClass: "text-red-300",
+    barClass: "bg-red-400",
+    badgeClass: "bg-red-400/15 text-red-300 border-red-400/30",
+    listClass: "bg-red-400/10",
+    icon: <TriangleAlert className="size-4" />,
+  },
 };
 
 const filterMeta: Record<
@@ -60,6 +71,10 @@ const filterMeta: Record<
     label: "等待中",
     emptyText: "当前没有等待中的上传任务",
   },
+  error: {
+    label: "未完成",
+    emptyText: "当前没有未完成的上传任务",
+  },
 };
 
 function UploadPanel({ showUploadPanel, currentFolderId }: UploadPanelProps) {
@@ -67,6 +82,7 @@ function UploadPanel({ showUploadPanel, currentFolderId }: UploadPanelProps) {
     success: {},
     uploading: {},
     pending: {},
+    error: {},
   });
   const [activeFilter, setActiveFilter] =
     useState<UploadFilterKey>("uploading");
@@ -77,6 +93,7 @@ function UploadPanel({ showUploadPanel, currentFolderId }: UploadPanelProps) {
       uploading: Object.keys(tasks.uploading).length,
       success: Object.keys(tasks.success).length,
       pending: Object.keys(tasks.pending).length,
+      error: Object.keys(tasks.error).length,
     }),
     [tasks],
   );
@@ -92,6 +109,14 @@ function UploadPanel({ showUploadPanel, currentFolderId }: UploadPanelProps) {
           "hover:border-sky-400/20 hover:bg-sky-400/10 hover:text-sky-200",
       },
       {
+        key: "pending" as const,
+        label: "等待中",
+        count: counts.pending,
+        activeClass: statusMap.pending.badgeClass,
+        hoverClass:
+          "hover:border-amber-400/20 hover:bg-amber-400/10 hover:text-amber-200",
+      },
+      {
         key: "success" as const,
         label: "已完成",
         count: counts.success,
@@ -100,12 +125,12 @@ function UploadPanel({ showUploadPanel, currentFolderId }: UploadPanelProps) {
           "hover:border-emerald-400/20 hover:bg-emerald-400/10 hover:text-emerald-200",
       },
       {
-        key: "pending" as const,
-        label: "等待中",
-        count: counts.pending,
-        activeClass: statusMap.pending.badgeClass,
+        key: "error" as const,
+        label: "未完成",
+        count: counts.error,
+        activeClass: statusMap.error.badgeClass,
         hoverClass:
-          "hover:border-amber-400/20 hover:bg-amber-400/10 hover:text-amber-200",
+          "hover:border-red-400/20 hover:bg-red-400/10 hover:text-red-200",
       },
     ],
     [counts],
@@ -119,7 +144,8 @@ function UploadPanel({ showUploadPanel, currentFolderId }: UploadPanelProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const finishedCount = counts.success;
-  const allCount = counts.pending + counts.success + counts.uploading;
+  const allCount =
+    counts.pending + counts.success + counts.uploading + counts.error;
   const currentMeta = filterMeta[activeFilter];
   const currentStatus = statusMap[activeFilter];
 
@@ -132,7 +158,7 @@ function UploadPanel({ showUploadPanel, currentFolderId }: UploadPanelProps) {
       const files = e.target.files;
       if (!files || files.length === 0) return;
 
-      const uploadTasks = Array.from(files).map((file) => {
+      const selectedTasks = Array.from(files).map((file) => {
         const taskId = crypto.randomUUID().replaceAll("-", "");
 
         return {
@@ -148,6 +174,12 @@ function UploadPanel({ showUploadPanel, currentFolderId }: UploadPanelProps) {
           },
         };
       });
+      const uploadTasks = selectedTasks.filter(
+        ({ file }) => file.size <= MAX_UPLOAD_FILE_SIZE,
+      );
+      const oversizedTasks = selectedTasks.filter(
+        ({ file }) => file.size > MAX_UPLOAD_FILE_SIZE,
+      );
 
       setTasks((prev) => ({
         ...prev,
@@ -157,7 +189,24 @@ function UploadPanel({ showUploadPanel, currentFolderId }: UploadPanelProps) {
             uploadTasks.map(({ taskId, task }) => [taskId, task]),
           ),
         },
+        error: {
+          ...prev.error,
+          ...Object.fromEntries(
+            oversizedTasks.map(({ file, taskId, task }) => [
+              taskId,
+              {
+                ...task,
+                status: "error" as const,
+                errorReason: `文件大小不能超过 ${MAX_UPLOAD_FILE_SIZE_TEXT}，当前文件大小为 ${formatFileSize(file.size)}`,
+              },
+            ]),
+          ),
+        },
       }));
+
+      if (oversizedTasks.length > 0 && uploadTasks.length === 0) {
+        setActiveFilter("error");
+      }
 
       uploadTasks.forEach(({ file, taskId }) => {
         void requestPoolRef.current
@@ -275,9 +324,9 @@ function UploadPanel({ showUploadPanel, currentFolderId }: UploadPanelProps) {
               return {
                 ...prev,
                 uploading,
-                pending: {
-                  ...prev.pending,
-                  [taskId]: { ...task, progress: 0, status: "pending" },
+                error: {
+                  ...prev.error,
+                  [taskId]: { ...task, progress: 0, status: "error" },
                 },
               };
             });

@@ -21,10 +21,7 @@ import FolderEditDialog from "./components/folder-edit-dialog";
 import FolderIntroduction from "./components/folder-introduction";
 import ImageIntroduction from "./components/image-introduction";
 import BeeImageItem from "./components/image-item";
-import type {
-  BeeFileType,
-  FolderScrollAreaProps,
-} from "./types";
+import type { BeeFileType, FolderScrollAreaProps } from "./types";
 import { FileApi } from "/@/api/file";
 // import { cn } from "/@/library/utils";
 import { FolderPlus } from "lucide-react";
@@ -50,7 +47,7 @@ function FolderScrollArea({
   //当前操作文件夹的类型 1:创建 2修改
   const folderMode = useRef<1 | 2>(1);
   const [folderDialogOpen, setFolderDialogOpen] = useState<boolean>(false);
-  // const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const [folders, setFolders] = useState<BeeFileType[]>([]);
   const [showFolderIntroduction, setShowFolderIntroduction] = useState(false);
   const [showImageIntroduction, setShowImageIntroduction] = useState(false);
@@ -167,7 +164,7 @@ function FolderScrollArea({
 
   const getFileList = useCallback(
     (parentId: string, currentPage: number) => {
-      // setLoading(true);
+      setLoading(true);
       return FileApi.getFileListApi({
         page: currentPage,
         parentId,
@@ -179,7 +176,7 @@ function FolderScrollArea({
           pageSize: res.data.pageSize,
           total: res.data.total,
         });
-        // setLoading(false);
+        setLoading(false);
       });
     },
     [limit, onPaginationChange],
@@ -278,24 +275,26 @@ function FolderScrollArea({
         <BeeLoading description="正在准备 BEE 文件列表" />
       </div> */}
       {folders.length === 0 ? (
-        <div className="w-full h-full flex justify-center items-center">
-          <BeeEmpty
-            onUpload={toggleUploadPanel}
-            onRefresh={() => onRefresh(true)}
-          >
-            {/* <FolderEditDialog onConfirm={onCreateFolder}> */}
-            <Button
-              size="sm"
-              variant="link"
-              onClick={() => handleFolderChange(1)}
-              className="text-white/80 text-[12px]"
+        !loading && (
+          <div className="w-full h-full flex justify-center items-center">
+            <BeeEmpty
+              onUpload={toggleUploadPanel}
+              onRefresh={() => onRefresh(true)}
             >
-              <FolderPlus />
-              创建文件夹
-            </Button>
-            {/* </FolderEditDialog> */}
-          </BeeEmpty>
-        </div>
+              {/* <FolderEditDialog onConfirm={onCreateFolder}> */}
+              <Button
+                size="sm"
+                variant="link"
+                onClick={() => handleFolderChange(1)}
+                className="text-white/80 text-[12px]"
+              >
+                <FolderPlus />
+                创建文件夹
+              </Button>
+              {/* </FolderEditDialog> */}
+            </BeeEmpty>
+          </div>
+        )
       ) : (
         <ScrollArea className="h-full w-full">
           <div className="flex w-full h-[32px] items-end justify-between px-4">
