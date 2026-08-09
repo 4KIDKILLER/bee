@@ -13,11 +13,12 @@ import type {
 import { FileApi } from "/@/api/file";
 import RequestPool from "/@/library/class/RequestPool";
 import { formatFileSize } from "/@/library/utils";
+import { v4 as uuidv4 } from "uuid"
 
 // 上传中状态的最短展示时长，避免小文件上传过快导致进度条一闪而过
 const MIN_UPLOAD_DISPLAY_DURATION = 3000;
 // 最大限制10M
-const MAX_UPLOAD_FILE_SIZE = 1 * 1024;
+const MAX_UPLOAD_FILE_SIZE = 10 * 1024 * 1024;
 const MAX_UPLOAD_FILE_SIZE_TEXT = "10M";
 
 const statusMap: Record<UploadTaskStatus, UploadTaskStatusConfig> = {
@@ -159,7 +160,7 @@ function UploadPanel({ showUploadPanel, currentFolderId }: UploadPanelProps) {
       if (!files || files.length === 0) return;
 
       const selectedTasks = Array.from(files).map((file) => {
-        const taskId = crypto.randomUUID().replaceAll("-", "");
+        const taskId = uuidv4().replaceAll(/-/g, "");
 
         return {
           file,
