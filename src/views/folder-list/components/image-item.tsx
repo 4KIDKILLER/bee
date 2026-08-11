@@ -4,11 +4,13 @@ import type { BeeFileType } from "../types";
 export interface BeeImageItemProps {
   folder: BeeFileType;
   onPreview?: (src: string) => void;
+  onDelete?: (folder: BeeFileType) => void;
   onViewDetail?: (folder: BeeFileType) => void;
 }
 
 export function BeeImageItem({
   folder,
+  onDelete,
   onPreview,
   onViewDetail,
 }: BeeImageItemProps) {
@@ -32,7 +34,10 @@ export function BeeImageItem({
         />
       </div>
       <div className="max-w-[100px] text-xs text-purple-50 text-shadow-amber-100">
-        <BeeImageContextMenu onViewDetail={() => onViewDetail?.(folder)}>
+        <BeeImageContextMenu
+          onDelete={() => onDelete?.(folder)}
+          onViewDetail={() => onViewDetail?.(folder)}
+        >
           <span
             title={folder.originalName}
             className="flex max-w-full cursor-pointer rounded-md bg-black/35 px-[6px] py-[4px] transition-colors hover:bg-(--theme-color)"

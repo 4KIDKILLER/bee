@@ -80,8 +80,9 @@ import {
     AvatarGroup,
     AvatarGroupCount,
     AvatarImage,
-  } from "./ShadcnUI/avatar"
-  import { Toaster } from "./ShadcnUI/sonner";
+} from "./ShadcnUI/avatar"
+import { Toaster } from "./ShadcnUI/sonner";
+import { Badge } from "./ShadcnUI/badge";
 
 import { BeeCell } from "../views/folder-list/components/cell";
 import { BeeTootip } from "./BeeUI/bee-tootip";
@@ -90,6 +91,7 @@ import { BeeImage, BeeImageContextMenu, BeeImagePreview } from "./BeeUI/bee-imag
 import { BeeFolder } from "../views/folder-list/components/folder-item";
 import { BeeLoading } from "./BeeUI/bee-loading";
 import { BeeEmpty } from "./BeeUI/bee-empty";
+import { BeeConfirm, BeeDeleteConfirm } from "./BeeUI/bee-confirm";
 
 export {
     Input,
@@ -159,12 +161,15 @@ export {
     AvatarGroupCount,
     AvatarImage,
     Toaster,
+    Badge,
 
     BeeCell,
     BeeIcon,
     BeeImage,
     BeeTootip,
     BeeFolder,
+    BeeConfirm,
+    BeeDeleteConfirm,
     BeeImagePreview,
     BeeImageContextMenu,
     BeeLoading,

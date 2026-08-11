@@ -3,6 +3,7 @@ import {
   Button,
   BeeEmpty,
   BeeFolder,
+  BeeDeleteConfirm,
   BeeImagePreview,
   // BeeTootip,
   // BeeLoading,
@@ -49,6 +50,7 @@ function FolderScrollArea({
   const [folderDialogOpen, setFolderDialogOpen] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [folders, setFolders] = useState<BeeFileType[]>([]);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState<boolean>(false);
   const [showFolderIntroduction, setShowFolderIntroduction] = useState(false);
   const [showImageIntroduction, setShowImageIntroduction] = useState(false);
   const [activeFolderId, setActiveFolderId] = useState<string | null>(null);
@@ -359,6 +361,7 @@ function FolderScrollArea({
                 <BeeImageItem
                   key={folder.id}
                   folder={folder}
+                  onDelete={() => setShowDeleteConfirm(true)}
                   onPreview={(src: string) => handlePreviewImage([src], 0)}
                   onViewDetail={(item) => handleShowImageIntroduction(item.id)}
                 />
@@ -367,6 +370,11 @@ function FolderScrollArea({
           </div>
         </ScrollArea>
       )}
+      <BeeDeleteConfirm
+        open={showDeleteConfirm}
+        onConfirm={() => {}}
+        onCancel={() => setShowDeleteConfirm(false)}
+      ></BeeDeleteConfirm>
       <FolderEditDialog
         open={folderDialogOpen}
         onConfirm={handleCreateFolder}

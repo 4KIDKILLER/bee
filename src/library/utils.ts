@@ -1,5 +1,6 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
+import { toast } from "sonner"
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -16,4 +17,14 @@ export function formatFileSize(size: number) {
   const value = size / 1024 ** unitIndex
 
   return `${value.toFixed(unitIndex === 0 ? 0 : 1)} ${units[unitIndex]}`
+}
+
+export function copyToClipboard(text: string) {
+  navigator.clipboard.writeText(text)
+    .then(() => {
+      toast.success("已复制");
+    })
+    .catch((error) => {
+      console.error('Failed to copy text:', error);
+    });
 }

@@ -7,7 +7,8 @@ import {
   ScrollArea,
   Textarea,
 } from "/@c/index";
-import { Bookmark, ImageIcon, Info, Plus, Tag, X } from "lucide-react";
+import {copyToClipboard} from "/@/library/utils"
+import { Copy, Bookmark, ImageIcon, Info, Plus, Tag, X } from "lucide-react";
 import type { BeeFileType } from "../types";
 
 interface ImageIntroductionProps {
@@ -177,11 +178,17 @@ function ImageIntroduction({
     };
   }, [open, onClose]);
 
+  const originalName = data?.originalName ?? "未选择图片";
+  const dotIndex = originalName.lastIndexOf(".");
+  const hasFileExt = dotIndex > 0;
+  const fileName = hasFileExt ? originalName.slice(0, dotIndex) : originalName;
+  const fileExt = hasFileExt ? originalName.slice(dotIndex) : "";
+
   return (
     <aside
       ref={panelRef}
       aria-hidden={!open}
-      className={`absolute right-0 top-0 bottom-0 z-20 w-80 ${
+      className={`absolute right-0 top-0 bottom-0 z-20 w-80 max-w-80 overflow-hidden ${
         !open && !data
           ? "hidden"
           : open
@@ -189,19 +196,27 @@ function ImageIntroduction({
             : "pointer-events-none"
       }`}
     >
-      <ScrollArea className="h-full text-white">
-        <div className="flex min-h-full flex-col px-4 py-4">
+      <ScrollArea className="h-full w-full max-w-full overflow-hidden text-white">
+        <div className="box-border flex w-full min-w-0 max-w-full flex-col overflow-hidden px-4 py-4">
           <header
-            className={`flex items-center justify-between rounded-2xl border border-white/30 bg-black/90 p-4 ${headerAnimation.className}`}
+            className={`flex w-full min-w-0 max-w-full items-center justify-between overflow-hidden rounded-2xl border border-white/30 bg-black/90 p-4 ${headerAnimation.className}`}
             style={headerAnimation.style}
           >
-            <div className="flex min-w-0 items-center gap-2">
-              <ImageIcon className="size-5 text-(--theme-color)" />
-              <span className="truncate text-md font-semibold tracking-wide text-white">
-                {data?.originalName ?? "未选择图片"}
+            <div className="flex min-w-0 flex-1 items-center gap-2 overflow-hidden">
+              <ImageIcon className="size-5 shrink-0 text-(--theme-color)" />
+              <span
+                className="flex w-48 min-w-0 max-w-full text-md font-semibold text-white"
+                title={originalName}
+              >
+                <span className="block min-w-0 flex-1 truncate">
+                  {fileName}
+                </span>
+                <span className="shrink-0 text-(--theme-color)">
+                  <i>{fileExt}</i>
+                </span>
               </span>
             </div>
-            <span className="cursor-pointer" onClick={onClose}>
+            <span className="ml-3 shrink-0 cursor-pointer" onClick={onClose}>
               <X className="size-5" />
             </span>
           </header>
@@ -239,10 +254,16 @@ function ImageIntroduction({
                     <div className="mt-1 text-white">{data.updateTime}</div>
                   </div>
                   <div>
-                    <div className="text-white/45">资源地址</div>
-                    <div className="mt-1 break-all text-xs text-white/70">
-                      {data.covers[0]}
+                    <div className="text-white/45 flex gap-1 items-center">
+                      <span>资源地址</span>
+                      <span
+                        onClick={() => copyToClipboard(data.src)}
+                        className="cursor-copy hover:text-(--theme-color)"
+                      >
+                        <Copy size={13} />
+                      </span>
                     </div>
+                    <div className="mt-1 break-all">{data.src}</div>
                   </div>
                 </div>
               </section>
