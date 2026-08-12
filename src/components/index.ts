@@ -83,6 +83,14 @@ import {
 } from "./ShadcnUI/avatar"
 import { Toaster } from "./ShadcnUI/sonner";
 import { Badge } from "./ShadcnUI/badge";
+import {
+    InputGroup,
+    InputGroupAddon,
+    InputGroupButton,
+    InputGroupText,
+    InputGroupInput,
+    InputGroupTextarea
+} from "./ShadcnUI/input-group"
 
 import { BeeCell } from "../views/folder-list/components/cell";
 import { BeeTootip } from "./BeeUI/bee-tootip";
@@ -162,6 +170,12 @@ export {
     AvatarImage,
     Toaster,
     Badge,
+    InputGroup,
+    InputGroupAddon,
+    InputGroupButton,
+    InputGroupText,
+    InputGroupInput,
+    InputGroupTextarea,
 
     BeeCell,
     BeeIcon,

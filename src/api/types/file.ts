@@ -15,6 +15,12 @@ interface CreateFolderParamsType {
     folderName: string
 }
 
+interface UpdateNameParamsType {
+    id: string
+    type: number
+    name: string
+}
+
 interface FileListDataType {
     id: string
     parentId: string
@@ -40,6 +46,7 @@ export type {
     FileListDataType,
     FileListParamsType,
     FileListResponseType,
+    UpdateNameParamsType,
     OnUploadProgressType,
     CreateFolderParamsType
 }

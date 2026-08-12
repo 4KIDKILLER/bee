@@ -3,14 +3,17 @@ import type { BeeFileType } from "../types";
 
 export interface BeeImageItemProps {
   folder: BeeFileType;
+  allowSetCover: boolean;
   onPreview?: (src: string) => void;
   onDelete?: (folder: BeeFileType) => void;
+  onRename?: (folder: BeeFileType) => void;
   onViewDetail?: (folder: BeeFileType) => void;
 }
 
 export function BeeImageItem({
   folder,
   onDelete,
+  onRename,
   onPreview,
   onViewDetail,
 }: BeeImageItemProps) {
@@ -22,19 +25,20 @@ export function BeeImageItem({
     <BeeCell>
       <div className="w-[100px] h-[80px] flex items-center justify-center">
         <BeeImage
-          showContextMenu={false}
-          className="overflow-hidden rounded-md"
-          fit="contain"
-          width={80}
-          alt={folder.originalName}
-          height={64}
           preview
+          width={80}
+          height={64}
+          fit="contain"
           onPreview={onPreview}
           src={folder.thumbSrc}
-        />
+          showContextMenu={false}
+          alt={folder.originalName}
+          className="overflow-hidden rounded-md"
+          />
       </div>
       <div className="max-w-[100px] text-xs text-purple-50 text-shadow-amber-100">
         <BeeImageContextMenu
+          onRename={() => onRename?.(folder)}
           onDelete={() => onDelete?.(folder)}
           onViewDetail={() => onViewDetail?.(folder)}
         >

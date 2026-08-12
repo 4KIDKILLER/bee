@@ -1,8 +1,11 @@
 import {
+  forwardRef,
+  useImperativeHandle,
+  useMemo,
   useState,
   type ChangeEvent,
-  type SubmitEvent,
   type ReactNode,
+  type SubmitEvent,
 } from "react";
 import {
   Button,
@@ -15,30 +18,61 @@ import {
   DialogTitle,
   DialogTrigger,
   Field,
-  FieldError,
   FieldGroup,
   FieldLabel,
   Input,
 } from "/@c/index";
+
+const modeText = {
+  1: {
+    title: "创建文件夹",
+    desc: "在当前文件夹里创建一个专门用来存放图片的新文件夹",
+  },
+  2: {
+    title: "编辑文件夹",
+    desc: "修改当前图片文件夹的名称或存储路径以便更好地管理",
+  },
+};
+interface FolderEditFormData {
+  folderName: string;
+}
+
+interface FolderEditDialogRef {
+  setFormData: (data: FolderEditFormData) => void;
+  resetForm: () => void;
+}
 
 interface CreateFolderDialogProps {
   open: boolean;
   onClose: () => void;
   children?: ReactNode;
   onCancel?: () => void;
-  onConfirm?: (folderName: string) => Promise<boolean>;
+  mode: 1 | 2;
+  onConfirm?: (folderName: string) => void;
 }
 
-function CreateFolderDialog({
-  open,
-  onClose,
-  children,
-  onCancel,
-  onConfirm,
-}: CreateFolderDialogProps) {
+const CreateFolderDialog = forwardRef<
+  FolderEditDialogRef,
+  CreateFolderDialogProps
+>(({ open, mode, onClose, children, onCancel, onConfirm }, ref) => {
   const [folderName, setFolderName] = useState("");
   const [invalid, setInvalid] = useState(false);
   // const [open, setOpen] = useState(false);
+
+  const resetForm = () => {
+    setFolderName("");
+    setInvalid(false);
+  };
+
+  useImperativeHandle(ref, () => ({
+    setFormData: ({ folderName: nextFolderName }) => {
+      setFolderName(nextFolderName);
+      setInvalid(false);
+    },
+    resetForm,
+  }));
+
+  const text = useMemo(() => modeText[mode], [mode]);
 
   const validateFolderName = (name: string): boolean => {
     if (!name.trim()) {
@@ -65,16 +99,10 @@ function CreateFolderDialog({
       return;
     }
 
-    onConfirm?.(folderName).then((status) => {
-      if (status) {
-        onClose();
-        setFolderName("");
-        setInvalid(false);
-      }
-    });
+    onConfirm?.(folderName);
   };
 
-  const handlefolderNameChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const onFolderNameChange = (e: ChangeEvent<HTMLInputElement>) => {
     const nextValue = e.target.value;
     setFolderName(nextValue);
     if (invalid) {
@@ -85,8 +113,7 @@ function CreateFolderDialog({
   const handleOpenChange = (status: boolean) => {
     if (!status) {
       onClose();
-      setFolderName("");
-      setInvalid(false);
+      resetForm();
     }
   };
 
@@ -96,10 +123,8 @@ function CreateFolderDialog({
       <DialogContent className="sm:max-w-sm">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
-            <DialogTitle>创建文件夹</DialogTitle>
-            <DialogDescription>
-              在当前文件夹里创建一个专门用来存放图片的新文件夹
-            </DialogDescription>
+            <DialogTitle>{text.title}</DialogTitle>
+            <DialogDescription>{text.desc}</DialogDescription>
           </DialogHeader>
           <FieldGroup className="mt-4">
             <Field data-invalid={invalid}>
@@ -110,15 +135,13 @@ function CreateFolderDialog({
               <Input
                 required
                 id="folderName"
+                maxLength={10}
                 name="folderName"
                 value={folderName}
-                onChange={handlefolderNameChange}
                 aria-invalid={invalid}
                 placeholder="请输入文件夹名称"
+                onChange={onFolderNameChange}
               />
-              <FieldError>
-                请输入有效的文件夹名称，且不能包含 \\ / : * ? " &lt; &gt; |
-              </FieldError>
             </Field>
           </FieldGroup>
           <DialogFooter className="mt-6">
@@ -133,6 +156,7 @@ function CreateFolderDialog({
       </DialogContent>
     </Dialog>
   );
-}
+});
 
+export type { FolderEditDialogRef, FolderEditFormData };
 export default CreateFolderDialog;

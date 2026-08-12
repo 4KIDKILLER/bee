@@ -10,6 +10,7 @@ import {
   X,
   ZoomIn,
   ZoomOut,
+  SquarePen,
 } from "lucide-react";
 import { cn } from "/@/library/utils";
 import { Button } from "../ShadcnUI/button";
@@ -52,6 +53,7 @@ export interface BeeImageProps extends Omit<
   onViewDetail?: () => void;
   onSetAsCover?: (slot: 1 | 2 | 3) => void;
   onDelete?: () => void;
+  onRename?: () => void;
   onPreview?: (src: string) => void;
 }
 
@@ -399,10 +401,6 @@ export function BeeImage({
   height,
   fit,
   preview = false,
-  showContextMenu = false,
-  onViewDetail,
-  onSetAsCover,
-  onDelete,
   onPreview,
   className,
   style,
@@ -441,17 +439,7 @@ export function BeeImage({
     />
   );
 
-  return showContextMenu ? (
-    <BeeImageContextMenu
-      onDelete={onDelete}
-      onViewDetail={onViewDetail}
-      onSetAsCover={onSetAsCover}
-    >
-      <span className="inline-flex max-w-full">{imageNode}</span>
-    </BeeImageContextMenu>
-  ) : (
-    imageNode
-  );
+  return imageNode;
 }
 
 export function BeeImageContextMenu({
@@ -459,18 +447,23 @@ export function BeeImageContextMenu({
   onViewDetail,
   onSetAsCover,
   onDelete,
+  onRename,
 }: {
   children: React.ReactNode;
 } & Partial<
-  Pick<BeeImageProps, "onViewDetail" | "onSetAsCover" | "onDelete">
+  Pick<BeeImageProps, "onViewDetail" | "onSetAsCover" | "onDelete" | "onRename">
 >) {
   return (
     <ContextMenu>
       <ContextMenuTrigger asChild>{children}</ContextMenuTrigger>
       <ContextMenuContent>
+        <ContextMenuItem onClick={() => onRename?.()}>
+          <SquarePen />
+          重命名
+        </ContextMenuItem>
         <ContextMenuItem onClick={() => onViewDetail?.()}>
           <Info />
-          详细信息
+          显示简介
         </ContextMenuItem>
         <ContextMenuItem onClick={() => onSetAsCover?.(1)}>
           <ImageUp />

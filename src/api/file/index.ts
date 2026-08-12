@@ -3,13 +3,15 @@ import type {
     FileListParamsType,
     FileListResponseType,
     OnUploadProgressType,
-    CreateFolderParamsType
+    UpdateNameParamsType,
+    CreateFolderParamsType,
 } from "../types/file";
 import request from "/@/library/request";
 
 interface FileApiType {
-    createFolderApi: (params: CreateFolderParamsType) => Promise<ApiDefaultResponseType>
     getFileListApi: (params: FileListParamsType) => Promise<FileListResponseType>
+    updateNameApi: (params: UpdateNameParamsType) => Promise<ApiDefaultResponseType>
+    createFolderApi: (params: CreateFolderParamsType) => Promise<ApiDefaultResponseType>
     uploadFileApi: (params: FormData, onUploadProgress: OnUploadProgressType) => Promise<ApiDefaultResponseType>
 }
 
@@ -37,6 +39,14 @@ const FileApi: FileApiType = {
      */
     createFolderApi(params: CreateFolderParamsType): Promise<ApiDefaultResponseType> {
         return request.post<null, CreateFolderParamsType>("/createFolder", params)
+    },
+    /**
+     * @description 文件/文件夹重命名
+     * @param params 
+     * @returns 
+     */
+    updateNameApi(params: UpdateNameParamsType): Promise<ApiDefaultResponseType> {
+        return request.post<null, UpdateNameParamsType>("/rename", params)
     }
 }
 

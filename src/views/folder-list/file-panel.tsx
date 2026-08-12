@@ -18,7 +18,12 @@ import {
   AlertDialogTitle,
 } from "/@c/index";
 // SquareMousePointer, SquareDashedMousePointer
-import FolderEditDialog from "./components/folder-edit-dialog";
+import FolderEditDialog, {
+  type FolderEditDialogRef,
+} from "./components/folder-edit-dialog";
+import ImageEditDialog, {
+  type ImageEditDialogRef,
+} from "./components/image-edit-dialog";
 import FolderIntroduction from "./components/folder-introduction";
 import ImageIntroduction from "./components/image-introduction";
 import BeeImageItem from "./components/image-item";
@@ -43,11 +48,13 @@ function FolderScrollArea({
   onOpenFolder,
   onPaginationChange,
 }: FolderScrollAreaProps) {
-  //当前操作的文件夹id
-  const folderId = useRef<string>("");
+  //当前操作的文件夹/图片
+  const currentFolder = useRef<BeeFileType | null>(null);
   //当前操作文件夹的类型 1:创建 2修改
-  const folderMode = useRef<1 | 2>(1);
+  const [folderEditMode, setFolderEditMode] = useState<1 | 2>(1);
   const [folderDialogOpen, setFolderDialogOpen] = useState<boolean>(false);
+  const [imageEditDialogOpen, setImageEditDialogOpen] =
+    useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [folders, setFolders] = useState<BeeFileType[]>([]);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<boolean>(false);
@@ -60,6 +67,8 @@ function FolderScrollArea({
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImages, setPreviewImages] = useState<string[]>([]);
   const [previewIndex, setPreviewIndex] = useState(0);
+  const imageEditDialogRef = useRef<ImageEditDialogRef>(null);
+  const folderEditDialogRef = useRef<FolderEditDialogRef>(null);
   const skipNextFetchKeyRef = useRef<string | null>(null);
   const activeFolder =
     folders.find((folder) => folder.id === activeFolderId) ?? null;
@@ -195,28 +204,39 @@ function FolderScrollArea({
     [currentFolderId, getFileList, page],
   );
 
-  const handleCreateFolder = useCallback(
+  const editCallback = useCallback(
+    (result: ApiDefaultResponseType) => {
+      toast.success(result.message);
+      setFolderDialogOpen(false);
+      folderEditDialogRef.current?.resetForm();
+      onRefresh();
+    },
+    [onRefresh],
+  );
+
+  const onFileRename = useCallback(
+    (name: string) => {
+      FileApi.updateNameApi({
+        name: name,
+        id: (currentFolder.current as BeeFileType).id,
+        type: (currentFolder.current as BeeFileType).type,
+      }).then(editCallback);
+    },
+    [editCallback],
+  );
+
+  const handleFolderEditConfirm = useCallback(
     async (folderName: string) => {
-      if (folderMode.current == 1) {
-        const createResult = await FileApi.createFolderApi({
+      if (folderEditMode == 1) {
+        FileApi.createFolderApi({
           folderName,
           parentId: currentFolderId,
-        });
-        return new Promise<boolean>((resolve, reject) => {
-          if (createResult.code == 200) {
-            onRefresh();
-            resolve(true);
-          } else {
-            reject(false);
-          }
-        });
+        }).then(editCallback);
       } else {
-        return new Promise<boolean>((resolve) => {
-          resolve(true);
-        });
+        onFileRename(folderName);
       }
     },
-    [currentFolderId, folderMode, onRefresh],
+    [currentFolderId, folderEditMode, onFileRename, editCallback],
   );
 
   useEffect(() => {
@@ -252,13 +272,25 @@ function FolderScrollArea({
     [getFileList, limit, onOpenFolder],
   );
 
-  const handleFolderRename = useCallback((folder: BeeFileType) => {
-    folderId.current = folder.id;
-    console.log(folder);
+  const handleTargetRename = useCallback((target: BeeFileType) => {
+    currentFolder.current = target;
+    if (target.type == 1) {
+      folderEditDialogRef.current?.setFormData({
+        folderName: target.originalName,
+      });
+      setFolderEditMode(2);
+      setFolderDialogOpen(true);
+    } else {
+      imageEditDialogRef.current?.setFormData({
+        imageName: target.originalName,
+      });
+      setImageEditDialogOpen(true);
+    }
   }, []);
 
   const handleFolderChange = useCallback((mode: 1 | 2) => {
-    folderMode.current = mode;
+    folderEditDialogRef.current?.resetForm();
+    setFolderEditMode(mode);
     setFolderDialogOpen(true);
   }, []);
 
@@ -350,7 +382,7 @@ function FolderScrollArea({
                   selection={selection}
                   isChecked={selectedFolders.includes(folder.id)}
                   isOpen={openFolderId === folder.id}
-                  onFolderRename={handleFolderRename}
+                  onFolderRename={handleTargetRename}
                   onFolderCheckChange={onFolderCheckChange}
                   onFolderOpenChange={onFolderOpenChange}
                   onFolderInfo={(item) => handleShowFolderIntroduction(item.id)}
@@ -361,6 +393,7 @@ function FolderScrollArea({
                 <BeeImageItem
                   key={folder.id}
                   folder={folder}
+                  onRename={handleTargetRename}
                   onDelete={() => setShowDeleteConfirm(true)}
                   onPreview={(src: string) => handlePreviewImage([src], 0)}
                   onViewDetail={(item) => handleShowImageIntroduction(item.id)}
@@ -376,10 +409,18 @@ function FolderScrollArea({
         onCancel={() => setShowDeleteConfirm(false)}
       ></BeeDeleteConfirm>
       <FolderEditDialog
+        ref={folderEditDialogRef}
+        mode={folderEditMode}
         open={folderDialogOpen}
-        onConfirm={handleCreateFolder}
+        onConfirm={handleFolderEditConfirm}
         onClose={() => setFolderDialogOpen(false)}
       ></FolderEditDialog>
+      <ImageEditDialog
+        ref={imageEditDialogRef}
+        onConfirm={onFileRename}
+        open={imageEditDialogOpen}
+        onClose={() => setImageEditDialogOpen(false)}
+      ></ImageEditDialog>
       <FolderIntroduction
         open={showFolderIntroduction}
         folder={activeFolder}
