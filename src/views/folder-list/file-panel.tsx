@@ -428,7 +428,6 @@ function FolderScrollArea({
         onAddTag={handleAddTag}
         onRemoveTag={handleRemoveTag}
         onRemarkChange={handleRemarkChange}
-        onPreviewImage={handlePreviewImage}
       />
       <ImageIntroduction
         open={showImageIntroduction}

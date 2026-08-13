@@ -18,7 +18,6 @@ interface FolderIntroductionProps {
   onAddTag: (id: string, tag: string) => void;
   onRemoveTag: (id: string, tag: string) => void;
   onRemarkChange: (id: string, remark: string) => void;
-  onPreviewImage: (images: string[], index: number) => void;
 }
 
 interface FolderTagEditorProps {
@@ -106,14 +105,13 @@ function FolderTagEditor({
   );
 }
 
-function  FolderIntroduction({
+function FolderIntroduction({
   open,
   folder,
   onClose,
   onAddTag,
   onRemoveTag,
   onRemarkChange,
-  onPreviewImage,
 }: FolderIntroductionProps) {
   const panelRef = useRef<HTMLElement>(null);
   const shouldAnimate = folder !== null;
@@ -126,7 +124,9 @@ function  FolderIntroduction({
       };
     }
 
-    const animationName = open ? "animate__backInRight" : "animate__backOutRight";
+    const animationName = open
+      ? "animate__backInRight"
+      : "animate__backOutRight";
 
     return {
       className: `animate__animated animate__faster ${animationName}`,
@@ -156,7 +156,7 @@ function  FolderIntroduction({
 
     const handlePointerDown = (event: MouseEvent) => {
       const target = event.target as HTMLElement | null;
-      console.log(event)
+      console.log(event);
       if (
         target?.closest(
           '[data-slot="dialog-content"], [data-slot="dialog-overlay"]',
@@ -278,11 +278,6 @@ function  FolderIntroduction({
                           src={src}
                           alt={`${folder.name}-cover-${index + 1}`}
                           className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                          preview
-                          // showContextMenu
-                          onPreview={(imageSrc) =>
-                            onPreviewImage(folder.covers, folder.covers.indexOf(imageSrc))
-                          }
                         />
                         <div className="absolute inset-x-0 bottom-0 bg-linear-to-t from-black/70 to-transparent px-2 py-1 text-[11px] text-white/80 pointer-events-none">
                           封面 {index + 1}

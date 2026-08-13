@@ -228,10 +228,9 @@ function ImageIntroduction({
                 style={previewAnimation.style}
               >
                 <BeeImage
-                  src={data.src}
-                  alt={data.name}
-                  preview={false}
                   fit="contain"
+                  alt={data.name}
+                  src={data.thumbSrc}
                   className="h-36 w-full bg-black/20 object-contain"
                 />
               </section>

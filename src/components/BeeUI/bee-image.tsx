@@ -49,12 +49,11 @@ export interface BeeImageProps extends Omit<
   height?: number | string;
   fit?: React.CSSProperties["objectFit"];
   preview?: boolean;
-  showContextMenu?: boolean;
   onViewDetail?: () => void;
   onSetAsCover?: (slot: 1 | 2 | 3) => void;
   onDelete?: () => void;
   onRename?: () => void;
-  onPreview?: (src: string) => void;
+  onPreview?: () => void;
 }
 
 export interface BeeImagePreviewProps {
@@ -416,7 +415,7 @@ export function BeeImage({
       return;
     }
 
-    onPreview?.(src);
+    onPreview?.();
   };
 
   const imageNode = (

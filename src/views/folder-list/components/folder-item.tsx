@@ -32,8 +32,8 @@ interface ImageItemProps {
 const ImageItem = memo(function ImageItem({ src, alt = "" }: ImageItemProps) {
   return (
     <BeeImage
-      src={src}
       alt={alt}
+      src={src}
       className="w-full h-full object-cover rounded-[10px] pointer-events-none select-none"
     />
   );

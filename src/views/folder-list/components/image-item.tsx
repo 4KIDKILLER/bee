@@ -3,7 +3,6 @@ import type { BeeFileType } from "../types";
 
 export interface BeeImageItemProps {
   folder: BeeFileType;
-  allowSetCover: boolean;
   onPreview?: (src: string) => void;
   onDelete?: (folder: BeeFileType) => void;
   onRename?: (folder: BeeFileType) => void;
@@ -29,12 +28,11 @@ export function BeeImageItem({
           width={80}
           height={64}
           fit="contain"
-          onPreview={onPreview}
-          src={folder.thumbSrc}
-          showContextMenu={false}
           alt={folder.originalName}
+          src={folder.thumbSrc}
           className="overflow-hidden rounded-md"
-          />
+          onPreview={() => onPreview?.(folder.src)}
+        />
       </div>
       <div className="max-w-[100px] text-xs text-purple-50 text-shadow-amber-100">
         <BeeImageContextMenu
