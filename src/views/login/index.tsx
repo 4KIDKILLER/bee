@@ -71,8 +71,8 @@ function Login() {
   };
 
   return (
-    <div className="flex h-full w-full items-center justify-center px-6 py-10">
-      <div className="relative mx-auto flex w-full max-w-100 overflow-hidden rounded-[32px] border border-white/20 bg-black/20 shadow-[0_30px_120px_rgba(0,0,0,0.38)] backdrop-blur-xl">
+    <div className="flex h-full w-[1400px] items-center justify-end mx-auto">
+      <div className="relativeflex w-full max-w-100 overflow-hidden rounded-[32px] border border-white/20 bg-black/20 shadow-[0_30px_120px_rgba(0,0,0,0.38)] backdrop-blur-xl">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(64,158,255,0.22),transparent_30%),radial-gradient(circle_at_bottom_right,rgba(255,255,255,0.08),transparent_28%)]" />
 
         <div className="relative w-full">
