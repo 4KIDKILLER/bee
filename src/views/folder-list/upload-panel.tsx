@@ -87,7 +87,7 @@ function UploadPanel({ showUploadPanel, currentFolderId }: UploadPanelProps) {
   });
   const [activeFilter, setActiveFilter] =
     useState<UploadFilterKey>("uploading");
-  const requestPoolRef = useRef(new RequestPool(3));
+  const requestPoolRef = useRef(new RequestPool(import.meta.env.VITE_MAX_UPLOAD_SIZE));
 
   const counts = useMemo(
     () => ({
