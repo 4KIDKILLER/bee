@@ -16,12 +16,12 @@ export interface BeeFolderProps {
   selection?: boolean;
   isChecked?: boolean;
   isOpen?: boolean;
-  onFolderCheckChange?: (id: string) => void;
-  onFolderOpenChange?: (id: string, open: boolean) => void;
-  onFolderInfo?: (folder: BeeFileType) => void;
-  onFolderDelete?: (folder: BeeFileType) => void;
-  onFolderRename?: (folder: BeeFileType) => void;
-  onOpenFolder?: (folder: BeeFileType) => void;
+  onCheckChange?: (id: string) => void;
+  onOpenChange?: (id: string, open: boolean) => void;
+  onInfo?: (folder: BeeFileType) => void;
+  onDelete?: (folder: BeeFileType) => void;
+  onRename?: (folder: BeeFileType) => void;
+  onOpen?: (folder: BeeFileType) => void;
 }
 
 interface ImageItemProps {
@@ -44,12 +44,12 @@ export function BeeFolder({
   selection = false,
   isChecked = false,
   isOpen = false,
-  onFolderCheckChange,
-  onFolderOpenChange,
-  onFolderInfo,
-  onFolderDelete,
-  onFolderRename,
-  onOpenFolder,
+  onCheckChange,
+  onOpenChange,
+  onInfo,
+  onDelete,
+  onRename,
+  onOpen,
 }: BeeFolderProps) {
   return (
     <BeeCell>
@@ -59,8 +59,8 @@ export function BeeFolder({
         selection={selection}
         isChecked={isChecked}
         checkedColor="#4ADE80"
-        onCheckChange={() => onFolderCheckChange?.(folder.id)}
-        onOpenChange={(open) => onFolderOpenChange?.(folder.id, open)}
+        onCheckChange={() => onCheckChange?.(folder.id)}
+        onOpenChange={(open) => onOpenChange?.(folder.id, open)}
         items={folder.covers.map((src, idx) => (
           <ImageItem
             key={idx}
@@ -74,22 +74,22 @@ export function BeeFolder({
           <ContextMenuTrigger asChild>
             <span
               title={folder.originalName}
-              onClick={() => onOpenFolder?.(folder)}
+              onClick={() => onOpen?.(folder)}
               className="block w-full truncate cursor-pointer rounded-md bg-black/35 px-[6px] py-[4px] transition-colors hover:bg-(--theme-color)"
             >
               {folder.originalName}
             </span>
           </ContextMenuTrigger>
           <ContextMenuContent>
-            <ContextMenuItem onClick={() => onFolderRename?.(folder)}>
+            <ContextMenuItem onClick={() => onRename?.(folder)}>
               <SquarePen />
               重新命名
             </ContextMenuItem>
-            <ContextMenuItem onClick={() => onFolderInfo?.(folder)}>
+            <ContextMenuItem onClick={() => onInfo?.(folder)}>
               <Info />
               显示简介
             </ContextMenuItem>
-            <ContextMenuItem onClick={() => onFolderDelete?.(folder)}>
+            <ContextMenuItem onClick={() => onDelete?.(folder)}>
               <Trash2 />
               删除
             </ContextMenuItem>

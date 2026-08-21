@@ -4,12 +4,14 @@ import type {
     FileListResponseType,
     OnUploadProgressType,
     UpdateNameParamsType,
+    DeleteFileParamsType,
     CreateFolderParamsType,
 } from "../types/file";
 import request from "/@/library/request";
 
 interface FileApiType {
     getFileListApi: (params: FileListParamsType) => Promise<FileListResponseType>
+    deleteFileApi: (params: DeleteFileParamsType) => Promise<ApiDefaultResponseType>
     updateNameApi: (params: UpdateNameParamsType) => Promise<ApiDefaultResponseType>
     createFolderApi: (params: CreateFolderParamsType) => Promise<ApiDefaultResponseType>
     uploadFileApi: (params: FormData, onUploadProgress: OnUploadProgressType) => Promise<ApiDefaultResponseType>
@@ -47,6 +49,14 @@ const FileApi: FileApiType = {
      */
     updateNameApi(params: UpdateNameParamsType): Promise<ApiDefaultResponseType> {
         return request.post<null, UpdateNameParamsType>("/rename", params)
+    },
+    /**
+     * @description 删除文件/文件夹
+     * @param params 
+     * @returns 
+     */
+    deleteFileApi(params: DeleteFileParamsType): Promise<ApiDefaultResponseType> {
+        return request.post<null, DeleteFileParamsType>("/deleteFile", params)
     }
 }
 

@@ -8,14 +8,6 @@ import {
   // BeeTootip,
   // BeeLoading,
   ScrollArea,
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
 } from "/@c/index";
 // SquareMousePointer, SquareDashedMousePointer
 import FolderEditDialog, {
@@ -49,7 +41,7 @@ function FolderScrollArea({
   onPaginationChange,
 }: FolderScrollAreaProps) {
   //当前操作的文件夹/图片
-  const currentFolder = useRef<BeeFileType | null>(null);
+  const [currentTarget, setCurrentTarget] = useState<BeeFileType | null>(null);
   //当前操作文件夹的类型 1:创建 2修改
   const [folderEditMode, setFolderEditMode] = useState<1 | 2>(1);
   const [folderDialogOpen, setFolderDialogOpen] = useState<boolean>(false);
@@ -62,8 +54,6 @@ function FolderScrollArea({
   const [showImageIntroduction, setShowImageIntroduction] = useState(false);
   const [activeFolderId, setActiveFolderId] = useState<string | null>(null);
   const [activeImageId, setActiveImageId] = useState<string | null>(null);
-  const [pendingDeleteFolder, setPendingDeleteFolder] =
-    useState<BeeFileType | null>(null);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImages, setPreviewImages] = useState<string[]>([]);
   const [previewIndex, setPreviewIndex] = useState(0);
@@ -151,27 +141,17 @@ function FolderScrollArea({
     setPreviewOpen(true);
   };
 
-  const handleDeleteFolder = () => {
-    if (!pendingDeleteFolder) {
-      return;
-    }
+  const handleDeleteTarget = useCallback((target: BeeFileType) => {
+    setCurrentTarget(target);
+    setShowDeleteConfirm(true);
+  }, []);
 
-    setFolders((prev) =>
-      prev.filter((folder) => folder.id !== pendingDeleteFolder.id),
-    );
+  const handleCancelDelete = useCallback(() => {
+    setShowDeleteConfirm(false);
+  }, []);
 
-    if (activeFolderId === pendingDeleteFolder.id) {
-      setActiveFolderId(null);
-      setShowFolderIntroduction(false);
-    }
-
-    if (activeImageId === pendingDeleteFolder.id) {
-      setActiveImageId(null);
-      setShowImageIntroduction(false);
-    }
-
-    setPendingDeleteFolder(null);
-  };
+  const handleConfirmDelete = useCallback(() => {
+  }, []);
 
   const getFileList = useCallback(
     (parentId: string, currentPage: number) => {
@@ -218,11 +198,11 @@ function FolderScrollArea({
     (name: string) => {
       FileApi.updateNameApi({
         name: name,
-        id: (currentFolder.current as BeeFileType).id,
-        type: (currentFolder.current as BeeFileType).type,
+        id: (currentTarget as BeeFileType).id,
+        type: (currentTarget as BeeFileType).type,
       }).then(editCallback);
     },
-    [editCallback],
+    [editCallback, currentTarget],
   );
 
   const handleFolderEditConfirm = useCallback(
@@ -273,7 +253,7 @@ function FolderScrollArea({
   );
 
   const handleTargetRename = useCallback((target: BeeFileType) => {
-    currentFolder.current = target;
+    setCurrentTarget(target);
     if (target.type == 1) {
       folderEditDialogRef.current?.setFormData({
         folderName: target.originalName,
@@ -382,19 +362,19 @@ function FolderScrollArea({
                   selection={selection}
                   isChecked={selectedFolders.includes(folder.id)}
                   isOpen={openFolderId === folder.id}
-                  onFolderRename={handleTargetRename}
-                  onFolderCheckChange={onFolderCheckChange}
-                  onFolderOpenChange={onFolderOpenChange}
-                  onFolderInfo={(item) => handleShowFolderIntroduction(item.id)}
-                  onFolderDelete={setPendingDeleteFolder}
-                  onOpenFolder={handleOpenFolder}
+                  onRename={handleTargetRename}
+                  onCheckChange={onFolderCheckChange}
+                  onOpenChange={onFolderOpenChange}
+                  onInfo={(item) => handleShowFolderIntroduction(item.id)}
+                  onDelete={handleDeleteTarget}
+                  onOpen={handleOpenFolder}
                 />
               ) : (
                 <BeeImageItem
                   key={folder.id}
                   folder={folder}
                   onRename={handleTargetRename}
-                  onDelete={() => setShowDeleteConfirm(true)}
+                  onDelete={handleDeleteTarget}
                   onPreview={(src: string) => handlePreviewImage([src], 0)}
                   onViewDetail={(item) => handleShowImageIntroduction(item.id)}
                 />
@@ -405,8 +385,9 @@ function FolderScrollArea({
       )}
       <BeeDeleteConfirm
         open={showDeleteConfirm}
-        onConfirm={() => {}}
-        onCancel={() => setShowDeleteConfirm(false)}
+        onCancel={handleCancelDelete}
+        onConfirm={handleConfirmDelete}
+        name={currentTarget?.originalName}
       ></BeeDeleteConfirm>
       <FolderEditDialog
         ref={folderEditDialogRef}
@@ -444,34 +425,6 @@ function FolderScrollArea({
         onOpenChange={setPreviewOpen}
         onIndexChange={setPreviewIndex}
       />
-      <AlertDialog
-        open={Boolean(pendingDeleteFolder)}
-        onOpenChange={(open) => {
-          if (!open) {
-            setPendingDeleteFolder(null);
-          }
-        }}
-      >
-        <AlertDialogContent className="sm:max-w-sm">
-          <AlertDialogHeader>
-            <AlertDialogTitle>确认删除文件夹</AlertDialogTitle>
-            <AlertDialogDescription>
-              {pendingDeleteFolder
-                ? `确定要删除“${pendingDeleteFolder.name}”吗？该操作不可撤销。`
-                : "确定要删除该文件夹吗？该操作不可撤销。"}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter className="mt-6">
-            <AlertDialogCancel>取消</AlertDialogCancel>
-            <AlertDialogAction
-              variant="destructive"
-              onClick={handleDeleteFolder}
-            >
-              确认删除
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
     </div>
   );
 }

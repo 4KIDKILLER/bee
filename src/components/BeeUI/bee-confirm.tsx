@@ -46,11 +46,13 @@ export function BeeConfirm({
 }
 
 export function BeeDeleteConfirm({
+  name,
   open,
   children,
   onCancel,
   onConfirm,
 }: {
+  name?: string;
   open: boolean;
   children?: ReactNode;
   onCancel: () => void;
@@ -64,14 +66,18 @@ export function BeeDeleteConfirm({
           <AlertDialogMedia className="bg-destructive/10 text-destructive dark:bg-destructive/20 dark:text-destructive">
             <Trash2Icon />
           </AlertDialogMedia>
-          <AlertDialogTitle>确定删除吗?</AlertDialogTitle>
+          <AlertDialogTitle>确定删除"{ name }"吗?</AlertDialogTitle>
           <AlertDialogDescription>
             你确定要下达“毁灭指令”吗？此操作违反《时间回溯法》，一旦执行，概不负责回收。
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel variant="outline" onClick={onCancel}>取消</AlertDialogCancel>
-          <AlertDialogAction variant="destructive" onClick={onConfirm}>删除</AlertDialogAction>
+          <AlertDialogCancel variant="outline" onClick={onCancel}>
+            取消
+          </AlertDialogCancel>
+          <AlertDialogAction variant="destructive" onClick={onConfirm}>
+            删除
+          </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
