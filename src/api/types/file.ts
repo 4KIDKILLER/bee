@@ -38,8 +38,9 @@ interface FileListDataType {
     updateTime: string
 }
 
-interface DeleteFileParamsType {
+interface DeleteSoftParamsType {
     id: string
+    type: 1 | 2
 }
 
 type OnUploadProgressType = (e: AxiosProgressEvent) => void
@@ -50,7 +51,7 @@ export type {
     FileListDataType,
     FileListParamsType,
     FileListResponseType,
-    DeleteFileParamsType,
+    DeleteSoftParamsType,
     UpdateNameParamsType,
     OnUploadProgressType,
     CreateFolderParamsType

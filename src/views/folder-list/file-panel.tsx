@@ -150,9 +150,6 @@ function FolderScrollArea({
     setShowDeleteConfirm(false);
   }, []);
 
-  const handleConfirmDelete = useCallback(() => {
-  }, []);
-
   const getFileList = useCallback(
     (parentId: string, currentPage: number) => {
       setLoading(true);
@@ -183,6 +180,19 @@ function FolderScrollArea({
     },
     [currentFolderId, getFileList, page],
   );
+
+  const handleConfirmDelete = useCallback(() => {
+    if (currentTarget) {
+      FileApi.deleteSoftApi({
+        id: currentTarget.id,
+        type: currentTarget.type,
+      }).then((res) => {
+        toast.success(res.message);
+        setShowDeleteConfirm(false);
+        onRefresh(true);
+      });
+    }
+  }, [onRefresh, currentTarget]);
 
   const editCallback = useCallback(
     (result: ApiDefaultResponseType) => {

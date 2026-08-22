@@ -4,14 +4,14 @@ import type {
     FileListResponseType,
     OnUploadProgressType,
     UpdateNameParamsType,
-    DeleteFileParamsType,
+    DeleteSoftParamsType,
     CreateFolderParamsType,
 } from "../types/file";
 import request from "/@/library/request";
 
 interface FileApiType {
     getFileListApi: (params: FileListParamsType) => Promise<FileListResponseType>
-    deleteFileApi: (params: DeleteFileParamsType) => Promise<ApiDefaultResponseType>
+    deleteSoftApi: (params: DeleteSoftParamsType) => Promise<ApiDefaultResponseType>
     updateNameApi: (params: UpdateNameParamsType) => Promise<ApiDefaultResponseType>
     createFolderApi: (params: CreateFolderParamsType) => Promise<ApiDefaultResponseType>
     uploadFileApi: (params: FormData, onUploadProgress: OnUploadProgressType) => Promise<ApiDefaultResponseType>
@@ -55,8 +55,8 @@ const FileApi: FileApiType = {
      * @param params 
      * @returns 
      */
-    deleteFileApi(params: DeleteFileParamsType): Promise<ApiDefaultResponseType> {
-        return request.post<null, DeleteFileParamsType>("/deleteFile", params)
+    deleteSoftApi(params: DeleteSoftParamsType): Promise<ApiDefaultResponseType> {
+        return request.post<null, DeleteSoftParamsType>("/deleteSoft", params)
     }
 }
 
