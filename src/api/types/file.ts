@@ -31,7 +31,7 @@ interface FileListDataType {
     type: 1 | 2
     src: string
     thumbSrc: string
-    tags: string[]
+    tags: Array<{ id: string, tagName: string }>
     covers: string[]
     remark: string
     createTime: string

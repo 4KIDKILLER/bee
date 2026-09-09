@@ -21,6 +21,7 @@ import ImageIntroduction from "./components/image-introduction";
 import BeeImageItem from "./components/image-item";
 import type { BeeFileType, FolderScrollAreaProps } from "./types";
 import { FileApi } from "/@/api/file";
+import { FileTagApi } from "/@/api/file-tag";
 // import { cn } from "/@/library/utils";
 import { FolderPlus } from "lucide-react";
 import { toast } from "sonner";
@@ -89,33 +90,34 @@ function FolderScrollArea({
     setShowImageIntroduction(false);
   };
 
-  const handleAddTag = (id: string, tag: string) => {
-    const nextTag = tag.trim();
-    if (!nextTag) {
-      return;
-    }
+  const handleAddTag = (fileId: string, tagName: string) => {
+    const nextTag = tagName.trim();
+    if (!nextTag) return;
 
-    setFolders((prev) =>
-      prev.map((folder) => {
-        if (folder.id !== id || folder.tags.includes(nextTag)) {
-          return folder;
-        }
+    FileTagApi.createTagApi({
+      fileId,
+      tagName,
+    }).then(() => {
+      toast.success("标签创建成功");
 
-        return {
-          ...folder,
-          tags: [...folder.tags, nextTag],
-        };
-      }),
-    );
+      setFolders((prev) =>
+        prev.map((folder) => {
+          return {
+            ...folder,
+            tags: [...folder.tags, { id: fileId, tagName }],
+          };
+        }),
+      );
+    });
   };
 
-  const handleRemoveTag = (id: string, tag: string) => {
+  const handleRemoveTag = (id: string, tagId: string) => {
     setFolders((prev) =>
       prev.map((folder) =>
         folder.id === id
           ? {
               ...folder,
-              tags: folder.tags.filter((item) => item !== tag),
+              tags: folder.tags.filter((item) => item.id !== tagId),
             }
           : folder,
       ),

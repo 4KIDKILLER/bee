@@ -1,14 +1,7 @@
-import { useEffect, useRef, useState, type CSSProperties } from "react";
-import {
-  Button,
-  BeeIcon,
-  BeeImage,
-  Input,
-  ScrollArea,
-  Textarea,
-  ButtonGroup,
-} from "/@c/index";
-import { Plus, Tag, X, Bookmark, Info, ImageIcon } from "lucide-react";
+import { useEffect, useRef, type CSSProperties } from "react";
+import { BeeIcon, BeeImage, ScrollArea, Textarea } from "/@c/index";
+import TagEditor from "./tag-editor";
+import { X, Bookmark, Info, ImageIcon } from "lucide-react";
 import type { BeeFileType } from "../types";
 
 interface FolderIntroductionProps {
@@ -18,91 +11,6 @@ interface FolderIntroductionProps {
   onAddTag: (id: string, tag: string) => void;
   onRemoveTag: (id: string, tag: string) => void;
   onRemarkChange: (id: string, remark: string) => void;
-}
-
-interface FolderTagEditorProps {
-  folder: BeeFileType;
-  onAddTag: (id: string, tag: string) => void;
-  onRemoveTag: (id: string, tag: string) => void;
-  className?: string;
-  style?: CSSProperties;
-}
-
-function FolderTagEditor({
-  folder,
-  onAddTag,
-  onRemoveTag,
-  className,
-  style,
-}: FolderTagEditorProps) {
-  const [tagInput, setTagInput] = useState("");
-
-  const handleAddTag = () => {
-    const nextTag = tagInput.trim();
-    if (!nextTag) {
-      return;
-    }
-
-    onAddTag(folder.id, nextTag);
-    setTagInput("");
-  };
-
-  return (
-    <section
-      className={`rounded-2xl border border-white/30 bg-black/90 p-4 ${className ?? ""}`}
-      style={style}
-    >
-      <div className="flex items-center gap-2 text-sm font-medium text-white">
-        <Tag className="size-4 text-(--theme-color)" />
-        标签
-      </div>
-      <div className="mt-4 flex flex-wrap gap-2">
-        {folder.tags.length > 0 ? (
-          folder.tags.map((tag) => (
-            <span
-              key={tag}
-              className="inline-flex items-center gap-1 rounded-full border border-sky-400/25 bg-sky-400/10 px-3 py-1 text-xs text-sky-100"
-            >
-              {tag}
-              <button
-                type="button"
-                className="rounded-full text-sky-100/70 transition-colors hover:text-white"
-                onClick={() => onRemoveTag(folder.id, tag)}
-              >
-                <X className="size-3" />
-              </button>
-            </span>
-          ))
-        ) : (
-          <div className="text-xs text-white/40">暂未设置标签</div>
-        )}
-      </div>
-      <div className="mt-4 w-full">
-        <ButtonGroup className="w-full">
-          <Input
-            value={tagInput}
-            onChange={(e) => setTagInput(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                e.preventDefault();
-                handleAddTag();
-              }
-            }}
-            placeholder="输入标签后回车或点击添加"
-            className="border-white/10 bg-white/5 text-white placeholder:text-white/30"
-          />
-          <Button
-            size="sm"
-            variant="outline"
-            className="shrink-0 border-white/10 bg-white/5 text-white hover:bg-white/10 hover:text-white"
-            onClick={handleAddTag}
-          >
-            <Plus />
-          </Button>
-        </ButtonGroup>
-      </div>
-    </section>
-  );
 }
 
 function FolderIntroduction({
@@ -156,7 +64,6 @@ function FolderIntroduction({
 
     const handlePointerDown = (event: MouseEvent) => {
       const target = event.target as HTMLElement | null;
-      console.log(event);
       if (
         target?.closest(
           '[data-slot="dialog-content"], [data-slot="dialog-overlay"]',
@@ -230,13 +137,13 @@ function FolderIntroduction({
                 </div>
               </section>
 
-              <FolderTagEditor
+              <TagEditor
+                data={folder}
                 key={folder.id}
-                folder={folder}
                 onAddTag={onAddTag}
                 onRemoveTag={onRemoveTag}
-                className={tagAnimation.className}
                 style={tagAnimation.style}
+                className={tagAnimation.className}
               />
 
               <section
