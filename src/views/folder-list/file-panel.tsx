@@ -49,7 +49,7 @@ function FolderScrollArea({
   const [imageEditDialogOpen, setImageEditDialogOpen] =
     useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
-  const [folders, setFolders] = useState<BeeFileType[]>([]);
+  const [targets, setTargets] = useState<BeeFileType[]>([]);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<boolean>(false);
   const [showFolderIntroduction, setShowFolderIntroduction] = useState(false);
   const [showImageIntroduction, setShowImageIntroduction] = useState(false);
@@ -62,9 +62,9 @@ function FolderScrollArea({
   const folderEditDialogRef = useRef<FolderEditDialogRef>(null);
   const skipNextFetchKeyRef = useRef<string | null>(null);
   const activeFolder =
-    folders.find((folder) => folder.id === activeFolderId) ?? null;
+    targets.find((folder) => folder.id === activeFolderId) ?? null;
   const activeImage =
-    folders.find(
+    targets.find(
       (folder) => folder.id === activeImageId && folder.type === 2,
     ) ?? null;
 
@@ -100,7 +100,7 @@ function FolderScrollArea({
     }).then(() => {
       toast.success("标签创建成功");
 
-      setFolders((prev) =>
+      setTargets((prev) =>
         prev.map((folder) => {
           return {
             ...folder,
@@ -112,7 +112,7 @@ function FolderScrollArea({
   };
 
   const handleRemoveTag = (id: string, tagId: string) => {
-    setFolders((prev) =>
+    setTargets((prev) =>
       prev.map((folder) =>
         folder.id === id
           ? {
@@ -125,7 +125,7 @@ function FolderScrollArea({
   };
 
   const handleRemarkChange = (id: string, remark: string) => {
-    setFolders((prev) =>
+    setTargets((prev) =>
       prev.map((folder) =>
         folder.id === id
           ? {
@@ -143,8 +143,8 @@ function FolderScrollArea({
     setPreviewOpen(true);
   };
 
-  const handleDeleteTarget = useCallback((target: BeeFileType) => {
-    setCurrentTarget(target);
+  const handleDeleteTarget = useCallback((targets: BeeFileType) => {
+    setCurrentTarget(targets);
     setShowDeleteConfirm(true);
   }, []);
 
@@ -160,7 +160,7 @@ function FolderScrollArea({
         parentId,
         pageSize: limit,
       }).then((res) => {
-        setFolders(res.data.list);
+        setTargets(res.data.list);
         onPaginationChange({
           page: res.data.page,
           pageSize: res.data.pageSize,
@@ -264,17 +264,17 @@ function FolderScrollArea({
     [getFileList, limit, onOpenFolder],
   );
 
-  const handleTargetRename = useCallback((target: BeeFileType) => {
-    setCurrentTarget(target);
-    if (target.type == 1) {
+  const handleTargetRename = useCallback((targets: BeeFileType) => {
+    setCurrentTarget(targets);
+    if (targets.type == 1) {
       folderEditDialogRef.current?.setFormData({
-        folderName: target.originalName,
+        folderName: targets.originalName,
       });
       setFolderEditMode(2);
       setFolderDialogOpen(true);
     } else {
       imageEditDialogRef.current?.setFormData({
-        imageName: target.originalName,
+        imageName: targets.originalName,
       });
       setImageEditDialogOpen(true);
     }
@@ -300,7 +300,7 @@ function FolderScrollArea({
       >
         <BeeLoading description="正在准备 BEE 文件列表" />
       </div> */}
-      {folders.length === 0 ? (
+      {targets.length === 0 ? (
         !loading && (
           <div className="w-full h-full flex justify-center items-center">
             <BeeEmpty
@@ -366,7 +366,7 @@ function FolderScrollArea({
             </div>
           </div>
           <div className="grid w-full grid-cols-8 auto-rows-[150px]">
-            {folders.map((folder) =>
+            {targets.map((folder) =>
               folder.type === 1 ? (
                 <BeeFolder
                   key={folder.id}
@@ -383,8 +383,8 @@ function FolderScrollArea({
                 />
               ) : (
                 <BeeImageItem
+                  file={folder}
                   key={folder.id}
-                  folder={folder}
                   onRename={handleTargetRename}
                   onDelete={handleDeleteTarget}
                   onPreview={(src: string) => handlePreviewImage([src], 0)}

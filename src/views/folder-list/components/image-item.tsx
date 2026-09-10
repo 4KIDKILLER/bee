@@ -1,24 +1,31 @@
-import { BeeCell, BeeImage, BeeImageContextMenu } from "/@c/index";
+import {
+  BeeCell,
+  BeeImage,
+  BeeImageContextMenu,
+  type BeeCoverSlotType,
+} from "/@c/index";
 import type { BeeFileType } from "../types";
 
 export interface BeeImageItemProps {
-  folder: BeeFileType;
+  file: BeeFileType;
   onPreview?: (src: string) => void;
-  onDelete?: (folder: BeeFileType) => void;
-  onRename?: (folder: BeeFileType) => void;
-  onViewDetail?: (folder: BeeFileType) => void;
+  onDelete?: (file: BeeFileType) => void;
+  onRename?: (file: BeeFileType) => void;
+  onViewDetail?: (file: BeeFileType) => void;
+  onSetAsCover?: (slot: BeeCoverSlotType, src: string) => void;
 }
 
 export function BeeImageItem({
-  folder,
+  file,
   onDelete,
   onRename,
   onPreview,
+  onSetAsCover,
   onViewDetail,
 }: BeeImageItemProps) {
-  const dotIndex = folder.originalName.lastIndexOf(".");
-  const fileName = folder.originalName.slice(0, dotIndex);
-  const fileExt = folder.originalName.slice(dotIndex);
+  const dotIndex = file.originalName.lastIndexOf(".");
+  const fileName = file.originalName.slice(0, dotIndex);
+  const fileExt = file.originalName.slice(dotIndex);
 
   return (
     <BeeCell>
@@ -28,20 +35,23 @@ export function BeeImageItem({
           width={80}
           height={64}
           fit="contain"
-          alt={folder.originalName}
-          src={folder.thumbSrc}
+          alt={file.originalName}
+          src={file.thumbSrc}
           className="overflow-hidden rounded-md"
-          onPreview={() => onPreview?.(folder.src)}
+          onPreview={() => onPreview?.(file.src)}
         />
       </div>
       <div className="max-w-[100px] text-xs text-purple-50 text-shadow-amber-100">
         <BeeImageContextMenu
-          onRename={() => onRename?.(folder)}
-          onDelete={() => onDelete?.(folder)}
-          onViewDetail={() => onViewDetail?.(folder)}
+          onRename={() => onRename?.(file)}
+          onDelete={() => onDelete?.(file)}
+          onViewDetail={() => onViewDetail?.(file)}
+          onSetAsCover={(slot: BeeCoverSlotType) =>
+            onSetAsCover?.(slot, file.thumbSrc)
+          }
         >
           <span
-            title={folder.originalName}
+            title={file.originalName}
             className="flex max-w-full cursor-pointer rounded-md bg-black/35 px-[6px] py-[4px] transition-colors hover:bg-(--theme-color)"
           >
             <span className="min-w-0 truncate">{fileName}</span>

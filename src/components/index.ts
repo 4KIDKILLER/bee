@@ -95,11 +95,15 @@ import {
 import { BeeCell } from "../views/folder-list/components/cell";
 import { BeeTootip } from "./BeeUI/bee-tootip";
 import { BeeIcon } from "./BeeUI/bee-icon";
-import { BeeImage, BeeImageContextMenu, BeeImagePreview } from "./BeeUI/bee-image";
+import { BeeImage, BeeImageContextMenu, BeeImagePreview, type BeeCoverSlotType } from "./BeeUI/bee-image";
 import { BeeFolder } from "../views/folder-list/components/folder-item";
 import { BeeLoading } from "./BeeUI/bee-loading";
 import { BeeEmpty } from "./BeeUI/bee-empty";
 import { BeeConfirm, BeeDeleteConfirm } from "./BeeUI/bee-confirm";
+
+export type {
+    BeeCoverSlotType
+}
 
 export {
     Input,

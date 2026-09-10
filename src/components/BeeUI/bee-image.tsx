@@ -38,6 +38,8 @@ export interface BeeImageSource {
   alt?: string;
 }
 
+export type BeeCoverSlotType = 1 | 2 | 3;
+
 export type BeeImagePreviewItem = string | BeeImageSource;
 
 export interface BeeImageProps extends Omit<
@@ -45,15 +47,15 @@ export interface BeeImageProps extends Omit<
   "src" | "width" | "height"
 > {
   src: string;
-  width?: number | string;
-  height?: number | string;
-  fit?: React.CSSProperties["objectFit"];
   preview?: boolean;
-  onViewDetail?: () => void;
-  onSetAsCover?: (slot: 1 | 2 | 3) => void;
   onDelete?: () => void;
   onRename?: () => void;
   onPreview?: () => void;
+  width?: number | string;
+  height?: number | string;
+  onViewDetail?: () => void;
+  fit?: React.CSSProperties["objectFit"];
+  onSetAsCover?: (slot: BeeCoverSlotType) => void;
 }
 
 export interface BeeImagePreviewProps {
