@@ -43,6 +43,12 @@ interface DeleteSoftParamsType {
     type: 1 | 2
 }
 
+interface UpdateCoverParamsType {
+    position: 1 | 2 | 3
+    id: string
+    cover: string
+}
+
 type OnUploadProgressType = (e: AxiosProgressEvent) => void
 
 type FileListResponseType = ApiListResponseType<FileListDataType>
@@ -54,5 +60,6 @@ export type {
     DeleteSoftParamsType,
     UpdateNameParamsType,
     OnUploadProgressType,
+    UpdateCoverParamsType,
     CreateFolderParamsType
 }

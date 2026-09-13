@@ -8,6 +8,7 @@ import {
   // BeeTootip,
   // BeeLoading,
   ScrollArea,
+  type BeeCoverSlotType,
 } from "/@c/index";
 // SquareMousePointer, SquareDashedMousePointer
 import FolderEditDialog, {
@@ -49,7 +50,7 @@ function FolderScrollArea({
   const [imageEditDialogOpen, setImageEditDialogOpen] =
     useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
-  const [targets, setTargets] = useState<BeeFileType[]>([]);
+  const [dataList, setDataList] = useState<BeeFileType[]>([]);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<boolean>(false);
   const [showFolderIntroduction, setShowFolderIntroduction] = useState(false);
   const [showImageIntroduction, setShowImageIntroduction] = useState(false);
@@ -62,9 +63,9 @@ function FolderScrollArea({
   const folderEditDialogRef = useRef<FolderEditDialogRef>(null);
   const skipNextFetchKeyRef = useRef<string | null>(null);
   const activeFolder =
-    targets.find((folder) => folder.id === activeFolderId) ?? null;
+    dataList.find((folder) => folder.id === activeFolderId) ?? null;
   const activeImage =
-    targets.find(
+    dataList.find(
       (folder) => folder.id === activeImageId && folder.type === 2,
     ) ?? null;
 
@@ -95,44 +96,46 @@ function FolderScrollArea({
     if (!nextTag) return;
 
     FileTagApi.createTagApi({
-      fileId,
       tagName,
-    }).then(() => {
+      fileId,
+    }).then((res) => {
       toast.success("标签创建成功");
 
-      setTargets((prev) =>
-        prev.map((folder) => {
-          return {
-            ...folder,
-            tags: [...folder.tags, { id: fileId, tagName }],
-          };
-        }),
+      setDataList((prev) =>
+        prev.map((item) =>
+          item.id === fileId
+            ? {
+                ...item,
+                tags: [...item.tags, { id: res.data.id, tagName }],
+              }
+            : item,
+        ),
       );
     });
   };
 
   const handleRemoveTag = (id: string, tagId: string) => {
-    setTargets((prev) =>
-      prev.map((folder) =>
-        folder.id === id
+    setDataList((prev) =>
+      prev.map((item) =>
+        item.id === id
           ? {
-              ...folder,
-              tags: folder.tags.filter((item) => item.id !== tagId),
+              ...item,
+              tags: item.tags.filter((item) => item.id !== tagId),
             }
-          : folder,
+          : item,
       ),
     );
   };
 
   const handleRemarkChange = (id: string, remark: string) => {
-    setTargets((prev) =>
-      prev.map((folder) =>
-        folder.id === id
+    setDataList((prev) =>
+      prev.map((item) =>
+        item.id === id
           ? {
-              ...folder,
+              ...item,
               remark,
             }
-          : folder,
+          : item,
       ),
     );
   };
@@ -143,10 +146,23 @@ function FolderScrollArea({
     setPreviewOpen(true);
   };
 
-  const handleDeleteTarget = useCallback((targets: BeeFileType) => {
-    setCurrentTarget(targets);
+  const handleDeleteTarget = useCallback((dataList: BeeFileType) => {
+    setCurrentTarget(dataList);
     setShowDeleteConfirm(true);
   }, []);
+
+  const handleSetAsCover = useCallback(
+    (position: BeeCoverSlotType, cover: string) => {
+      FileApi.setFolderCover({
+        cover,
+        position,
+        id: currentFolderId,
+      }).then((res) => {
+        toast.success(res.message)
+      });
+    },
+    [currentFolderId],
+  );
 
   const handleCancelDelete = useCallback(() => {
     setShowDeleteConfirm(false);
@@ -160,7 +176,7 @@ function FolderScrollArea({
         parentId,
         pageSize: limit,
       }).then((res) => {
-        setTargets(res.data.list);
+        setDataList(res.data.list);
         onPaginationChange({
           page: res.data.page,
           pageSize: res.data.pageSize,
@@ -264,17 +280,17 @@ function FolderScrollArea({
     [getFileList, limit, onOpenFolder],
   );
 
-  const handleTargetRename = useCallback((targets: BeeFileType) => {
-    setCurrentTarget(targets);
-    if (targets.type == 1) {
+  const handleTargetRename = useCallback((dataList: BeeFileType) => {
+    setCurrentTarget(dataList);
+    if (dataList.type == 1) {
       folderEditDialogRef.current?.setFormData({
-        folderName: targets.originalName,
+        folderName: dataList.originalName,
       });
       setFolderEditMode(2);
       setFolderDialogOpen(true);
     } else {
       imageEditDialogRef.current?.setFormData({
-        imageName: targets.originalName,
+        imageName: dataList.originalName,
       });
       setImageEditDialogOpen(true);
     }
@@ -300,7 +316,7 @@ function FolderScrollArea({
       >
         <BeeLoading description="正在准备 BEE 文件列表" />
       </div> */}
-      {targets.length === 0 ? (
+      {dataList.length === 0 ? (
         !loading && (
           <div className="w-full h-full flex justify-center items-center">
             <BeeEmpty
@@ -366,7 +382,7 @@ function FolderScrollArea({
             </div>
           </div>
           <div className="grid w-full grid-cols-8 auto-rows-[150px]">
-            {targets.map((folder) =>
+            {dataList.map((folder) =>
               folder.type === 1 ? (
                 <BeeFolder
                   key={folder.id}
@@ -387,6 +403,7 @@ function FolderScrollArea({
                   key={folder.id}
                   onRename={handleTargetRename}
                   onDelete={handleDeleteTarget}
+                  onSetAsCover={handleSetAsCover}
                   onPreview={(src: string) => handlePreviewImage([src], 0)}
                   onViewDetail={(item) => handleShowImageIntroduction(item.id)}
                 />
@@ -395,12 +412,14 @@ function FolderScrollArea({
           </div>
         </ScrollArea>
       )}
+      {/* 删除文件/文件夹确认 */}
       <BeeDeleteConfirm
         open={showDeleteConfirm}
         onCancel={handleCancelDelete}
         onConfirm={handleConfirmDelete}
         name={currentTarget?.originalName}
       ></BeeDeleteConfirm>
+      {/* 编辑文件夹信息 */}
       <FolderEditDialog
         ref={folderEditDialogRef}
         mode={folderEditMode}
@@ -408,12 +427,14 @@ function FolderScrollArea({
         onConfirm={handleFolderEditConfirm}
         onClose={() => setFolderDialogOpen(false)}
       ></FolderEditDialog>
+      {/* 编辑信息图片 */}
       <ImageEditDialog
         ref={imageEditDialogRef}
         onConfirm={onFileRename}
         open={imageEditDialogOpen}
         onClose={() => setImageEditDialogOpen(false)}
       ></ImageEditDialog>
+      {/* 文件夹详细信息 */}
       <FolderIntroduction
         open={showFolderIntroduction}
         folder={activeFolder}
@@ -422,6 +443,7 @@ function FolderScrollArea({
         onRemoveTag={handleRemoveTag}
         onRemarkChange={handleRemarkChange}
       />
+      {/* 图片详细信息 */}
       <ImageIntroduction
         open={showImageIntroduction}
         data={activeImage}
@@ -430,6 +452,7 @@ function FolderScrollArea({
         onRemoveTag={handleRemoveTag}
         onRemarkChange={handleRemarkChange}
       />
+      {/* 图片预览 */}
       <BeeImagePreview
         images={previewImages}
         open={previewOpen}

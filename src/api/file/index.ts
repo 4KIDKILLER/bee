@@ -5,6 +5,7 @@ import type {
     OnUploadProgressType,
     UpdateNameParamsType,
     DeleteSoftParamsType,
+    UpdateCoverParamsType,
     CreateFolderParamsType,
 } from "../types/file";
 import request from "/@/library/request";
@@ -15,6 +16,7 @@ interface FileApiType {
     updateNameApi: (params: UpdateNameParamsType) => Promise<ApiDefaultResponseType>
     createFolderApi: (params: CreateFolderParamsType) => Promise<ApiDefaultResponseType>
     uploadFileApi: (params: FormData, onUploadProgress: OnUploadProgressType) => Promise<ApiDefaultResponseType>
+    setFolderCover: (params: UpdateCoverParamsType) => Promise<ApiDefaultResponseType>
 }
 
 const FileApi: FileApiType = {
@@ -57,6 +59,14 @@ const FileApi: FileApiType = {
      */
     deleteSoftApi(params: DeleteSoftParamsType): Promise<ApiDefaultResponseType> {
         return request.post<null, DeleteSoftParamsType>("/deleteSoft", params)
+    },
+    /**
+     * @description 设置文件夹封面
+     * @param params 
+     * @returns 
+     */
+    setFolderCover(params: UpdateCoverParamsType): Promise<ApiDefaultResponseType> {
+        return request.post<null, UpdateCoverParamsType>("/setFolderCover", params)
     }
 }
 

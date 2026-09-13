@@ -1,9 +1,9 @@
 import request from "/@/library/request";
 
-import type { CreateTagParamsType } from "../types/file-tag"
+import type { CreateTagDataType, CreateTagParamsType, CreateTagResponseType } from "../types/file-tag"
 
 interface FileApiType {
-    createTagApi: (params: CreateTagParamsType) => Promise<ApiDefaultResponseType>
+    createTagApi: (params: CreateTagParamsType) => Promise<CreateTagResponseType>
 }
 
 const FileTagApi: FileApiType = {
@@ -12,8 +12,8 @@ const FileTagApi: FileApiType = {
      * @param params 
      * @returns 
      */
-    createTagApi(params: CreateTagParamsType): Promise<ApiDefaultResponseType> {
-        return request.post<null, CreateTagParamsType>("/createTarget", params)
+    createTagApi(params: CreateTagParamsType): Promise<CreateTagResponseType> {
+        return request.post<CreateTagDataType, CreateTagParamsType>("/createTarget", params)
     },
 }
 
