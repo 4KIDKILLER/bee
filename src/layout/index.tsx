@@ -117,6 +117,9 @@ const Layout = () => {
           <LayoutContent />
         </BrowserRouter>
       </TooltipProvider>
+      <span className="absolute bottom-[10px] right-[10px] bg-black/40 px-2 rounded-2xl text-white text-sm backdrop-blur-md">
+        {import.meta.env.VITE_APP_VERSION}
+      </span>
     </div>
   );
 };
