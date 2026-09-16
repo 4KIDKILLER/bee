@@ -26,7 +26,6 @@ import { FileTagApi } from "/@/api/file-tag";
 // import { cn } from "/@/library/utils";
 import { FolderPlus } from "lucide-react";
 import { toast } from "sonner";
-import { useSystemStore } from "/@s/system/useSystemStore";
 
 function FolderScrollArea({
   showUploadPanel,
@@ -43,8 +42,6 @@ function FolderScrollArea({
   onOpenFolder,
   onPaginationChange,
 }: FolderScrollAreaProps) {
-  const mode = useSystemStore((state) => state.mode);
-
   //当前操作的文件夹/图片
   const [currentTarget, setCurrentTarget] = useState<BeeFileType | null>(null);
   //当前操作文件夹的类型 1:创建 2修改
@@ -178,7 +175,6 @@ function FolderScrollArea({
         page: currentPage,
         parentId,
         pageSize: limit,
-        mode: mode,
       }).then((res) => {
         setDataList(res.data.list);
         onPaginationChange({
@@ -189,7 +185,7 @@ function FolderScrollArea({
         setLoading(false);
       });
     },
-    [limit, mode, onPaginationChange],
+    [limit, onPaginationChange],
   );
 
   const onRefresh = useCallback(
@@ -305,14 +301,6 @@ function FolderScrollArea({
     setFolderEditMode(mode);
     setFolderDialogOpen(true);
   }, []);
-
-  const onSystemModeChange = useCallback<
-    Parameters<typeof useSystemStore>[0]
-  >(() => {
-    getFileList(currentFolderId, 1);
-  }, [getFileList, currentFolderId]);
-
-  useSystemStore.subscribe(onSystemModeChange);
 
   return (
     <div

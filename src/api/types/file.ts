@@ -4,7 +4,6 @@ interface FileListParamsType {
     page: number
     parentId: string
     pageSize: number
-    mode: 'default' | 'private'
 }
 interface CreateFolderParamsType {
     // tags: string
