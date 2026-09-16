@@ -71,7 +71,7 @@ function Login() {
   };
 
   return (
-    <div className="flex h-full w-[1400px] items-center justify-end mx-auto">
+    <div className="flex h-full w-[1400px] items-center justify-center mx-auto">
       <div className="relativeflex w-full max-w-100 overflow-hidden rounded-[32px] border border-white/20 bg-black/20 shadow-[0_30px_120px_rgba(0,0,0,0.38)] backdrop-blur-xl">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(64,158,255,0.22),transparent_30%),radial-gradient(circle_at_bottom_right,rgba(255,255,255,0.08),transparent_28%)]" />
 
@@ -138,7 +138,7 @@ function Login() {
                   disabled={submitting}
                   className="mt-8 h-12 w-full rounded-2xl border border-(--theme-color)/40 bg-(--theme-color) text-white shadow-[0_12px_30px_rgba(64,158,255,0.28)] hover:bg-(--theme-color)/90"
                 >
-                  {submitting ? "正在登录..." : "登录并进入工作台"}
+                  {submitting ? "正在登录..." : "登录"}
                 </Button>
               </form>
             </div>

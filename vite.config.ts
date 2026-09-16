@@ -46,6 +46,7 @@ export default defineConfig({
       '/@/': `${resolve(__dirname, 'src')}/`,
       '/@v/': `${resolve(__dirname, 'src/views')}/`,
       '/@c/': `${resolve(__dirname, 'src/components')}/`,
+      '/@s/': `${resolve(__dirname, 'src/store')}/`,
     },
   },
 })

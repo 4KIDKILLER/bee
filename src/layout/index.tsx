@@ -1,4 +1,4 @@
-import { Suspense, lazy, useMemo } from "react";
+import { Suspense, lazy, useEffect, useMemo } from "react";
 import {
   BrowserRouter,
   Navigate,
@@ -7,8 +7,9 @@ import {
   useLocation,
   useNavigate,
 } from "react-router-dom";
+import { useSystemStore } from "../store/system/useSystemStore";
 import { LogOut } from "lucide-react";
-import { Dock, BeeIcon, BeeLoading, TooltipProvider,Toaster } from "/@c/index";
+import { Dock, BeeIcon, BeeLoading, TooltipProvider, Toaster } from "/@c/index";
 import { useAuth } from "../permissions/auth-context";
 import { ProtectedRoute, PublicOnlyRoute } from "../permissions/route-guards";
 
@@ -48,7 +49,9 @@ const LayoutContent = () => {
   const shouldShowDock = isAuthenticated && location.pathname !== "/login";
 
   if (!isHydrated) {
-    return <BeeLoading title="恢复登录中..." description="正在检查 BEE 会话状态" />;
+    return (
+      <BeeLoading title="恢复登录中..." description="正在检查 BEE 会话状态" />
+    );
   }
 
   return (
@@ -110,14 +113,56 @@ const LayoutContent = () => {
 };
 
 const Layout = () => {
+  const mode = useSystemStore((state) => state.mode);
+  const updateModel = useSystemStore((state) => state.updateMode);
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.ctrlKey && event.shiftKey && event.key.toLowerCase() === "b") {
+        event.preventDefault();
+        event.stopPropagation();
+
+        if (event.repeat) {
+          return;
+        }
+
+        updateModel(mode === "private" ? "default" : "private");
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown, { capture: true });
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown, { capture: true });
+    };
+  }, [mode, updateModel]);
+
   return (
     <div className="relative h-full min-h-full w-full overflow-hidden">
-      <TooltipProvider>
-        <BrowserRouter>
-          <LayoutContent />
-        </BrowserRouter>
-      </TooltipProvider>
-      <span className="absolute bottom-[10px] right-[10px] bg-black/40 px-2 rounded-2xl text-white text-sm backdrop-blur-md">
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 z-0 bg-cover bg-center bg-no-repeat transition-opacity duration-700 ease-in-out"
+        style={{
+          backgroundImage: "url('/wallpaper-default.png')",
+          opacity: mode === "default" ? 1 : 0,
+        }}
+      />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 z-0 bg-cover bg-center bg-no-repeat transition-opacity duration-700 ease-in-out"
+        style={{
+          backgroundImage: "url('/wallpaper-private.png')",
+          opacity: mode === "private" ? 1 : 0,
+        }}
+      />
+      <div className="relative z-10 h-full min-h-full">
+        <TooltipProvider>
+          <BrowserRouter>
+            <LayoutContent />
+          </BrowserRouter>
+        </TooltipProvider>
+      </div>
+      <span className="absolute bottom-[10px] right-[10px] z-20 bg-black/40 px-2 rounded-2xl text-white text-sm backdrop-blur-md">
         {import.meta.env.VITE_APP_VERSION}
       </span>
     </div>

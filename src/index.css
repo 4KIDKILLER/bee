@@ -49,7 +49,7 @@
 }
 
 :root {
-  --theme-color: #409EFF;
+  --theme-color: #409eff;
 
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
@@ -132,10 +132,10 @@
   html {
     @apply font-sans;
     background-color: #050816;
-    background-image: url("/wallpaper.jpg");
+    /*background-image: url("/wallpaper-light.png");
     background-position: center;
     background-repeat: no-repeat;
-    background-size: cover;
+    background-size: cover; */
   }
   body {
     @apply bg-transparent text-foreground;

@@ -114,10 +114,10 @@ function FolderList() {
     <div className="w-full h-full flex items-center justify-center">
       <div className="relative w-[1300px] min-w-[1300px] mx-auto h-[700px]">
         <div className="flex flex-col h-full">
-          <div className="h-[50px] flex w-full items-center bg-black/40 px-4 backdrop-blur-md rounded-tl-2xl rounded-tr-2xl border-t border-x border-white/20">
+          <div className="h-[50px] flex w-full items-center bg-black/40 px-4 backdrop-blur-sm rounded-tl-2xl rounded-tr-2xl border-t border-x border-white/20">
             <ViewModeSwitch value={viewMode} onChange={setViewMode} />
           </div>
-          <div className="relative flex-1 overflow-hidden rounded-bl-2xl rounded-br-2xl border-b border-x border-white/20 shadow-lg backdrop-blur-md">
+          <div className="relative flex-1 overflow-hidden backdrop-blur-[2px] rounded-bl-2xl rounded-br-2xl border-b border-x border-white/20 shadow-lg">
             <div className="relative h-full w-full bg-black/10">
               <FilePanel
                 showUploadPanel={showUploadPanel}
