@@ -138,7 +138,7 @@ const Layout = () => {
         event.preventDefault();
         event.stopPropagation();
 
-        if (event.repeat || privateVerifyVisible) {
+        if (event.repeat || privateVerifyVisible || mode == "private") {
           return;
         }
 

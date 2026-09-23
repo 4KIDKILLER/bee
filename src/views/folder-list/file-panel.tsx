@@ -263,9 +263,17 @@ function FolderScrollArea({
   }, [currentFolderId, getFileList, limit, page]);
 
   useEffect(() => {
-    useSystemStore.subscribe((value) => {
+    //TODO 进入私密模式后重置列表
+    //订阅返回一个卸载当前订阅的函数
+    const unsubscribe = useSystemStore.subscribe((value) => {
       console.log(value);
     });
+    /**
+     * 在useEffect中返回一个函数表示：这个effect创建了一些副作用资源，
+     * 组件卸载或effect重新执行前，请先帮我清理掉，即这个函数会在组件
+     * 卸载或当前useEffect重新执行时执行下面这个函数
+     */
+    return unsubscribe;
   }, []);
 
   const toggleUploadPanel = () => {
