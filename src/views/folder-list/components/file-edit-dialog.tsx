@@ -25,16 +25,16 @@ import {
   InputGroupInput,
 } from "/@c/index";
 
-interface ImageEditFormData {
+interface FileEditFormData {
   imageName: string;
 }
 
-interface ImageEditDialogRef {
-  setFormData: (data: ImageEditFormData) => void;
+interface FileEditDialogRef {
+  setFormData: (data: FileEditFormData) => void;
   resetForm: () => void;
 }
 
-interface EditImageDialogProps {
+interface FileEditDialogProps {
   open: boolean;
   onClose: () => void;
   children?: ReactNode;
@@ -42,7 +42,7 @@ interface EditImageDialogProps {
   onConfirm?: (imageName: string) => void;
 }
 
-const CreateFolderDialog = forwardRef<ImageEditDialogRef, EditImageDialogProps>(
+const FileEditDialog = forwardRef<FileEditDialogRef, FileEditDialogProps>(
   ({ open, onClose, children, onCancel, onConfirm }, ref) => {
     const [imageName, setImageName] = useState("");
     const [invalid, setInvalid] = useState(false);
@@ -167,5 +167,5 @@ const CreateFolderDialog = forwardRef<ImageEditDialogRef, EditImageDialogProps>(
   },
 );
 
-export type { ImageEditDialogRef, ImageEditFormData };
-export default CreateFolderDialog;
+export type { FileEditDialogRef, FileEditFormData };
+export default FileEditDialog;

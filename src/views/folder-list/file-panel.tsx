@@ -14,9 +14,9 @@ import {
 import FolderEditDialog, {
   type FolderEditDialogRef,
 } from "./components/folder-edit-dialog";
-import ImageEditDialog, {
-  type ImageEditDialogRef,
-} from "./components/image-edit-dialog";
+import FileEditDialog, {
+  type FileEditDialogRef,
+} from "./components/file-edit-dialog";
 import FolderIntroduction from "./components/folder-introduction";
 import ImageIntroduction from "./components/image-introduction";
 import BeeImageItem from "./components/image-item";
@@ -26,6 +26,8 @@ import { FileTagApi } from "/@/api/file-tag";
 // import { cn } from "/@/library/utils";
 import { FolderPlus } from "lucide-react";
 import { toast } from "sonner";
+
+import { useSystemStore } from "/@/store/system/useSystemStore";
 
 function FolderScrollArea({
   showUploadPanel,
@@ -59,7 +61,7 @@ function FolderScrollArea({
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImages, setPreviewImages] = useState<string[]>([]);
   const [previewIndex, setPreviewIndex] = useState(0);
-  const imageEditDialogRef = useRef<ImageEditDialogRef>(null);
+  const imageEditDialogRef = useRef<FileEditDialogRef>(null);
   const folderEditDialogRef = useRef<FolderEditDialogRef>(null);
   const skipNextFetchKeyRef = useRef<string | null>(null);
   const activeFolder =
@@ -260,6 +262,12 @@ function FolderScrollArea({
       .catch(() => {});
   }, [currentFolderId, getFileList, limit, page]);
 
+  useEffect(() => {
+    useSystemStore.subscribe((value) => {
+      console.log(value);
+    });
+  }, []);
+
   const toggleUploadPanel = () => {
     setViewMode("upload");
   };
@@ -418,12 +426,12 @@ function FolderScrollArea({
         onClose={() => setFolderDialogOpen(false)}
       ></FolderEditDialog>
       {/* 编辑信息图片 */}
-      <ImageEditDialog
+      <FileEditDialog
         ref={imageEditDialogRef}
         onConfirm={onFileRename}
         open={imageEditDialogOpen}
         onClose={() => setImageEditDialogOpen(false)}
-      ></ImageEditDialog>
+      ></FileEditDialog>
       {/* 文件夹详细信息 */}
       <FolderIntroduction
         open={showFolderIntroduction}
