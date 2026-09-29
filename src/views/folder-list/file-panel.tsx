@@ -29,6 +29,9 @@ import { toast } from "sonner";
 
 import { useSystemStore } from "/@/store/system/useSystemStore";
 
+const ROOT_FOLDER_ID = "";
+const FIRST_PAGE = 1;
+
 function FolderScrollArea({
   showUploadPanel,
   setViewMode,
@@ -43,6 +46,7 @@ function FolderScrollArea({
   onFolderOpenChange,
   onOpenFolder,
   onPaginationChange,
+  onResetNavigation,
 }: FolderScrollAreaProps) {
   //当前操作的文件夹/图片
   const [currentTarget, setCurrentTarget] = useState<BeeFileType | null>(null);
@@ -201,9 +205,36 @@ function FolderScrollArea({
     [currentFolderId, getFileList, page],
   );
 
-  const onReload = () => {
+  const onReload = useCallback(() => {
+    setDataList([]);
+    setLoading(false);
+    setCurrentTarget(null);
+    setFolderEditMode(1);
+    setFolderDialogOpen(false);
+    setImageEditDialogOpen(false);
+    setShowDeleteConfirm(false);
+    setShowFolderIntroduction(false);
+    setShowImageIntroduction(false);
+    setActiveFolderId(null);
+    setActiveImageId(null);
+    setPreviewOpen(false);
+    setPreviewImages([]);
+    setPreviewIndex(0);
+    folderEditDialogRef.current?.resetForm();
+    imageEditDialogRef.current?.resetForm();
+    onPaginationChange({
+      page: FIRST_PAGE,
+      pageSize: limit,
+      total: 0,
+    });
+    onResetNavigation();
+    setViewMode("list");
 
-  }
+    skipNextFetchKeyRef.current = `${ROOT_FOLDER_ID}:${FIRST_PAGE}:${limit}`;
+    queueMicrotask(() => {
+      void getFileList(ROOT_FOLDER_ID, FIRST_PAGE).catch(() => {});
+    });
+  }, [getFileList, limit, onPaginationChange, onResetNavigation, setViewMode]);
 
   const handleConfirmDelete = useCallback(() => {
     if (currentTarget) {
@@ -267,11 +298,11 @@ function FolderScrollArea({
   }, [currentFolderId, getFileList, limit, page]);
 
   useEffect(() => {
-    //TODO 进入私密模式后重置列表
+    // 进入私密模式后重置列表
     //订阅返回一个卸载当前订阅的函数
-    const unsubscribe = useSystemStore.subscribe((value) => {
-      if (value.mode == "private") {
-        onReload()
+    const unsubscribe = useSystemStore.subscribe((value, previousValue) => {
+      if (previousValue.mode !== "private" && value.mode === "private") {
+        onReload();
       }
     });
     /**
@@ -280,7 +311,7 @@ function FolderScrollArea({
      * 卸载或当前useEffect重新执行时执行下面这个函数
      */
     return unsubscribe;
-  }, []);
+  }, [onReload]);
 
   const toggleUploadPanel = () => {
     setViewMode("upload");

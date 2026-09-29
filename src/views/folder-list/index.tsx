@@ -13,12 +13,14 @@ import type {
   FolderListViewMode,
 } from "./types";
 
+const INITIAL_PAGE_INFO = {
+  page: 1,
+  total: 0,
+  limit: 32,
+};
+
 function FolderList() {
-  const [pageInfo, setPageInfo] = useState({
-    page: 1,
-    total: 0,
-    limit: 32,
-  });
+  const [pageInfo, setPageInfo] = useState(INITIAL_PAGE_INFO);
   const [path, setPath] = useState<BeeFileType[]>([rootPath]);
   const [selection, setSelection] = useState(false);
   const [viewMode, setViewMode] = useState<FolderListViewMode>("list");
@@ -75,6 +77,19 @@ function FolderList() {
     },
     [],
   );
+
+  const handleResetNavigation = useCallback(() => {
+    setCurrentFolderId("");
+    setPath([rootPath]);
+    setOpenFolderId(null);
+    setSelectedFolders([]);
+    setSelection(false);
+    setPageInfo((prev) => ({
+      ...prev,
+      page: 1,
+      total: 0,
+    }));
+  }, []);
 
   /**
    * 翻页事件
@@ -133,6 +148,7 @@ function FolderList() {
                 onFolderOpenChange={handleFolderOpenChange}
                 onOpenFolder={handleOpenFolder}
                 onPaginationChange={handlePaginationChange}
+                onResetNavigation={handleResetNavigation}
               />
               <UploadPanel
                 currentFolderId={currentFolderId}

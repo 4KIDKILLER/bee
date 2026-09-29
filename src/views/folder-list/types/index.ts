@@ -101,4 +101,5 @@ export interface FolderScrollAreaProps {
   onFolderOpenChange: (id: string, open: boolean) => void;
   onOpenFolder: (folder: BeeFileType) => void;
   onPaginationChange: (pagination: FileListPaginationMeta) => void;
+  onResetNavigation: () => void;
 }
