@@ -19,11 +19,13 @@ import { useSystemStore } from "../store/system/useSystemStore";
 import { LogOut } from "lucide-react";
 import { Dock, BeeIcon, BeeLoading, TooltipProvider, Toaster } from "/@c/index";
 import { useAuth } from "../permissions/auth-context";
+import { AUTH_SYSTEM_STORAGE } from "/@/permissions/constants";
 import { ProtectedRoute, PublicOnlyRoute } from "../permissions/route-guards";
 import PrivateVerifyDialog, {
   type VerifyDataType,
   type PrivateVerifyDialogRef,
 } from "./private-verify-dialog";
+import { UserApi } from "/@/api/user";
 
 const FolderList = lazy(() => import("/@v/folder-list"));
 const Overview = lazy(() => import("/@v/overview"));
@@ -134,7 +136,12 @@ const Layout = () => {
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.ctrlKey && event.shiftKey && event.key.toLowerCase() === "b") {
+      if (
+        event.ctrlKey &&
+        event.shiftKey &&
+        event.key.toLowerCase() === "b" &&
+        location.pathname === "/home"
+      ) {
         event.preventDefault();
         event.stopPropagation();
 
@@ -155,10 +162,13 @@ const Layout = () => {
 
   const handlePrivateVerify = useCallback(
     (data: VerifyDataType) => {
-      console.log(data);
-      updateModel("private");
-      setPrivateVerifyVisible(false)
-      privateVerifyDialogRef.current?.resetFields()
+      UserApi.privateApi(data).then((result) => {
+        //更新token
+        updateModel("private");
+        window.localStorage.setItem(AUTH_SYSTEM_STORAGE, result.data.token);
+        setPrivateVerifyVisible(false);
+        privateVerifyDialogRef.current?.resetFields();
+      });
     },
     [updateModel],
   );

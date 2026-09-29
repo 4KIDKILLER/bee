@@ -1,12 +1,14 @@
 import type {
     UserLoginDataType,
     UserLoginParamsType,
-    UserLoginResponseType
+    UserLoginResponseType,
+    UserPrivateLoginParamsType
 } from "../types/user";
 import request from "/@/library/request";
 
 interface UserApiType {
     loginApi: (params: UserLoginParamsType) => Promise<UserLoginResponseType>;
+    privateApi: (params: UserPrivateLoginParamsType) => Promise<UserLoginResponseType>
 }
 
 const UserApi: UserApiType = {
@@ -14,6 +16,9 @@ const UserApi: UserApiType = {
         return request.post<UserLoginDataType, UserLoginParamsType>("/login", params, {
             skipAuth: true,
         });
+    },
+    privateApi(params: UserPrivateLoginParamsType): Promise<UserLoginResponseType> {
+        return request.post<UserLoginDataType, UserPrivateLoginParamsType>("/private", params);
     }
 }
 

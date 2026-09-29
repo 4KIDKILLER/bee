@@ -5,7 +5,11 @@ import {
   useState,
   type PropsWithChildren,
 } from "react";
-import { AUTH_LOGOUT_EVENT, AUTH_TOKEN_STORAGE_KEY } from "./constants";
+import {
+  AUTH_LOGOUT_EVENT,
+  AUTH_SYSTEM_STORAGE,
+  AUTH_TOKEN_STORAGE_KEY,
+} from "./constants";
 import {
   AuthContext,
   type AuthContextValue,
@@ -64,6 +68,7 @@ function AuthProvider({ children }: PropsWithChildren) {
 
   const logout = useCallback(() => {
     window.localStorage.removeItem(AUTH_TOKEN_STORAGE_KEY);
+    window.sessionStorage.removeItem(AUTH_SYSTEM_STORAGE);
     setToken(null);
   }, []);
 

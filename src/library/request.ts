@@ -7,6 +7,7 @@ import type {
 import { toast } from "sonner";
 import {
     AUTH_LOGOUT_EVENT,
+    AUTH_SYSTEM_STORAGE,
     AUTH_TOKEN_STORAGE_KEY,
 } from "../permissions/constants";
 
@@ -66,6 +67,7 @@ function logout() {
     }
 
     window.localStorage.removeItem(AUTH_TOKEN_STORAGE_KEY);
+    window.sessionStorage.removeItem(AUTH_SYSTEM_STORAGE);
     window.dispatchEvent(new Event(AUTH_LOGOUT_EVENT));
 }
 

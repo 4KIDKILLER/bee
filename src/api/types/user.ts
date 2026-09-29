@@ -1,14 +1,23 @@
-interface UserLoginParamsType {
+type UserLoginParamsType = {
     username: string;
     password: string;
 }
 
-interface UserLoginDataType {
-    avatar: string;
+type UserPrivateLoginParamsType = {
+    password: string;
+}
+
+type UserLoginDataType = {
     token: string;
+    avatar: string;
     username: string;
 }
 
 type UserLoginResponseType = ApiResponseType<UserLoginDataType>
 
-export type { UserLoginDataType, UserLoginParamsType, UserLoginResponseType };
+export type {
+    UserLoginDataType,
+    UserLoginParamsType,
+    UserLoginResponseType,
+    UserPrivateLoginParamsType
+};

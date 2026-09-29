@@ -1,4 +1,7 @@
 import { create } from 'zustand'
+import {
+    AUTH_SYSTEM_STORAGE,
+} from "/@/permissions/constants";
 import { persist, createJSONStorage } from 'zustand/middleware'
 
 type SystemStoreStateType = {
@@ -17,7 +20,7 @@ const useSystemStore = create<SystemStoreType>()(
             updateMode: (mode) => set(() => ({ mode })),
         }),
         {
-            name: 'system-storage', // name of the item in the storage (must be unique)
+            name: AUTH_SYSTEM_STORAGE, // name of the item in the storage (must be unique)
             storage: createJSONStorage(() => sessionStorage), // (optional) by default, 'localStorage' is used
         },
     )
