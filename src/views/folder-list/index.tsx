@@ -52,35 +52,6 @@ function FolderList() {
           .slice(1)
           .join("/")}`;
 
-  /**
-   * 注册全局键盘事件
-   */
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (
-        event.ctrlKey &&
-        event.shiftKey &&
-        event.key.toLowerCase() === "b" &&
-        location.pathname === "/home"
-      ) {
-        event.preventDefault();
-        event.stopPropagation();
-
-        if (event.repeat || privateVerifyVisible || mode == "private") {
-          return;
-        }
-
-        setPrivateVerifyVisible(true);
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown, { capture: true });
-
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown, { capture: true });
-    };
-  }, [mode, updateModel, privateVerifyVisible]);
-
   const handleSelectionToggle = () => {
     setOpenFolderId(null);
     setSelection((prev) => {
@@ -177,18 +148,15 @@ function FolderList() {
     }));
   }, [isGoBackDisabled, path]);
 
-  const handlePrivateVerify = useCallback(
-    (data: VerifyDataType) => {
-      UserApi.privateApi(data).then((result) => {
-        //更新token
-        window.localStorage.setItem(AUTH_TOKEN_STORAGE_KEY, result.data.token);
-        pendingPrivateModeRef.current = true;
-        setPrivateVerifyVisible(false);
-        privateVerifyDialogRef.current?.resetFields();
-      });
-    },
-    [],
-  );
+  const handlePrivateVerify = useCallback((data: VerifyDataType) => {
+    UserApi.privateApi(data).then((result) => {
+      //更新token
+      window.localStorage.setItem(AUTH_TOKEN_STORAGE_KEY, result.data.token);
+      pendingPrivateModeRef.current = true;
+      setPrivateVerifyVisible(false);
+      privateVerifyDialogRef.current?.resetFields();
+    });
+  }, []);
 
   const handlePrivateVerifyAfterClose = useCallback(() => {
     if (!pendingPrivateModeRef.current) {
@@ -203,6 +171,40 @@ function FolderList() {
     pendingPrivateModeRef.current = false;
     setPrivateVerifyVisible(false);
   }, []);
+
+  /**
+   * 注册全局键盘事件
+   */
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (
+        event.ctrlKey &&
+        event.shiftKey &&
+        event.key.toLowerCase() === "b" &&
+        location.pathname === "/home"
+      ) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        if (
+          event.repeat ||
+          privateVerifyVisible ||
+          mode == "private" ||
+          viewMode != "list"
+        ) {
+          return;
+        }
+
+        setPrivateVerifyVisible(true);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown, { capture: true });
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown, { capture: true });
+    };
+  }, [mode, viewMode, updateModel, privateVerifyVisible]);
 
   return (
     <div className="w-full h-full flex items-center justify-center">
