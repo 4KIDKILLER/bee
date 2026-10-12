@@ -2,6 +2,7 @@ import {
   forwardRef,
   useState,
   useImperativeHandle,
+  type AnimationEvent,
   type ChangeEvent,
   type SubmitEvent,
 } from "react";
@@ -31,12 +32,13 @@ interface PrivateVerifyDialogProps {
   open: boolean;
   onClose: () => void;
   onSubmit: (data: VerifyDataType) => void;
+  onAfterClose?: () => void;
 }
 
 const PrivateVerifyDialog = forwardRef<
   PrivateVerifyDialogRef,
   PrivateVerifyDialogProps
->(({ open, onClose, onSubmit }, ref) => {
+>(({ open, onClose, onSubmit, onAfterClose }, ref) => {
   const [invalid, setInvalid] = useState(false);
   const [password, setPassword] = useState("");
 
@@ -65,9 +67,20 @@ const PrivateVerifyDialog = forwardRef<
     setPassword("");
   };
 
+  const handleAnimationEnd = (event: AnimationEvent<HTMLDivElement>) => {
+    if (event.target !== event.currentTarget || open) {
+      return;
+    }
+
+    onAfterClose?.();
+  };
+
   return (
     <Dialog open={open} onOpenChange={handleCancel}>
-      <DialogContent className="sm:max-w-sm">
+      <DialogContent
+        className="sm:max-w-sm"
+        onAnimationEnd={handleAnimationEnd}
+      >
         <form onSubmit={handleSubmit}>
           <DialogHeader>
             <DialogTitle>二级验证</DialogTitle>

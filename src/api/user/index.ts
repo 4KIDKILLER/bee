@@ -9,6 +9,7 @@ import request from "/@/library/request";
 interface UserApiType {
     loginApi: (params: UserLoginParamsType) => Promise<UserLoginResponseType>;
     privateApi: (params: UserPrivateLoginParamsType) => Promise<UserLoginResponseType>
+    exitPrivateApi: () => Promise<UserLoginResponseType>
 }
 
 const UserApi: UserApiType = {
@@ -19,6 +20,9 @@ const UserApi: UserApiType = {
     },
     privateApi(params: UserPrivateLoginParamsType): Promise<UserLoginResponseType> {
         return request.post<UserLoginDataType, UserPrivateLoginParamsType>("/private", params);
+    },
+    exitPrivateApi(): Promise<UserLoginResponseType> {
+        return request.post<UserLoginDataType>("/exitPrivate");
     }
 }
 

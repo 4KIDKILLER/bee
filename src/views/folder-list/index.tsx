@@ -1,12 +1,20 @@
-import { useCallback, useState } from "react";
+import { useCallback, useState, useEffect, useRef } from "react";
 import FilePanel from "./file-panel";
 import UploadPanel from "./upload-panel";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Sun } from "lucide-react";
 import { cn } from "/@/library/utils";
+import { UserApi } from "/@/api/user";
 import FolderListPagination from "./components/folder-list-pagination";
 import ViewModeSwitch from "./components/view-mode-switch";
 import { Button, BeeTootip } from "/@c/index";
+import { useSystemStore } from "/@/store/system/useSystemStore";
+import { AUTH_TOKEN_STORAGE_KEY } from "/@/permissions/constants";
 import { rootPath } from "./folder-list.d";
+import PrivateVerifyDialog, {
+  type VerifyDataType,
+  type PrivateVerifyDialogRef,
+} from "./components/private-verify-dialog";
+
 import type {
   BeeFileType,
   FileListPaginationMeta,
@@ -20,6 +28,13 @@ const INITIAL_PAGE_INFO = {
 };
 
 function FolderList() {
+  const mode = useSystemStore((state) => state.mode);
+  const updateModel = useSystemStore((state) => state.updateMode);
+
+  const privateVerifyDialogRef = useRef<PrivateVerifyDialogRef>(null);
+  const pendingPrivateModeRef = useRef(false);
+
+  const [privateVerifyVisible, setPrivateVerifyVisible] = useState(false);
   const [pageInfo, setPageInfo] = useState(INITIAL_PAGE_INFO);
   const [path, setPath] = useState<BeeFileType[]>([rootPath]);
   const [selection, setSelection] = useState(false);
@@ -36,6 +51,35 @@ function FolderList() {
           .map((item) => item.originalName)
           .slice(1)
           .join("/")}`;
+
+  /**
+   * 注册全局键盘事件
+   */
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (
+        event.ctrlKey &&
+        event.shiftKey &&
+        event.key.toLowerCase() === "b" &&
+        location.pathname === "/home"
+      ) {
+        event.preventDefault();
+        event.stopPropagation();
+
+        if (event.repeat || privateVerifyVisible || mode == "private") {
+          return;
+        }
+
+        setPrivateVerifyVisible(true);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown, { capture: true });
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown, { capture: true });
+    };
+  }, [mode, updateModel, privateVerifyVisible]);
 
   const handleSelectionToggle = () => {
     setOpenFolderId(null);
@@ -77,6 +121,14 @@ function FolderList() {
     },
     [],
   );
+
+  const handleBackToNormal = () => {
+    UserApi.exitPrivateApi().then((result) => {
+      //更新token
+      window.localStorage.setItem(AUTH_TOKEN_STORAGE_KEY, result.data.token);
+      updateModel("default");
+    });
+  };
 
   const handleResetNavigation = useCallback(() => {
     setCurrentFolderId("");
@@ -125,12 +177,50 @@ function FolderList() {
     }));
   }, [isGoBackDisabled, path]);
 
+  const handlePrivateVerify = useCallback(
+    (data: VerifyDataType) => {
+      UserApi.privateApi(data).then((result) => {
+        //更新token
+        window.localStorage.setItem(AUTH_TOKEN_STORAGE_KEY, result.data.token);
+        pendingPrivateModeRef.current = true;
+        setPrivateVerifyVisible(false);
+        privateVerifyDialogRef.current?.resetFields();
+      });
+    },
+    [],
+  );
+
+  const handlePrivateVerifyAfterClose = useCallback(() => {
+    if (!pendingPrivateModeRef.current) {
+      return;
+    }
+
+    pendingPrivateModeRef.current = false;
+    updateModel("private");
+  }, [updateModel]);
+
+  const handlePrivateVerifyClose = useCallback(() => {
+    pendingPrivateModeRef.current = false;
+    setPrivateVerifyVisible(false);
+  }, []);
+
   return (
     <div className="w-full h-full flex items-center justify-center">
       <div className="relative w-[1300px] min-w-[1300px] mx-auto h-[700px]">
         <div className="flex flex-col h-full">
-          <div className="h-[50px] flex w-full items-center bg-black/40 px-4 backdrop-blur-sm rounded-tl-2xl rounded-tr-2xl border-t border-x border-white/20">
+          <div className="h-[50px] flex w-full justify-between items-center bg-black/40 px-4 backdrop-blur-sm rounded-tl-2xl rounded-tr-2xl border-t border-x border-white/20">
             <ViewModeSwitch value={viewMode} onChange={setViewMode} />
+
+            {mode == "private" ? (
+              <span
+                onClick={handleBackToNormal}
+                className="w-[22px] h-[22px] active:text-(--theme-color) text-white/20 transition-all duration-500 ease-out hover:rotate-[360deg] hover:text-white cursor-pointer"
+              >
+                <Sun size={22} />
+              </span>
+            ) : (
+              <span />
+            )}
           </div>
           <div className="relative flex-1 overflow-hidden backdrop-blur-[2px] rounded-bl-2xl rounded-br-2xl border-b border-x border-white/20 shadow-lg">
             <div className="relative h-full w-full bg-black/10">
@@ -190,6 +280,14 @@ function FolderList() {
           )}
         </div>
       </div>
+
+      <PrivateVerifyDialog
+        open={privateVerifyVisible}
+        ref={privateVerifyDialogRef}
+        onSubmit={handlePrivateVerify}
+        onClose={handlePrivateVerifyClose}
+        onAfterClose={handlePrivateVerifyAfterClose}
+      />
     </div>
   );
 }

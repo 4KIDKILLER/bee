@@ -301,7 +301,7 @@ function FolderScrollArea({
     // 进入私密模式后重置列表
     //订阅返回一个卸载当前订阅的函数
     const unsubscribe = useSystemStore.subscribe((value, previousValue) => {
-      if (previousValue.mode !== "private" && value.mode === "private") {
+      if (previousValue.mode !== value.mode) {
         onReload();
       }
     });

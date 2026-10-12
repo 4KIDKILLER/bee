@@ -1,11 +1,7 @@
 import {
   Suspense,
   lazy,
-  useCallback,
-  useRef,
-  useEffect,
   useMemo,
-  useState,
 } from "react";
 import {
   BrowserRouter,
@@ -19,19 +15,13 @@ import { useSystemStore } from "../store/system/useSystemStore";
 import { LogOut } from "lucide-react";
 import { Dock, BeeIcon, BeeLoading, TooltipProvider, Toaster } from "/@c/index";
 import { useAuth } from "../permissions/auth-context";
-import { AUTH_SYSTEM_STORAGE } from "/@/permissions/constants";
 import { ProtectedRoute, PublicOnlyRoute } from "../permissions/route-guards";
-import PrivateVerifyDialog, {
-  type VerifyDataType,
-  type PrivateVerifyDialogRef,
-} from "./private-verify-dialog";
-import { UserApi } from "/@/api/user";
 
 const FolderList = lazy(() => import("/@v/folder-list"));
 const Overview = lazy(() => import("/@v/overview"));
 const Login = lazy(() => import("/@v/login"));
 
-const LayoutContent = () => {
+const LayoutContent = () => { 
   const navigate = useNavigate();
   const location = useLocation();
   const { isAuthenticated, isHydrated, logout } = useAuth();
@@ -128,50 +118,6 @@ const LayoutContent = () => {
 
 const Layout = () => {
   const mode = useSystemStore((state) => state.mode);
-  const updateModel = useSystemStore((state) => state.updateMode);
-
-  const privateVerifyDialogRef = useRef<PrivateVerifyDialogRef>(null);
-
-  const [privateVerifyVisible, setPrivateVerifyVisible] = useState(false);
-
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (
-        event.ctrlKey &&
-        event.shiftKey &&
-        event.key.toLowerCase() === "b" &&
-        location.pathname === "/home"
-      ) {
-        event.preventDefault();
-        event.stopPropagation();
-
-        if (event.repeat || privateVerifyVisible || mode == "private") {
-          return;
-        }
-
-        setPrivateVerifyVisible(true);
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown, { capture: true });
-
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown, { capture: true });
-    };
-  }, [mode, updateModel, privateVerifyVisible]);
-
-  const handlePrivateVerify = useCallback(
-    (data: VerifyDataType) => {
-      UserApi.privateApi(data).then((result) => {
-        //更新token
-        updateModel("private");
-        window.localStorage.setItem(AUTH_SYSTEM_STORAGE, result.data.token);
-        setPrivateVerifyVisible(false);
-        privateVerifyDialogRef.current?.resetFields();
-      });
-    },
-    [updateModel],
-  );
 
   return (
     <div className="relative h-full min-h-full w-full overflow-hidden">
@@ -201,13 +147,6 @@ const Layout = () => {
       <span className="absolute bottom-[10px] right-[10px] z-20 bg-black/40 px-2 rounded-2xl text-white text-sm backdrop-blur-md">
         {import.meta.env.VITE_APP_VERSION}
       </span>
-
-      <PrivateVerifyDialog
-        open={privateVerifyVisible}
-        ref={privateVerifyDialogRef}
-        onSubmit={handlePrivateVerify}
-        onClose={() => setPrivateVerifyVisible(false)}
-      />
     </div>
   );
 };
