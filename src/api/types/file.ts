@@ -36,6 +36,7 @@ interface FileListDataType {
     remark: string
     createTime: string
     updateTime: string
+    isPrivate: number
 }
 
 interface DeleteSoftParamsType {

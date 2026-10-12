@@ -5,12 +5,11 @@ import {
   BeeFolder,
   BeeDeleteConfirm,
   BeeImagePreview,
-  // BeeTootip,
+  BeeTootip,
   // BeeLoading,
   ScrollArea,
   type BeeCoverSlotType,
 } from "/@c/index";
-// SquareMousePointer, SquareDashedMousePointer
 import FolderEditDialog, {
   type FolderEditDialogRef,
 } from "./components/folder-edit-dialog";
@@ -23,8 +22,12 @@ import BeeImageItem from "./components/image-item";
 import type { BeeFileType, FolderScrollAreaProps } from "./types";
 import { FileApi } from "/@/api/file";
 import { FileTagApi } from "/@/api/file-tag";
-// import { cn } from "/@/library/utils";
-import { FolderPlus } from "lucide-react";
+import { cn } from "/@/library/utils";
+import {
+  FolderPlus,
+  SquareMousePointer,
+  SquareDashedMousePointer,
+} from "lucide-react";
 import { toast } from "sonner";
 
 import { useSystemStore } from "/@/store/system/useSystemStore";
@@ -41,7 +44,7 @@ function FolderScrollArea({
   currentFolderId,
   page,
   limit,
-  // onSelectionToggle,
+  onSelectionToggle,
   onFolderCheckChange,
   onFolderOpenChange,
   onOpenFolder,
@@ -207,7 +210,7 @@ function FolderScrollArea({
 
   const onReload = useCallback(() => {
     setDataList([]);
-    setLoading(false);
+    setLoading(true);
     setCurrentTarget(null);
     setFolderEditMode(1);
     setFolderDialogOpen(false);
@@ -283,6 +286,10 @@ function FolderScrollArea({
     },
     [currentFolderId, folderEditMode, onFileRename, editCallback],
   );
+  //TODO 完成隐藏文件/文件夹功能
+  const onSetPrivate = useCallback(() => {
+    console.log(selectedFolders)
+  },[selectedFolders]);
 
   useEffect(() => {
     const requestKey = `${currentFolderId}:${page}:${limit}`;
@@ -409,19 +416,38 @@ function FolderScrollArea({
               >
                 刷新
               </span>
+              <div
+                className={cn(
+                  "w-[2px] h-[10px] bg-white/50 mx-1 rounded-xs",
+                  selectedFolders.length > 0 ? "visible" : "invisible",
+                )}
+              />
+              <span
+                onClick={onSetPrivate}
+                className={cn(
+                  selectedFolders.length > 0 ? "visible" : "invisible",
+                  "flex items-center gap-1 cursor-pointer transition-colors text-[14px] text-white/20 hover:text-(--theme-color)/80",
+                )}
+              >
+                隐藏
+              </span>
             </div>
             <div className="flex gap-2 items-center">
-              {/* <BeeTootip content={`${selection ? "关闭" : "开启"}选择`}>
-              <span
-                onClick={onSelectionToggle}
-              >
-                {selection ? (
-                  <SquareMousePointer className="text-(--theme-color)" size={20} />
-                ) : (
-                  <SquareDashedMousePointer size={20} className="text-white/20 hover:text-(--theme-color)/80" />
-                )}
-              </span>
-            </BeeTootip> */}
+              <BeeTootip content={`${selection ? "关闭" : "开启"}选择`}>
+                <span onClick={onSelectionToggle}>
+                  {selection ? (
+                    <SquareMousePointer
+                      className="text-(--theme-color)"
+                      size={20}
+                    />
+                  ) : (
+                    <SquareDashedMousePointer
+                      size={20}
+                      className="text-white/20 hover:text-(--theme-color)/80"
+                    />
+                  )}
+                </span>
+              </BeeTootip>
             </div>
           </div>
           <div className="grid w-full grid-cols-8 auto-rows-[150px]">

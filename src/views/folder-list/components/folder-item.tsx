@@ -8,6 +8,7 @@ import {
   ContextMenuContent,
   ContextMenuTrigger,
 } from "/@c/index";
+import { cn } from "/@/library/utils";
 import { Info, SquarePen, Trash2 } from "lucide-react";
 import type { BeeFileType } from "/@/views/folder-list/types";
 
@@ -75,7 +76,10 @@ export function BeeFolder({
             <span
               title={folder.originalName}
               onClick={() => onOpen?.(folder)}
-              className="block w-full truncate cursor-pointer rounded-md bg-black/35 px-[6px] py-[4px] transition-colors hover:bg-(--theme-color)"
+              className={cn(
+                folder.isPrivate == 2 ? "bg-black/65 hover:text-(--theme-color)" : "bg-black/20 hover:bg-(--theme-color)",
+                "block w-full truncate cursor-pointer rounded-md px-[6px] py-[4px] transition-colors",
+              )}
             >
               {folder.originalName}
             </span>
