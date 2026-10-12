@@ -7,6 +7,7 @@ import type {
     DeleteSoftParamsType,
     UpdateCoverParamsType,
     CreateFolderParamsType,
+    UpdatePrivateParamsType,
 } from "../types/file";
 import request from "/@/library/request";
 
@@ -17,6 +18,7 @@ interface FileApiType {
     createFolderApi: (params: CreateFolderParamsType) => Promise<ApiDefaultResponseType>
     uploadFileApi: (params: FormData, onUploadProgress: OnUploadProgressType) => Promise<ApiDefaultResponseType>
     setFolderCover: (params: UpdateCoverParamsType) => Promise<ApiDefaultResponseType>
+    setPrivate: (params: UpdatePrivateParamsType) => Promise<ApiDefaultResponseType>
 }
 
 const FileApi: FileApiType = {
@@ -67,6 +69,14 @@ const FileApi: FileApiType = {
      */
     setFolderCover(params: UpdateCoverParamsType): Promise<ApiDefaultResponseType> {
         return request.post<null, UpdateCoverParamsType>("/setFolderCover", params)
+    },
+    /**
+     * @description 设置文件/文件夹私密状态
+     * @param params
+     * @returns
+     */
+    setPrivate(params: UpdatePrivateParamsType): Promise<ApiDefaultResponseType> {
+        return request.post<null, UpdatePrivateParamsType>("/setPrivate", params)
     }
 }
 

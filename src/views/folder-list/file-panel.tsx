@@ -287,9 +287,14 @@ function FolderScrollArea({
     [currentFolderId, folderEditMode, onFileRename, editCallback],
   );
   //TODO 完成隐藏文件/文件夹功能
-  const onSetPrivate = useCallback(() => {
-    console.log(selectedFolders)
-  },[selectedFolders]);
+  const onSetPrivate = useCallback(
+    (isPrivate: 1 | 2) => {
+      FileApi.setPrivate({ ids: selectedFolders, isPrivate }).then((res) => {
+        toast.success(res.message);
+      });
+    },
+    [selectedFolders],
+  );
 
   useEffect(() => {
     const requestKey = `${currentFolderId}:${page}:${limit}`;
@@ -423,13 +428,22 @@ function FolderScrollArea({
                 )}
               />
               <span
-                onClick={onSetPrivate}
+                onClick={() => onSetPrivate(2)}
                 className={cn(
                   selectedFolders.length > 0 ? "visible" : "invisible",
                   "flex items-center gap-1 cursor-pointer transition-colors text-[14px] text-white/20 hover:text-(--theme-color)/80",
                 )}
               >
                 隐藏
+              </span>
+              <span
+                onClick={() => onSetPrivate(1)}
+                className={cn(
+                  selectedFolders.length > 0 ? "visible" : "invisible",
+                  "ml-[4px] flex items-center gap-1 cursor-pointer transition-colors text-[14px] text-white/20 hover:text-(--theme-color)/80",
+                )}
+              >
+                取消隐藏
               </span>
             </div>
             <div className="flex gap-2 items-center">

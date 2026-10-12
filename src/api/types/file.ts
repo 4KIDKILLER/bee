@@ -50,6 +50,11 @@ interface UpdateCoverParamsType {
     cover: string
 }
 
+interface UpdatePrivateParamsType {
+    ids: string[]
+    isPrivate: 1 | 2
+}
+
 type OnUploadProgressType = (e: AxiosProgressEvent) => void
 
 type FileListResponseType = ApiListResponseType<FileListDataType>
@@ -62,5 +67,6 @@ export type {
     UpdateNameParamsType,
     OnUploadProgressType,
     UpdateCoverParamsType,
-    CreateFolderParamsType
+    CreateFolderParamsType,
+    UpdatePrivateParamsType
 }
