@@ -21,10 +21,7 @@ import BeeImageItem from "./components/image-item";
 import type { BeeFileType, FolderScrollAreaProps } from "./types";
 import { FileApi } from "/@/api/file";
 import { FileTagApi } from "/@/api/file-tag";
-import { cn } from "/@/library/utils";
-import {
-  FolderPlus,
-} from "lucide-react";
+import { FolderPlus } from "lucide-react";
 import { toast } from "sonner";
 
 import { useSystemStore } from "/@/store/system/useSystemStore";
@@ -410,37 +407,30 @@ function FolderScrollArea({
                 新建文件夹
               </span>
               {/* </FolderEditDialog> */}
-              <div className="w-[2px] h-[10px] bg-white/50 mx-1 rounded-xs" />
+              <div className="w-[2px] h-[10px] bg-black/30 mx-1 rounded-xs" />
               <span
                 onClick={() => onRefresh(true)}
                 className="flex items-center gap-1 cursor-pointer transition-colors text-white px-[6px] py-[4px] rounded-md bg-black/30 hover:bg-(--theme-color)/60"
               >
                 刷新
               </span>
-              <div
-                className={cn(
-                  "w-[2px] h-[10px] bg-white/50 mx-1 rounded-xs",
-                  selectedFolders.length > 0 ? "visible" : "invisible",
-                )}
-              />
-              <span
-                onClick={() => onSetPrivate(2)}
-                className={cn(
-                  selectedFolders.length > 0 ? "visible" : "invisible",
-                  "flex items-center gap-1 cursor-pointer transition-colors text-white px-[6px] py-[4px] rounded-md bg-black/30 hover:bg-(--theme-color)/60",
-                )}
-              >
-                隐藏
-              </span>
-              <span
-                onClick={() => onSetPrivate(1)}
-                className={cn(
-                  selectedFolders.length > 0 ? "visible" : "invisible",
-                  "ml-[4px] flex items-center gap-1 cursor-pointer transition-colors text-white px-[6px] py-[4px] rounded-md bg-black/30 hover:bg-(--theme-color)/60",
-                )}
-              >
-                取消隐藏
-              </span>
+              {selectedFolders.length > 0 && (
+                <>
+                  <div className="w-[2px] h-[10px] bg-black/30 mx-1 rounded-xs" />
+                  <span
+                    onClick={() => onSetPrivate(2)}
+                    className="flex items-center gap-1 cursor-pointer transition-colors text-white px-[6px] py-[4px] rounded-md bg-black/30 hover:bg-(--theme-color)/60"
+                  >
+                    隐藏
+                  </span>
+                  <span
+                    onClick={() => onSetPrivate(1)}
+                    className="ml-[4px] flex items-center gap-1 cursor-pointer transition-colors text-white px-[6px] py-[4px] rounded-md bg-black/30 hover:bg-(--theme-color)/60"
+                  >
+                    取消隐藏
+                  </span>
+                </>
+              )}
             </div>
           </div>
           <div className="grid w-full grid-cols-8 auto-rows-[150px]">

@@ -213,7 +213,7 @@ function FolderList() {
 
   return (
     <div className="w-full h-full flex items-center justify-center">
-      <div className="relative w-[1300px] min-w-[1300px] mx-auto h-[700px]">
+      <div className="relative w-[1300px] min-w-[1300px] mx-auto h-[700px] shadow-xl">
         <div className="flex flex-col h-full">
           <div className="h-[50px] flex w-full justify-between items-center bg-black/40 px-4 backdrop-blur-sm rounded-tl-2xl rounded-tr-2xl border-t border-x border-white/20">
             <ViewModeSwitch value={viewMode} onChange={setViewMode} />
@@ -268,8 +268,8 @@ function FolderList() {
           </div>
         </div>
 
-        <div className="mt-2 flex w-full justify-between px-4 text-center">
-          <div className="flex items-center pl-[6px] pr-[16px] py-[4px] rounded-full bg-black/40 px-4 backdrop-blur-sm border border-white/20">
+        <div className="mt-6 flex w-full justify-between px-4 text-center">
+          <div className="flex shadow-xl items-center pl-[6px] pr-[16px] py-[4px] rounded-full bg-black/40 px-4 backdrop-blur-sm border border-white/20">
             <BeeTootip side="left" content="返回上一级">
               <Button
                 size="icon"
@@ -286,7 +286,7 @@ function FolderList() {
           {pageInfo.total === 0 ? (
             <></>
           ) : (
-            <div className="rounded-full bg-black/40 px-[6px] backdrop-blur-sm flex items-center border border-white/20">
+            <div className="rounded-full shadow-xl bg-black/40 px-[6px] backdrop-blur-sm flex items-center border border-white/20">
               <FolderListPagination
                 page={pageInfo.page}
                 limit={pageInfo.limit}
