@@ -54,12 +54,12 @@ export function BeeFolder({
 }: BeeFolderProps) {
   return (
     <BeeCell>
+      {/* checkedColor="#4ADE80" */}
       <Folder
         size={0.8}
         isOpen={isOpen}
         selection={selection}
         isChecked={isChecked}
-        checkedColor="#4ADE80"
         onCheckChange={() => onCheckChange?.(folder.id)}
         onOpenChange={(open) => onOpenChange?.(folder.id, open)}
         items={folder.covers.map((src, idx) => (

@@ -17,6 +17,7 @@ import {
   type LoginResult,
 } from "./auth-context";
 import { UserApi } from "/@/api/user";
+import { useSystemStore } from "/@/store/system/useSystemStore";
 
 function readStoredToken(): string | null {
   if (typeof window === "undefined") {
@@ -40,6 +41,8 @@ function readStoredToken(): string | null {
 }
 
 function AuthProvider({ children }: PropsWithChildren) {
+  const updateMode = useSystemStore((state) => state.updateMode);
+
   const [token, setToken] = useState<string | null>(() => readStoredToken());
   const isHydrated = true;
 
@@ -69,8 +72,9 @@ function AuthProvider({ children }: PropsWithChildren) {
   const logout = useCallback(() => {
     window.localStorage.removeItem(AUTH_TOKEN_STORAGE_KEY);
     window.sessionStorage.removeItem(AUTH_SYSTEM_STORAGE);
+    updateMode("default");
     setToken(null);
-  }, []);
+  }, [updateMode]);
 
   useEffect(() => {
     window.addEventListener(AUTH_LOGOUT_EVENT, logout);

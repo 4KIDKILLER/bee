@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { cn } from "/@/library/utils";
+import { CircleCheckBig } from "lucide-react";
 
 interface FolderProps {
   color?: string;
@@ -42,7 +43,6 @@ const Folder: React.FC<FolderProps> = ({
   isChecked = false,
   isOpen,
   color = "#73CFFB",
-  checkedColor = "#",
   size = 1,
   items = [],
   className = "",
@@ -65,8 +65,7 @@ const Folder: React.FC<FolderProps> = ({
     onOpenChange?.(nextOpen);
   };
 
-  const folderColor = isChecked ? checkedColor : color;
-  const folderBackColor = darkenColor(folderColor, 0.08);
+  const folderBackColor = darkenColor(color, 0.08);
   const paper1 = darkenColor("#ffffff", 0.1);
   const paper2 = darkenColor("#ffffff", 0.05);
   const paper3 = "#ffffff";
@@ -186,7 +185,7 @@ const Folder: React.FC<FolderProps> = ({
               !isOpen && "group-hover:transform-[skew(15deg)_scaleY(0.6)]",
             )}
             style={{
-              backgroundColor: folderColor,
+              backgroundColor: color,
               borderRadius: "5px 10px 10px 10px",
               ...(isOpen && { transform: "skew(15deg) scaleY(0.6)" }),
             }}
@@ -197,7 +196,7 @@ const Folder: React.FC<FolderProps> = ({
               !isOpen && "group-hover:transform-[skew(-15deg)_scaleY(0.6)]",
             )}
             style={{
-              backgroundColor: folderColor,
+              backgroundColor: color,
               borderRadius: "5px 10px 10px 10px",
               ...(isOpen && { transform: "skew(-15deg) scaleY(0.6)" }),
             }}
@@ -211,7 +210,19 @@ const Folder: React.FC<FolderProps> = ({
             e.stopPropagation();
             onCheckChange?.();
           }}
-        ></div>
+        >
+          <div
+            style={{
+              borderRadius: "5px 10px 10px 10px",
+              background: isChecked ? "rgb(105, 190, 230)" : "",
+            }}
+            className={cn(
+              "h-full w-full flex items-center justify-center text-[#EBEDF0]",
+            )}
+          >
+            {isChecked && <CircleCheckBig size={40} />}
+          </div>
+        </div>
       )}
     </div>
   );

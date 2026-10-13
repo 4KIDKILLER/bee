@@ -1,7 +1,12 @@
 import { useCallback, useState, useEffect, useRef } from "react";
 import FilePanel from "./file-panel";
 import UploadPanel from "./upload-panel";
-import { ArrowLeft, Sun } from "lucide-react";
+import {
+  Sun,
+  ArrowLeft,
+  SquareMousePointer,
+  SquareDashedMousePointer,
+} from "lucide-react";
 import { cn } from "/@/library/utils";
 import { UserApi } from "/@/api/user";
 import FolderListPagination from "./components/folder-list-pagination";
@@ -212,35 +217,48 @@ function FolderList() {
         <div className="flex flex-col h-full">
           <div className="h-[50px] flex w-full justify-between items-center bg-black/40 px-4 backdrop-blur-sm rounded-tl-2xl rounded-tr-2xl border-t border-x border-white/20">
             <ViewModeSwitch value={viewMode} onChange={setViewMode} />
-
-            {mode == "private" ? (
-              <span
-                onClick={handleBackToNormal}
-                className="w-[22px] h-[22px] active:text-(--theme-color) text-white/20 transition-all duration-500 ease-out hover:rotate-[360deg] hover:text-white cursor-pointer"
-              >
-                <Sun size={22} />
+            <div className="flex gap-4 items-center">
+              <span onClick={handleSelectionToggle} className="cursor-pointer">
+                {selection ? (
+                  <SquareMousePointer
+                    size={22}
+                    className="text-(--theme-color)"
+                  />
+                ) : (
+                  <SquareDashedMousePointer
+                    size={22}
+                    className="text-white/20 hover:text-white"
+                  />
+                )}
               </span>
-            ) : (
-              <span />
-            )}
+              {mode == "private" ? (
+                <span
+                  onClick={handleBackToNormal}
+                  className="w-[22px] h-[22px] active:text-(--theme-color) text-white/20 transition-all duration-500 ease-out hover:rotate-[360deg] hover:text-white cursor-pointer"
+                >
+                  <Sun size={22} />
+                </span>
+              ) : (
+                <></>
+              )}
+            </div>
           </div>
           <div className="relative flex-1 overflow-hidden backdrop-blur-[2px] rounded-bl-2xl rounded-br-2xl border-b border-x border-white/20 shadow-lg">
             <div className="relative h-full w-full bg-black/10">
               <FilePanel
-                showUploadPanel={showUploadPanel}
-                setViewMode={setViewMode}
-                selection={selection}
-                selectedFolders={selectedFolders}
-                openFolderId={openFolderId}
-                currentFolderId={currentFolderId}
                 page={pageInfo.page}
+                selection={selection}
                 limit={pageInfo.limit}
-                onSelectionToggle={handleSelectionToggle}
-                onFolderCheckChange={handleFolderCheckChange}
-                onFolderOpenChange={handleFolderOpenChange}
+                setViewMode={setViewMode}
+                openFolderId={openFolderId}
                 onOpenFolder={handleOpenFolder}
-                onPaginationChange={handlePaginationChange}
+                currentFolderId={currentFolderId}
+                showUploadPanel={showUploadPanel}
+                selectedFolders={selectedFolders}
                 onResetNavigation={handleResetNavigation}
+                onPaginationChange={handlePaginationChange}
+                onFolderOpenChange={handleFolderOpenChange}
+                onFolderCheckChange={handleFolderCheckChange}
               />
               <UploadPanel
                 currentFolderId={currentFolderId}
@@ -251,14 +269,13 @@ function FolderList() {
         </div>
 
         <div className="mt-2 flex w-full justify-between px-4 text-center">
-          <div className="flex items-center">
+          <div className="flex items-center pl-[6px] pr-[16px] py-[4px] rounded-full bg-black/40 px-4 backdrop-blur-sm border border-white/20">
             <BeeTootip side="left" content="返回上一级">
               <Button
-                onClick={handleGoBack}
-                disabled={isGoBackDisabled}
-                variant="outline"
                 size="icon"
                 aria-label="返回上一级"
+                onClick={handleGoBack}
+                disabled={isGoBackDisabled}
                 className="rounded-full size-8 text-white/65 hover:border-(--theme-color) bg-transparent hover:bg-(--theme-color)/20 hover:text-(--theme-color) border-transparent"
               >
                 <ArrowLeft />
@@ -269,16 +286,18 @@ function FolderList() {
           {pageInfo.total === 0 ? (
             <></>
           ) : (
-            <FolderListPagination
-              page={pageInfo.page}
-              limit={pageInfo.limit}
-              total={pageInfo.total}
-              onPageChange={handlePageChange}
-              className={cn(
-                "animate__animated animate__faster",
-                showUploadPanel ? "animate__fadeOut" : "animate__fadeIn",
-              )}
-            />
+            <div className="rounded-full bg-black/40 px-[6px] backdrop-blur-sm flex items-center border border-white/20">
+              <FolderListPagination
+                page={pageInfo.page}
+                limit={pageInfo.limit}
+                total={pageInfo.total}
+                onPageChange={handlePageChange}
+                className={cn(
+                  "animate__animated animate__faster",
+                  showUploadPanel ? "animate__fadeOut" : "animate__fadeIn",
+                )}
+              />
+            </div>
           )}
         </div>
       </div>

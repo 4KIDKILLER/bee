@@ -5,7 +5,6 @@ import {
   BeeFolder,
   BeeDeleteConfirm,
   BeeImagePreview,
-  BeeTootip,
   // BeeLoading,
   ScrollArea,
   type BeeCoverSlotType,
@@ -25,8 +24,6 @@ import { FileTagApi } from "/@/api/file-tag";
 import { cn } from "/@/library/utils";
 import {
   FolderPlus,
-  SquareMousePointer,
-  SquareDashedMousePointer,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -44,7 +41,6 @@ function FolderScrollArea({
   currentFolderId,
   page,
   limit,
-  onSelectionToggle,
   onFolderCheckChange,
   onFolderOpenChange,
   onOpenFolder,
@@ -286,14 +282,14 @@ function FolderScrollArea({
     },
     [currentFolderId, folderEditMode, onFileRename, editCallback],
   );
-  //TODO 完成隐藏文件/文件夹功能
   const onSetPrivate = useCallback(
     (isPrivate: 1 | 2) => {
       FileApi.setPrivate({ ids: selectedFolders, isPrivate }).then((res) => {
         toast.success(res.message);
+        onRefresh();
       });
     },
-    [selectedFolders],
+    [onRefresh, selectedFolders],
   );
 
   useEffect(() => {
@@ -405,11 +401,11 @@ function FolderScrollArea({
       ) : (
         <ScrollArea className="h-full w-full">
           <div className="flex w-full h-[32px] items-end justify-between px-4">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 text-xs">
               {/* <FolderEditDialog onConfirm={onCreateFolder}> */}
               <span
                 onClick={() => handleFolderChange(1)}
-                className="cursor-pointer transition-colors text-[14px] text-white/20 hover:text-(--theme-color)/80"
+                className="cursor-pointer transition-colors text-white px-[6px] py-[4px] rounded-md bg-black/30 hover:bg-(--theme-color)/60"
               >
                 新建文件夹
               </span>
@@ -417,7 +413,7 @@ function FolderScrollArea({
               <div className="w-[2px] h-[10px] bg-white/50 mx-1 rounded-xs" />
               <span
                 onClick={() => onRefresh(true)}
-                className="flex items-center gap-1 cursor-pointer transition-colors text-[14px] text-white/20 hover:text-(--theme-color)/80"
+                className="flex items-center gap-1 cursor-pointer transition-colors text-white px-[6px] py-[4px] rounded-md bg-black/30 hover:bg-(--theme-color)/60"
               >
                 刷新
               </span>
@@ -431,7 +427,7 @@ function FolderScrollArea({
                 onClick={() => onSetPrivate(2)}
                 className={cn(
                   selectedFolders.length > 0 ? "visible" : "invisible",
-                  "flex items-center gap-1 cursor-pointer transition-colors text-[14px] text-white/20 hover:text-(--theme-color)/80",
+                  "flex items-center gap-1 cursor-pointer transition-colors text-white px-[6px] py-[4px] rounded-md bg-black/30 hover:bg-(--theme-color)/60",
                 )}
               >
                 隐藏
@@ -440,28 +436,11 @@ function FolderScrollArea({
                 onClick={() => onSetPrivate(1)}
                 className={cn(
                   selectedFolders.length > 0 ? "visible" : "invisible",
-                  "ml-[4px] flex items-center gap-1 cursor-pointer transition-colors text-[14px] text-white/20 hover:text-(--theme-color)/80",
+                  "ml-[4px] flex items-center gap-1 cursor-pointer transition-colors text-white px-[6px] py-[4px] rounded-md bg-black/30 hover:bg-(--theme-color)/60",
                 )}
               >
                 取消隐藏
               </span>
-            </div>
-            <div className="flex gap-2 items-center">
-              <BeeTootip content={`${selection ? "关闭" : "开启"}选择`}>
-                <span onClick={onSelectionToggle}>
-                  {selection ? (
-                    <SquareMousePointer
-                      className="text-(--theme-color)"
-                      size={20}
-                    />
-                  ) : (
-                    <SquareDashedMousePointer
-                      size={20}
-                      className="text-white/20 hover:text-(--theme-color)/80"
-                    />
-                  )}
-                </span>
-              </BeeTootip>
             </div>
           </div>
           <div className="grid w-full grid-cols-8 auto-rows-[150px]">
@@ -471,22 +450,25 @@ function FolderScrollArea({
                   key={folder.id}
                   folder={folder}
                   selection={selection}
-                  isChecked={selectedFolders.includes(folder.id)}
-                  isOpen={openFolderId === folder.id}
-                  onRename={handleTargetRename}
-                  onCheckChange={onFolderCheckChange}
-                  onOpenChange={onFolderOpenChange}
-                  onInfo={(item) => handleShowFolderIntroduction(item.id)}
-                  onDelete={handleDeleteTarget}
                   onOpen={handleOpenFolder}
+                  onRename={handleTargetRename}
+                  onDelete={handleDeleteTarget}
+                  onOpenChange={onFolderOpenChange}
+                  isOpen={openFolderId === folder.id}
+                  onCheckChange={onFolderCheckChange}
+                  isChecked={selectedFolders.includes(folder.id)}
+                  onInfo={(item) => handleShowFolderIntroduction(item.id)}
                 />
               ) : (
                 <BeeImageItem
                   file={folder}
                   key={folder.id}
+                  selection={selection}
                   onRename={handleTargetRename}
                   onDelete={handleDeleteTarget}
                   onSetAsCover={handleSetAsCover}
+                  onCheckChange={onFolderCheckChange}
+                  isChecked={selectedFolders.includes(folder.id)}
                   onPreview={(src: string) => handlePreviewImage([src], 0)}
                   onViewDetail={(item) => handleShowImageIntroduction(item.id)}
                 />
