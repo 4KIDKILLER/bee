@@ -44,6 +44,8 @@ function FolderScrollArea({
   onPaginationChange,
   onResetNavigation,
 }: FolderScrollAreaProps) {
+  const mode = useSystemStore((state) => state.mode);
+
   //当前操作的文件夹/图片
   const [currentTarget, setCurrentTarget] = useState<BeeFileType | null>(null);
   //当前操作文件夹的类型 1:创建 2修改
@@ -414,7 +416,7 @@ function FolderScrollArea({
               >
                 刷新
               </span>
-              {selectedFolders.length > 0 && (
+              {selectedFolders.length > 0 && mode === "private" && (
                 <>
                   <div className="w-[2px] h-[10px] bg-black/30 mx-1 rounded-xs" />
                   <span
