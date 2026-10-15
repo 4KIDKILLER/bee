@@ -409,7 +409,7 @@ function FolderScrollArea({
                 新建文件夹
               </span>
               {/* </FolderEditDialog> */}
-              <div className="w-[2px] h-[10px] bg-black/30 mx-1 rounded-xs" />
+              <div className="w-[2px] h-[10px] bg-white/30 mx-1 rounded-xs" />
               <span
                 onClick={() => onRefresh(true)}
                 className="flex items-center gap-1 cursor-pointer transition-colors text-white px-[6px] py-[4px] rounded-md bg-black/30 hover:bg-(--theme-color)/60"
@@ -418,7 +418,7 @@ function FolderScrollArea({
               </span>
               {selectedFolders.length > 0 && mode === "private" && (
                 <>
-                  <div className="w-[2px] h-[10px] bg-black/30 mx-1 rounded-xs" />
+                  <div className="w-[2px] h-[10px]  bg-white/30 mx-1 rounded-xs" />
                   <span
                     onClick={() => onSetPrivate(2)}
                     className="flex items-center gap-1 cursor-pointer transition-colors text-white px-[6px] py-[4px] rounded-md bg-black/30 hover:bg-(--theme-color)/60"

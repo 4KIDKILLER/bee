@@ -243,8 +243,8 @@ function FolderList() {
               )}
             </div>
           </div>
-          <div className="relative flex-1 overflow-hidden backdrop-blur-[2px] rounded-bl-2xl rounded-br-2xl border-b border-x border-white/20 shadow-lg">
-            <div className="relative h-full w-full bg-black/10">
+          <div className="relative flex-1 overflow-hidden backdrop-blur-[2px] rounded-bl-2xl rounded-br-2xl border-b border-x border-white/20 shadow-lg bg-black/20">
+            <div className="relative h-full w-full">
               <FilePanel
                 page={pageInfo.page}
                 selection={selection}
@@ -286,16 +286,17 @@ function FolderList() {
           {pageInfo.total === 0 ? (
             <></>
           ) : (
-            <div className="rounded-full shadow-xl bg-black/40 px-[6px] backdrop-blur-sm flex items-center border border-white/20">
+            <div
+              className={cn(
+                showUploadPanel ? "animate__fadeOut" : "animate__fadeIn",
+                "animate__animated animate__faster rounded-full shadow-xl bg-black/40 px-[6px] backdrop-blur-sm flex items-center border border-white/20",
+              )}
+            >
               <FolderListPagination
                 page={pageInfo.page}
                 limit={pageInfo.limit}
                 total={pageInfo.total}
                 onPageChange={handlePageChange}
-                className={cn(
-                  "animate__animated animate__faster",
-                  showUploadPanel ? "animate__fadeOut" : "animate__fadeIn",
-                )}
               />
             </div>
           )}

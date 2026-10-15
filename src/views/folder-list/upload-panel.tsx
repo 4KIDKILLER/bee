@@ -346,8 +346,8 @@ function UploadPanel({ showUploadPanel, currentFolderId }: UploadPanelProps) {
       }`}
     >
       <input
-        type="file"
         multiple
+        type="file"
         id="fileInput"
         className="hidden"
         ref={fileInputRef}
