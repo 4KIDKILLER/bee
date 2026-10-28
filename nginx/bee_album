@@ -1,0 +1,18 @@
+server {
+    # IPv4无限制
+    listen 6003;
+    # IPv6无限制
+    listen [::]:6003;
+
+    # 换成你的域名；没有域名先用服务器 IP 或 _
+    server_name _;
+
+    root /var/www/bee_album;
+
+    # 静态资源缓存（可选，但推荐）
+    location ~* \.(js|css|png|jpg|jpeg|gif|svg|ico|woff2?|ttf|eot)$ {
+        expires 30d;
+        add_header Cache-Control "public, immutable";
+        try_files $uri =404;
+    }
+}
