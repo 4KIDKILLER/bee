@@ -7,7 +7,18 @@ import tailwindcss from '@tailwindcss/vite'
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   server: {
-    port: 6111
+    port: 6111,
+    proxy: {
+      '/bee': {
+        changeOrigin: true,
+        target: 'http://127.0.0.1:8765',
+      },
+      '/files': {
+        target: 'http://127.0.0.1:9006',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/files/, '')  // 看 6003 实际路径决定
+      }
+    }
   },
   build: {
     chunkSizeWarningLimit: 800,

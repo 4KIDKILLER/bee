@@ -19,4 +19,23 @@ server {
     location / {
         try_files $uri $uri/ /index.html;
     }
+
+    # 接口转发
+    location /bee/ {
+        proxy_pass http://127.0.0.1:6002;   # 注意：末尾没有斜杠
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    #图片请求转发
+    location /files/ {
+        proxy_pass http://127.0.0.1:6003/;   # 末尾斜杠，剥掉 /files
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        # 文件服务通常需要这两个，支持大文件上传/下载
+        client_max_body_size 100m;
+        proxy_read_timeout 300s;
+    }
 }
