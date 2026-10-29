@@ -13,7 +13,7 @@ import type {
 import { FileApi } from "/@/api/file";
 import RequestPool from "/@/library/class/RequestPool";
 import { formatFileSize } from "/@/library/utils";
-import { v4 as uuidv4 } from "uuid"
+import { v4 as uuidv4 } from "uuid";
 
 // 上传中状态的最短展示时长，避免小文件上传过快导致进度条一闪而过
 const MIN_UPLOAD_DISPLAY_DURATION = 3000;
@@ -87,7 +87,9 @@ function UploadPanel({ showUploadPanel, currentFolderId }: UploadPanelProps) {
   });
   const [activeFilter, setActiveFilter] =
     useState<UploadFilterKey>("uploading");
-  const requestPoolRef = useRef(new RequestPool(import.meta.env.VITE_MAX_UPLOAD_SIZE));
+  const requestPoolRef = useRef(
+    new RequestPool(import.meta.env.VITE_MAX_UPLOAD_SIZE),
+  );
 
   const counts = useMemo(
     () => ({
@@ -352,6 +354,7 @@ function UploadPanel({ showUploadPanel, currentFolderId }: UploadPanelProps) {
         className="hidden"
         ref={fileInputRef}
         onChange={handleFileChange}
+        accept=".jpg,.png,.jpeg,.gif"
       />
       <div className="flex h-full text-white w-full overflow-hidden border border-white/10">
         <UploadStatusMenu

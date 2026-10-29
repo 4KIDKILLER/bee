@@ -21,7 +21,7 @@ server {
     }
 
     # 接口转发
-    location /bee/ {
+    location ^~ /bee/ {
         proxy_pass http://127.0.0.1:6002;   # 注意：末尾没有斜杠
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
@@ -30,7 +30,7 @@ server {
     }
 
     #图片请求转发
-    location /files/ {
+    location ^~ /files/ {
         proxy_pass http://127.0.0.1:6003/;   # 末尾斜杠，剥掉 /files
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
