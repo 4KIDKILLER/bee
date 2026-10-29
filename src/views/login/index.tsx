@@ -1,5 +1,6 @@
 import { useMemo, useState, type ChangeEvent, type FormEvent } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { md5 } from "js-md5";
 import {
   BeeIcon,
   Button,
@@ -59,7 +60,7 @@ function Login() {
 
     try {
       setSubmitting(true);
-      await login({ username, password });
+      await login({ username, password: md5(password) });
       setFormState(initialFormState);
       setHasSubmitted(false);
       navigate(redirectPath, { replace: true });
@@ -93,7 +94,10 @@ function Login() {
               <form className="mt-8" onSubmit={handleSubmit} autoComplete="off">
                 <FieldGroup className="gap-5">
                   <Field data-invalid={usernameInvalid}>
-                    <FieldLabel className="border-none p-0 text-white/78" htmlFor="username">
+                    <FieldLabel
+                      className="border-none p-0 text-white/78"
+                      htmlFor="username"
+                    >
                       账号
                     </FieldLabel>
                     <Input
@@ -112,7 +116,10 @@ function Login() {
                   </Field>
 
                   <Field data-invalid={passwordInvalid}>
-                    <FieldLabel className="border-none p-0 text-white/78" htmlFor="password">
+                    <FieldLabel
+                      className="border-none p-0 text-white/78"
+                      htmlFor="password"
+                    >
                       密码
                     </FieldLabel>
                     <Input
